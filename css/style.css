@@ -58,19 +58,33 @@ button{ font-family:inherit; }
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:6px 2px 20px;
+  gap:12px;
+  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px 16px;
+  margin:6px 0 20px;
 }
-.header h3{
+.header-text h3{
   font-size:17px;
-  font-weight:700;
+  font-weight:800;
   color:var(--brand);
+  margin-bottom:2px;
+}
+.header-tag{
+  font-size:11px;
+  color:var(--sub);
+  font-weight:600;
+  margin:0;
 }
 .header img{
-  height:38px;
-  width:38px;
-  border-radius:10px;
+  height:42px;
+  width:42px;
+  border-radius:12px;
   object-fit:cover;
-  background:var(--line);
+  background:var(--surface);
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  flex-shrink:0;
 }
 
 /* ---------------- SECTION TITLE ---------------- */
@@ -309,8 +323,8 @@ button{ font-family:inherit; }
 }
 .nav-item::before{ font-size:19px; }
 .nav-item[data-page="index.html"]::before{ content:"🏠"; }
-.nav-item[data-page="ai-editing.html"]::before{ content:"🎬"; }
-.nav-item[data-page="social.html"]::before{ content:"📲"; }
+.nav-item[data-page="ff.html"]::before{ content:"🎮"; }
+.nav-item[data-page="other.html"]::before{ content:"🗂️"; }
 .nav-item[data-page="account.html"]::before{ content:"👤"; }
 .nav-item.active{ color:var(--accent); }
 
