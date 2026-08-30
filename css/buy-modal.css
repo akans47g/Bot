@@ -98,6 +98,23 @@ body.bm-open{ overflow:hidden; }
 }
 .qty-chip.selected .q-num{ color:var(--bm-accent); }
 
+.qty-or{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:14px 0 10px;
+  color:var(--bm-sub);
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+}
+.qty-or::before, .qty-or::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:#ECECF2;
+}
+
 .buy-modal-step2{
   max-height:0; overflow:hidden; opacity:0;
   transition:max-height .3s ease, opacity .25s ease;
