@@ -15,7 +15,7 @@
 ================================================================= */
 
 const PRODUCTS = {
-  hulk:     { name: "Hulk Videos Bundle",             rate: 200 },
+  hulk:     { name: "Hulk Videos Bundle",             rate: 40 },
   cricket:  { name: "Cricket Videos Bundle",          rate: 200 },
   food:     { name: "Food Cutting Videos Bundle",     rate: 200 },
   car:      { name: "Car Videos Bundle",              rate: 200 },
