@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AKANS Store | Bundles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/nav.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/buy-modal.css">
+
+<script>
+function toggleDetails(id) {
+  const allBoxes = document.querySelectorAll('.details-box');
+  allBoxes.forEach(box => {
+    if (box.id !== id) {
+      box.style.display = 'none';
+      const btn = box.previousElementSibling?.querySelector?.('.details-btn');
+    }
+  });
+
+  const box = document.getElementById(id);
+  const isOpen = box.style.display === 'block';
+  box.style.display = isOpen ? 'none' : 'block';
+
+  // Sound
+  const snd = document.getElementById('sound-details');
+  if (snd) { snd.currentTime = 0; snd.play().catch(() => {}); }
+}
+</script>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script type="module" src="js/auth.js"></script>
+</head>
+
+<body>
+
+<!-- ========================
+     PAGE WRAPPER
+========================= -->
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h3>Only M.7 Limited</h3>
+    <img src="logo.png" alt="AKANS Logo">
+  </div>
+
+  <!-- ========================
+       SECTION TITLE
+  ========================= -->
+  <div class="section-title">
+    <span class="section-badge">🔥 Hot Deals</span>
+    <h2>Top Video Bundles</h2>
+    <p>Instant delivery • Full HD Quality</p>
+  </div>
+
+  <!-- ========================
+       BUNDLE 1 — HULK
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="hulk.jpg" class="card-img" alt="Hulk Bundle">
+      <div class="card-text">
+        <div class="card-badge">AI Generated</div>
+        <h3>Hulk Videos Bundle</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹39</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-hulk')">Details ▾</button>
+          <button class="buy-btn" id="buy-hulk" onclick="openBuyModal('hulk')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-hulk">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>AI Generated Hulk Videos</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>📱 Type</span><span>Short Reels</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.7 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 1.5 — CRICKET
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="cricket.jpg" class="card-img" alt="Cricket Bundle">
+      <div class="card-text">
+        <div class="card-badge">Sports</div>
+        <h3>Cricket Videos Bundle</h3>
+        <p class="card-count">📦 500+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-cricket')">Details ▾</button>
+          <button class="buy-btn" id="buy-cricket" onclick="openBuyModal('cricket')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-cricket">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Cricket Short Videos</span>
+        <span>🎬 Total</span><span>500+ Videos</span>
+        <span>📱 Type</span><span>Short Reels</span>
+        <span>🖥️ Quality</span><span>HD & Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.7 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 2 — FOOD
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="food.jpg" class="card-img" alt="Food Bundle">
+      <div class="card-text">
+        <div class="card-badge">Satisfying</div>
+        <h3>Food Cutting Videos Bundle</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹39</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-food')">Details ▾</button>
+          <button class="buy-btn" id="buy-food" onclick="openBuyModal('food')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-food">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>AI Food Cutting Videos</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>📱 Type</span><span>Satisfying Reels</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.6 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 3 — CAR
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="car.jpg" class="card-img" alt="Car Bundle">
+      <div class="card-text">
+        <div class="card-badge">Cinematic</div>
+        <h3>Car Videos Bundle</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹45</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-car')">Details ▾</button>
+          <button class="buy-btn" id="buy-car" onclick="openBuyModal('car')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-car">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>AI Car Videos</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>📱 Type</span><span>Cinematic Reels</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.8 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 4 — ANIME
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="anime.jpg" class="card-img" alt="Anime Bundle">
+      <div class="card-text">
+        <div class="card-badge popular-badge">⭐ Most Popular</div>
+        <h3>Anime Videos Bundle</h3>
+        <p class="card-count">📦 3000+ Videos</p>
+        <div class="price-row">
+          <del>₹399</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-anime')">Details ▾</button>
+          <button class="buy-btn" id="buy-anime" onclick="openBuyModal('anime')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-anime">
+      <div class="details-grid">
+        <span>📁 Includes</span><span>Naruto, Jujutsu Kaisen, One Piece</span>
+        <span>🌐 Language</span><span>Hindi, English, Japanese</span>
+        <span>📱 Type</span><span>Short Videos</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.9 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 5 — MORAL STORY
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="moral.jpg" class="card-img" alt="Moral Story Bundle">
+      <div class="card-text">
+        <div class="card-badge">2D Animation</div>
+        <h3>2D Moral Story Long Videos</h3>
+        <p class="card-count">📦 500+ Long Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-moral')">Details ▾</button>
+          <button class="buy-btn" id="buy-moral" onclick="openBuyModal('moral')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-moral">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>2D Animation Viral Cartoon Videos</span>
+        <span>🌐 Language</span><span>Hindi</span>
+        <span>📱 Type</span><span>Long Videos</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.8 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 6 — MONKEY
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="monkey.jpg" class="card-img" alt="Monkey Vlog Bundle">
+      <div class="card-text">
+        <div class="card-badge">Funny</div>
+        <h3>Monkey Vlog Videos</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹399</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-monkey')">Details ▾</button>
+          <button class="buy-btn" id="buy-monkey" onclick="openBuyModal('monkey')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-monkey">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Monkey Vlog Videos</span>
+        <span>🎬 Total</span><span>500+ Videos</span>
+        <span>🌐 Language</span><span>Hindi</span>
+        <span>📱 Type</span><span>Funny & Adventure Vlogs</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.8 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 7 — LIFE HACKS
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="lifehack.jpg" class="card-img" alt="Life Hacks Bundle">
+      <div class="card-text">
+        <div class="card-badge popular-badge">⭐ Best Seller</div>
+        <h3>Daily Life Hacks Videos</h3>
+        <p class="card-count">📦 3000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹55</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-lifehack')">Details ▾</button>
+          <button class="buy-btn" id="buy-lifehack" onclick="openBuyModal('lifehack')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-lifehack">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Smart Daily Life Hacks</span>
+        <span>🎬 Total</span><span>3000+ Videos</span>
+        <span>📋 Content</span><span>Home Tricks, DIY, Tool Hacks, Study Tricks</span>
+        <span>📱 Type</span><span>Short Viral Videos</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.9 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 8 — NATURE
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="nature.jpg" class="card-img" alt="Nature Bundle">
+      <div class="card-text">
+        <div class="card-badge">Relaxing</div>
+        <h3>Nature Videos Bundle</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-nature')">Details ▾</button>
+          <button class="buy-btn" id="buy-nature" onclick="openBuyModal('nature')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-nature">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Beautiful Nature Collection</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>🌿 Includes</span><span>Jungle, Mountains, Waterfalls, Rivers 🌴</span>
+        <span>📱 Type</span><span>Relaxing Shorts & Cinematic Clips</span>
+        <span>🖥️ Quality</span><span>Full HD / 4K</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.8 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 9 — HORROR
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="horror.jpg" class="card-img" alt="Horror Bundle">
+      <div class="card-text">
+        <div class="card-badge">Horror</div>
+        <h3>Horror Videos Bundle</h3>
+        <p class="card-count">📦 800+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-horror')">Details ▾</button>
+          <button class="buy-btn" id="buy-horror" onclick="openBuyModal('horror')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-horror">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Horror Shorts Collection</span>
+        <span>🎬 Total</span><span>800+ Videos</span>
+        <span>📋 Content</span><span>Scary Stories, Paranormal Clips, Horror Shorts</span>
+        <span>🌐 Language</span><span>Hindi</span>
+        <span>📱 Type</span><span>Short Story Videos</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.7 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 10 — ART
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="art.jpg" class="card-img" alt="Art Bundle">
+      <div class="card-text">
+        <div class="card-badge">Creative</div>
+        <h3>ART & Satisfying Videos Bundle</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">📈 Trending Now</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-art')">Details ▾</button>
+          <button class="buy-btn" id="buy-art" onclick="openBuyModal('art')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-art">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Creative + Relaxing Shorts</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>🎨 Art</span><span>500+ Art Shorts</span>
+        <span>✨ Satisfying</span><span>500+ Satisfying Shorts</span>
+        <span>📱 Type</span><span>Reels / Shorts</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant Access</span>
+        <span>⭐ Rating</span><span>4.8 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 11 — GYM
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="gym.jpg" class="card-img" alt="Gym Bundle">
+      <div class="card-text">
+        <div class="card-badge hot-badge">🔥 High Demand</div>
+        <h3>Gym Boy & Attitude Videos</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹55</span>
+        </div>
+        <p class="urgent">🔥 High Demand Bundle</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-gym')">Details ▾</button>
+          <button class="buy-btn" id="buy-gym" onclick="openBuyModal('gym')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-gym">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Motivation + Attitude Shorts</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>💪 Gym</span><span>700+ Gym Attitude Videos</span>
+        <span>😤 Attitude</span><span>350+ Attitude Shorts</span>
+        <span>📱 Type</span><span>Reels / Status Videos</span>
+        <span>🖥️ Quality</span><span>HD / Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.7 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 12 — ROMANTIC
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="romantic.jpg" class="card-img" alt="Romantic Bundle">
+      <div class="card-text">
+        <div class="card-badge popular-badge">💖 99% Viral</div>
+        <h3>2D Romantic Short Videos</h3>
+        <p class="card-count">📦 800+ Videos</p>
+        <div class="price-row">
+          <del>₹549</del>
+          <span class="price-now">₹69</span>
+        </div>
+        <p class="urgent">💖 99% Viral Content</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-romantic')">Details ▾</button>
+          <button class="buy-btn" id="buy-romantic" onclick="openBuyModal('romantic')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-romantic">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>2D Romantic Shorts</span>
+        <span>🎬 Total</span><span>800+ Videos</span>
+        <span>💕 Content</span><span>Emotional + Love Story Shorts</span>
+        <span>🔥 Viral</span><span>99% Viral Ready Content 💯</span>
+        <span>📱 Type</span><span>Short Videos</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.9 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       TRENDING BUNDLES
+  ========================= -->
+  <div class="section-title" style="margin-top:28px;">
+    <span class="section-badge">🔥 Hot</span>
+    <h2>Trending Bundles</h2>
+  </div>
+
+</div><!-- page-wrap temporary close -->
+<div class="trending-scroll">
+
+  <div class="trending-card">
+    <img src="Cat.jpg" alt="Cat Story Bundle">
+    <h4>Cat Story's Bundle</h4>
+    <p>1000+ Videos</p>
+    <p class="t-price">₹49 Only</p>
+    <button class="t-buy-btn" id="buy-cat" onclick="openBuyModal('cat')">Buy Now</button>
+  </div>
+
+  <div class="trending-card">
+    <img src="WomanGym.jpg" alt="Woman Gym Bundle">
+    <h4>Woman Gym Bundle</h4>
+    <p>1000+ Videos</p>
+    <p class="t-price">₹49 Only</p>
+    <button class="t-buy-btn" id="buy-womangym" onclick="openBuyModal('womangym')">Buy Now</button>
+  </div>
+
+  <div class="trending-card">
+    <img src="Sanatani.jpg" alt="Sanatani AI Reel Bundle">
+    <h4>Sanatani AI Reel Bundle</h4>
+    <p>1000+ Videos</p>
+    <p class="t-price">₹49 Only</p>
+    <button class="t-buy-btn" id="buy-sanatani" onclick="openBuyModal('sanatani')">Buy Now</button>
+  </div>
+
+  <div class="trending-card">
+    <img src="Stock.jpg" alt="Stock Market Bundle">
+    <h4>Stock Market Bundle</h4>
+    <p>1000+ Videos</p>
+    <p class="t-price">₹49 Only</p>
+    <button class="t-buy-btn" id="buy-stock" onclick="openBuyModal('stock')">Buy Now</button>
+  </div>
+
+</div>
+<div class="page-wrap"><!-- page-wrap resume -->
+
+  <!-- ========================
+       CUSTOMER SUPPORT
+  ========================= -->
+  <div class="info-card support-card">
+    <div class="info-icon">💬</div>
+    <h3>24×7 Customer Support</h3>
+    <p>We're always here to help you!</p>
+    <a href="mailto:Akans47g@gmail.com" class="support-email">Akans47g@gmail.com</a>
+  </div>
+
+  <!-- ========================
+       SELLING PROOF & SOCIAL
+  ========================= -->
+  <div class="info-card">
+    <h3 style="margin-bottom:14px;">📢 Selling Proof & Social Pages</h3>
+
+    <div class="proof-row">
+      <div class="proof-label">
+        <span class="proof-icon">📸</span>
+        <span>Instagram Page</span>
+      </div>
+      <a href="https://www.instagram.com/akans.ai" class="blue-btn" target="_blank">View</a>
+    </div>
+
+    <div class="proof-row">
+      <div class="proof-label">
+        <span class="proof-icon">✈️</span>
+        <span>Telegram Channel</span>
+      </div>
+      <a href="https://t.me/AKANS_AI" class="blue-btn" target="_blank">View</a>
+    </div>
+
+    <div class="proof-row">
+      <div class="proof-label">
+        <span class="proof-icon">💬</span>
+        <span>Telegram Contact</span>
+      </div>
+      <a href="https://t.me/AKANS_Moin" class="blue-btn" target="_blank">View</a>
+    </div>
+
+    <div class="proof-row">
+      <div class="proof-label">
+        <span class="proof-icon">✅</span>
+        <span>Selling Proof</span>
+      </div>
+      <a href="https://t.me/+X8lVU6ZMLZNmMjI1" class="blue-btn" target="_blank">View</a>
+    </div>
+  </div>
+
+  <!-- ========================
+       TRUST FOOTER
+  ========================= -->
+  <div class="trust-card">
+    <div class="trust-grid">
+      <div class="trust-item">✔ Paytm Verified Seller</div>
+      <div class="trust-item">✔ Secure UPI Payment</div>
+      <div class="trust-item">✔ Instant Delivery</div>
+      <div class="trust-item">✔ Privacy Protected</div>
+    </div>
+    <p class="trust-note">Digital Product • No Refund After Access</p>
+  </div>
+
+</div>
+<!-- PAGE END -->
+
+<!-- ========================
+     BUY NOW MODAL
+========================= -->
+<div class="buy-modal-overlay" id="buyModalOverlay">
+  <div class="buy-modal" id="buyModal">
+    <div class="buy-modal-handle"></div>
+    <button type="button" class="buy-modal-close" onclick="closeBuyModal()" aria-label="Close">✕</button>
+
+    <p class="buy-modal-eyebrow">Buy Now</p>
+    <h3 class="buy-modal-title" id="bmProductName">—</h3>
+
+    <p class="buy-modal-label">Content Select Karein</p>
+    <div class="qty-grid" id="bmQtyGrid"></div>
+
+    <div class="buy-modal-step2" id="bmStep2">
+      <div class="price-display">
+        <span>Total Price</span>
+        <strong id="bmPrice">₹0</strong>
+      </div>
+
+      <label class="buy-modal-label" for="bmUtr">UTR Number / Payment Link</label>
+      <input type="text" id="bmUtr" class="buy-modal-input" placeholder="Yahan UTR ya link paste karein">
+      <p class="bm-error" id="bmError"></p>
+
+      <p class="wallet-line">Wallet Balance: <strong id="bmWalletBal">₹0</strong></p>
+
+      <div class="insufficient-box" id="bmInsufficient">
+        <p>⚠️ Balance kam hai — ₹<span id="bmShort">0</span> aur chahiye.</p>
+        <button type="button" class="add-money-btn" onclick="location.href='addmoney.html'">💰 Add Money</button>
+      </div>
+
+      <button type="button" class="confirm-buy-btn" id="bmConfirmBtn" onclick="confirmPurchase()">✅ Confirm &amp; Buy Now</button>
+    </div>
+  </div>
+</div>
+
+<div class="bm-toast" id="bmToast"></div>
+
+
+<!-- ========================
+     BOTTOM NAVIGATION
+========================= -->
+<nav class="bottom-nav">
+  <button class="nav-item" data-page="index.html" onclick="location.href='index.html'">
+    
+    <span>Bundles</span>
+  </button>
+  <button class="nav-item" data-page="ai-editing.html" onclick="location.href='ai-editing.html'">
+    
+    <span>AI & Edit</span>
+  </button>
+  <button class="nav-item" data-page="social.html" onclick="location.href='social.html'">
+    
+    <span>Social</span>
+  </button>
+  <button class="nav-item" data-page="account.html" onclick="location.href='account.html'">
+   
+    <span>Account</span>
+  </button>
+</nav>
+
+<!-- SOUNDS -->
+<audio id="sound-details" src="assets/sounds/details.mp3" preload="none"></audio>
+<audio id="sound-buy" src="assets/sounds/buy.mp3" preload="none"></audio>
+<audio id="sound-nav" src="assets/sounds/nav.mp3" preload="none"></audio>
+
+<!-- SCRIPTS -->
+<script>
+// Active nav tab
+document.addEventListener("DOMContentLoaded", () => {
+  const currentPage = window.location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll(".nav-item").forEach(btn => {
+    if (btn.dataset.page === currentPage) btn.classList.add("active");
+  });
+
+  // Auto-hide nav on scroll
+  let lastScroll = 0;
+  const nav = document.querySelector(".bottom-nav");
+  if (nav) {
+    window.addEventListener("scroll", () => {
+      const cur = window.pageYOffset;
+      nav.classList.toggle("hide", cur > lastScroll && cur > 80);
+      lastScroll = cur;
+    });
+  }
+});
+</script>
+
+<script type="module" src="js/auth.js"></script>
+<script src="js/products.js"></script>
+
+<!-- ========================
+     BUY NOW MODAL — LOGIC
+     Temporary local demo: wallet balance & orders are stored in
+     browser localStorage for now. Jab Firebase/Auth/Admin Panel
+     ready ho jaaye, tab sirf yeh 3 functions replace karne honge:
+     getWalletBalance(), setWalletBalance(), saveOrder()
+========================= -->
+<script>
+const QTY_TIERS = [50, 100, 300, 500, 1000, 5000, 10000, 50000];
+let bmState = { productId: null, rate: 0, qty: 0, price: 0 };
+
+function formatINR(n){
+  n = Math.round(n * 100) / 100;
+  return "₹" + (n % 1 === 0 ? n : n.toFixed(2));
+}
+function qtyLabel(n){
+  return n >= 1000 ? (n / 1000) + "K" : String(n);
+}
+
+/* ---- TEMP DEMO WALLET (replace with Firebase later) ---- */
+function getWalletBalance(){
+  const v = localStorage.getItem('akansWalletBalance');
+  if (v === null){ localStorage.setItem('akansWalletBalance', '500'); return 500; } // demo starting balance
+  return parseFloat(v) || 0;
+}
+function setWalletBalance(bal){
+  localStorage.setItem('akansWalletBalance', String(bal));
+}
+function saveOrder(order){
+  const list = JSON.parse(localStorage.getItem('akansOrders') || '[]');
+  list.push(order);
+  localStorage.setItem('akansOrders', JSON.stringify(list));
+}
+/* --------------------------------------------------------- */
+
+function openBuyModal(productId){
+  const product = window.PRODUCTS && window.PRODUCTS[productId];
+  if (!product){ alert('Product data nahi mili — js/products.js check karein.'); return; }
+
+  bmState = { productId, rate: product.rate, qty: 0, price: 0 };
+
+  document.getElementById('bmProductName').textContent = product.name;
+  document.getElementById('bmUtr').value = '';
+  document.getElementById('bmError').textContent = '';
+  document.getElementById('bmInsufficient').classList.remove('show');
+  document.getElementById('bmStep2').classList.remove('open');
+  document.getElementById('bmWalletBal').textContent = formatINR(getWalletBalance());
+
+  const grid = document.getElementById('bmQtyGrid');
+  grid.innerHTML = '';
+  QTY_TIERS.forEach(qty => {
+    const price = (product.rate / 1000) * qty;
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'qty-chip';
+    chip.innerHTML = '<span class="q-num">' + qtyLabel(qty) + '</span><span class="q-price">' + formatINR(price) + '</span>';
+    chip.onclick = function(){ selectQty(qty, price, chip); };
+    grid.appendChild(chip);
+  });
+
+  document.body.classList.add('bm-open');
+  document.getElementById('buyModalOverlay').classList.add('active');
+}
+
+function selectQty(qty, price, chipEl){
+  document.querySelectorAll('.qty-chip').forEach(c => c.classList.remove('selected'));
+  chipEl.classList.add('selected');
+
+  bmState.qty = qty;
+  bmState.price = price;
+
+  document.getElementById('bmPrice').textContent = formatINR(price);
+  document.getElementById('bmError').textContent = '';
+  document.getElementById('bmInsufficient').classList.remove('show');
+  document.getElementById('bmStep2').classList.add('open');
+}
+
+function confirmPurchase(){
+  const errorEl = document.getElementById('bmError');
+
+  if (!bmState.qty){
+    errorEl.textContent = 'Pehle content quantity select karein';
+    return;
+  }
+  const utr = document.getElementById('bmUtr').value.trim();
+  if (!utr){
+    errorEl.textContent = 'UTR number ya payment link dalein';
+    document.getElementById('bmUtr').focus();
+    return;
+  }
+  errorEl.textContent = '';
+
+  const balance = getWalletBalance();
+
+  if (balance >= bmState.price){
+    setWalletBalance(balance - bmState.price);
+
+    saveOrder({
+      id: Date.now(),
+      productId: bmState.productId,
+      productName: document.getElementById('bmProductName').textContent,
+      qty: bmState.qty,
+      price: bmState.price,
+      utr: utr,
+      date: new Date().toISOString(),
+      status: 'pending'
+    });
+
+    const snd = document.getElementById('sound-buy');
+    if (snd){ snd.currentTime = 0; snd.play().catch(function(){}); }
+
+    closeBuyModal();
+    showToast('✅ Order request bheja gaya! Admin jaldi approve karega.');
+  } else {
+    document.getElementById('bmShort').textContent = formatINR(bmState.price - balance);
+    document.getElementById('bmInsufficient').classList.add('show');
+  }
+}
+
+function closeBuyModal(){
+  document.getElementById('buyModalOverlay').classList.remove('active');
+  document.body.classList.remove('bm-open');
+}
+
+document.getElementById('buyModalOverlay').addEventListener('click', function(e){
+  if (e.target === this) closeBuyModal();
+});
+
+let bmToastTimer;
+function showToast(msg){
+  const t = document.getElementById('bmToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(bmToastTimer);
+  bmToastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+</script>
+<!-- ✅ Dynamic products from admin panel -->
+<script type="module" src="js/products-loader.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
