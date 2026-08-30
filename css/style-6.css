@@ -1,0 +1,334 @@
+/* =================================================================
+   AKANS STORE — MAIN STYLESHEET (style.css)
+   =================================================================
+   Poori site ki styling yahan hai: header, bundle cards, details
+   box, trending scroll, support/social cards, trust footer, aur
+   bottom nav.
+
+   👉 buy-modal.css alag file hai, usse yahan kuch chhua nahi gaya.
+   👉 Rang badalne ho to bas neeche ":root" wale variables edit karo
+      — pura site automatically update ho jaayega.
+================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --ink:#181428;      /* main text */
+  --sub:#6E6B85;       /* muted/secondary text */
+  --brand:#4F2FCE;     /* primary brand (headings, badges, nav) */
+  --brand-2:#7B4FF0;   /* brand gradient partner */
+  --accent:#FF6B3D;    /* CTA orange — same as buy-modal.css */
+  --accent-2:#FFA751;  /* CTA orange gradient partner */
+  --success:#16C784;   /* trust / positive */
+  --bg:#F6F4FC;        /* page background */
+  --surface:#FFFFFF;   /* card background */
+  --line:#ECEAF5;      /* borders / dividers */
+  --radius:18px;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:80px; /* room for fixed bottom nav */
+}
+
+h1,h2,h3,h4{
+  font-family:'Baloo 2','Inter',sans-serif;
+  margin:0 0 4px;
+  color:var(--ink);
+}
+a{ color:inherit; }
+img{ max-width:100%; display:block; }
+button{ font-family:inherit; }
+
+.page-wrap{
+  max-width:480px;
+  margin:0 auto;
+  padding:16px 16px 4px;
+}
+
+/* ---------------- HEADER ---------------- */
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:6px 2px 20px;
+}
+.header h3{
+  font-size:17px;
+  font-weight:700;
+  color:var(--brand);
+}
+.header img{
+  height:38px;
+  width:38px;
+  border-radius:10px;
+  object-fit:cover;
+  background:var(--line);
+}
+
+/* ---------------- SECTION TITLE ---------------- */
+.section-title{
+  text-align:center;
+  margin:6px 0 20px;
+}
+.section-badge{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  padding:5px 14px;
+  border-radius:20px;
+  margin-bottom:8px;
+}
+.section-title h2{ font-size:22px; font-weight:800; }
+.section-title p{ color:var(--sub); font-size:13px; margin:4px 0 0; }
+
+/* ---------------- BUNDLE CARD ---------------- */
+.bundle-card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:14px;
+  margin-bottom:14px;
+  box-shadow:0 2px 10px rgba(79,47,206,.06);
+}
+.card-top{ display:flex; gap:12px; }
+.card-img{
+  width:84px; height:84px;
+  border-radius:14px;
+  object-fit:cover;
+  background:var(--line);
+  flex-shrink:0;
+}
+.card-text{ flex:1; min-width:0; }
+
+.card-badge{
+  display:inline-block;
+  background:var(--bg);
+  color:var(--brand);
+  border:1px solid var(--line);
+  font-size:10.5px;
+  font-weight:700;
+  padding:3px 9px;
+  border-radius:20px;
+  margin-bottom:6px;
+}
+.card-badge.popular-badge{ background:#FFF7E0; border-color:#FFE7A3; color:#B8860B; }
+.card-badge.hot-badge{ background:#FFEDE8; border-color:#FFCFC0; color:var(--accent); }
+
+.card-text h3{ font-size:15.5px; font-weight:700; line-height:1.25; margin-bottom:4px; }
+.card-count{ font-size:12px; color:var(--sub); margin:0 0 8px; }
+
+.price-row{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#FFF3EC;
+  border:1px dashed #FFCBA8;
+  border-radius:10px;
+  padding:4px 10px;
+  margin-bottom:6px;
+}
+.price-row del{ color:var(--sub); font-size:12.5px; font-weight:500; }
+.price-row .price-now{ color:var(--accent); font-size:17px; font-weight:800; }
+
+.urgent{
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--accent);
+  margin:0 0 10px;
+  animation:urgentPulse 2.2s ease-in-out infinite;
+}
+
+.btn-row{ display:flex; gap:8px; }
+.details-btn{
+  flex:1;
+  background:var(--surface);
+  border:1.5px solid var(--line);
+  color:var(--sub);
+  font-size:12.5px;
+  font-weight:700;
+  padding:9px 6px;
+  border-radius:12px;
+  cursor:pointer;
+}
+.buy-btn, .t-buy-btn{
+  flex:1;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  border:none;
+  color:#fff;
+  font-size:12.5px;
+  font-weight:700;
+  padding:9px 6px;
+  border-radius:12px;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(255,107,61,.3);
+}
+.details-btn:active, .buy-btn:active, .t-buy-btn:active{ transform:scale(.97); }
+
+/* ---------------- DETAILS BOX ---------------- */
+.details-box{
+  display:none;
+  margin-top:10px;
+  padding-top:12px;
+  border-top:1px dashed var(--line);
+}
+.details-grid{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:7px 10px;
+  font-size:12px;
+}
+.details-grid span:nth-child(odd){ color:var(--sub); font-weight:600; white-space:nowrap; }
+.details-grid span:nth-child(even){ color:var(--ink); font-weight:500; }
+
+/* ---------------- TRENDING SCROLL ---------------- */
+.trending-scroll{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding:4px 16px 18px;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+}
+.trending-scroll::-webkit-scrollbar{ display:none; }
+.trending-card{
+  flex:0 0 132px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px;
+  scroll-snap-align:start;
+  box-shadow:0 2px 10px rgba(79,47,206,.06);
+}
+.trending-card img{
+  width:100%; height:90px;
+  border-radius:10px;
+  object-fit:cover;
+  background:var(--line);
+  margin-bottom:8px;
+}
+.trending-card h4{ font-size:12.5px; font-weight:700; margin-bottom:2px; line-height:1.25; }
+.trending-card p{ font-size:11px; color:var(--sub); margin:0 0 6px; }
+.t-price{ color:var(--accent) !important; font-weight:800 !important; font-size:13px !important; }
+
+/* ---------------- SUPPORT / SOCIAL / INFO CARDS ---------------- */
+.info-card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:14px;
+}
+.support-card{ text-align:center; }
+.info-icon{ font-size:28px; margin-bottom:6px; }
+.support-card h3{ font-size:15px; }
+.support-card p{ color:var(--sub); font-size:12.5px; margin:2px 0 10px; }
+.support-email{
+  display:inline-block;
+  background:var(--bg);
+  color:var(--brand);
+  font-weight:700;
+  font-size:13px;
+  padding:8px 16px;
+  border-radius:20px;
+  text-decoration:none;
+}
+
+.proof-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+.proof-row:last-child{ border-bottom:none; }
+.proof-label{ display:flex; align-items:center; gap:10px; font-size:13.5px; font-weight:600; }
+.proof-icon{
+  width:32px; height:32px;
+  border-radius:50%;
+  background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px;
+}
+.blue-btn{
+  background:var(--brand);
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  padding:7px 16px;
+  border-radius:20px;
+  text-decoration:none;
+}
+
+/* ---------------- TRUST FOOTER ---------------- */
+.trust-card{
+  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:20px;
+  text-align:center;
+}
+.trust-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+.trust-item{ font-size:11.5px; font-weight:700; color:var(--ink); }
+.trust-note{ font-size:11px; color:var(--sub); font-style:italic; margin:0; }
+
+/* ---------------- BOTTOM NAV ---------------- */
+.bottom-nav{
+  position:fixed;
+  left:0; right:0; bottom:0;
+  display:flex;
+  justify-content:space-around;
+  background:var(--surface);
+  border-top:1px solid var(--line);
+  padding:8px 0 max(8px, env(safe-area-inset-bottom));
+  z-index:500;
+  transition:transform .25s ease;
+}
+.bottom-nav.hide{ transform:translateY(100%); }
+.nav-item{
+  background:none;
+  border:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  color:var(--sub);
+  font-size:10.5px;
+  font-weight:600;
+  padding:4px 10px;
+  cursor:pointer;
+}
+.nav-item::before{ font-size:19px; }
+.nav-item[data-page="index.html"]::before{ content:"🏠"; }
+.nav-item[data-page="ai-editing.html"]::before{ content:"🎬"; }
+.nav-item[data-page="social.html"]::before{ content:"📲"; }
+.nav-item[data-page="account.html"]::before{ content:"👤"; }
+.nav-item.active{ color:var(--accent); }
+
+/* ---------------- MOTION & ACCESSIBILITY ---------------- */
+@keyframes urgentPulse{
+  0%,100%{ opacity:1; }
+  50%{ opacity:.55; }
+}
+.details-btn:focus-visible,
+.buy-btn:focus-visible,
+.t-buy-btn:focus-visible,
+.blue-btn:focus-visible,
+.support-email:focus-visible,
+.nav-item:focus-visible{
+  outline:2px solid var(--brand);
+  outline-offset:2px;
+}
+@media (prefers-reduced-motion: reduce){
+  .urgent{ animation:none; }
+  .bottom-nav{ transition:none; }
+}
