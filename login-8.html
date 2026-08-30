@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login | AKANS Social Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-card">
+
+    <div class="login-brand">
+      <img src="logo.png" alt="AKANS Logo">
+      <h2>AKANS Social Store</h2>
+    </div>
+
+    <div class="login-tabs">
+      <button type="button" class="login-tab active" id="tabLogin" onclick="switchTab('login')">Login</button>
+      <button type="button" class="login-tab" id="tabSignup" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <p class="login-error" id="loginError"></p>
+
+    <input type="email" id="authEmail" class="login-input" placeholder="Email address" autocomplete="email">
+    <input type="password" id="authPassword" class="login-input" placeholder="Password" autocomplete="current-password">
+
+    <button type="button" class="login-forgot" id="forgotBtn" onclick="handleForgotPassword()">Password bhool gaye?</button>
+
+    <button type="button" class="login-primary-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Login</button>
+
+    <div class="login-or"><span>ya</span></div>
+
+    <button type="button" class="google-btn" onclick="handleGoogleLogin()">
+      <svg viewBox="0 0 48 48">
+        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/>
+        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.6 18.9 12.5 24 12.5c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6 29.6 4 24 4c-7.4 0-13.8 4.2-17.7 10.7z"/>
+        <path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.6c-2 1.5-4.7 2.5-7.7 2.5-5.2 0-9.6-3.5-11.2-8.2l-6.6 5.1C9.9 39.6 16.4 44 24 44z"/>
+        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.6 5.6C41.5 36 44 30.6 44 24c0-1.2-.1-2.4-.4-3.5z"/>
+      </svg>
+      Continue with Google
+    </button>
+
+  </div>
+</div>
+
+<script type="module">
+  import { signupWithEmail, loginWithEmail, loginWithGoogle, watchAuthState, resetPassword } from './js/auth.js';
+
+  let mode = 'login';
+
+  window.switchTab = function(newMode){
+    mode = newMode;
+    document.getElementById('tabLogin').classList.toggle('active', newMode === 'login');
+    document.getElementById('tabSignup').classList.toggle('active', newMode === 'signup');
+    document.getElementById('authSubmitBtn').textContent = newMode === 'login' ? 'Login' : 'Account Banayein';
+    document.getElementById('authPassword').setAttribute('autocomplete', newMode === 'login' ? 'current-password' : 'new-password');
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('loginError').style.color = '';
+  };
+
+  function friendlyAuthError(err){
+    const map = {
+      'auth/invalid-email': 'Email sahi format me nahi hai',
+      'auth/user-not-found': 'Ye email register nahi hai — Sign Up karein',
+      'auth/wrong-password': 'Password galat hai',
+      'auth/invalid-credential': 'Email ya password galat hai',
+      'auth/email-already-in-use': 'Ye email pehle se register hai — Login karein',
+      'auth/weak-password': 'Password kam se kam 6 characters ka hona chahiye',
+      'auth/popup-closed-by-user': 'Google popup band ho gaya, dobara try karein',
+      'auth/network-request-failed': 'Internet connection check karein',
+      'auth/unauthorized-domain': 'Ye website domain Firebase me authorize nahi hai (Authorized domains me add karein)'
+    };
+    return map[err.code] || 'Kuch galat ho gaya, dobara try karein';
+  }
+
+  window.handleAuthSubmit = async function(){
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const errEl = document.getElementById('loginError');
+    errEl.style.color = '';
+    errEl.textContent = '';
+
+    if (!email || !password){
+      errEl.textContent = 'Email aur password dono bharein';
+      return;
+    }
+
+    try{
+      if (mode === 'login'){
+        await loginWithEmail(email, password);
+      } else {
+        await signupWithEmail(email, password);
+      }
+      window.location.href = 'index.html';
+    } catch(err){
+      errEl.textContent = friendlyAuthError(err);
+    }
+  };
+
+  window.handleGoogleLogin = async function(){
+    const errEl = document.getElementById('loginError');
+    errEl.style.color = '';
+    errEl.textContent = '';
+    try{
+      await loginWithGoogle();
+      window.location.href = 'index.html';
+    } catch(err){
+      errEl.textContent = friendlyAuthError(err);
+    }
+  };
+
+  window.handleForgotPassword = async function(){
+    const email = document.getElementById('authEmail').value.trim();
+    const errEl = document.getElementById('loginError');
+    if (!email){
+      errEl.style.color = '';
+      errEl.textContent = 'Pehle apna email likhein, fir "Password bhool gaye" dabayein';
+      return;
+    }
+    try{
+      await resetPassword(email);
+      errEl.style.color = 'var(--success)';
+      errEl.textContent = '✅ Reset link ' + email + ' par bhej diya gaya hai';
+    } catch(err){
+      errEl.style.color = '';
+      errEl.textContent = friendlyAuthError(err);
+    }
+  };
+
+  // Pehle se logged in hai to login page dikhane ki zaroorat nahi
+  watchAuthState(function(user){
+    if (user) window.location.href = 'index.html';
+  });
+</script>
+
+</body>
+</html>
