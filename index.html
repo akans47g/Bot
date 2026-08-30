@@ -41,7 +41,10 @@ function toggleDetails(id) {
 
   <!-- HEADER -->
   <div class="header">
-    <h3>Only M.7 Limited</h3>
+    <div class="header-text">
+      <h3>AKANS Social Store</h3>
+      <p class="header-tag">Bundles • Deals • Fast Delivery</p>
+    </div>
     <img src="logo.png" alt="AKANS Logo">
   </div>
 
@@ -616,6 +619,11 @@ function toggleDetails(id) {
     <p class="buy-modal-label">Content Select Karein</p>
     <div class="qty-grid" id="bmQtyGrid"></div>
 
+    <div class="qty-or"><span>ya</span></div>
+
+    <input type="number" id="bmCustomQty" class="buy-modal-input" placeholder="Khud quantity likhein (min. 50)" min="50" inputmode="numeric">
+    <p class="bm-error" id="bmCustomError"></p>
+
     <div class="buy-modal-step2" id="bmStep2">
       <div class="price-display">
         <span>Total Price</span>
@@ -649,13 +657,13 @@ function toggleDetails(id) {
     
     <span>Bundles</span>
   </button>
-  <button class="nav-item" data-page="ai-editing.html" onclick="location.href='ai-editing.html'">
+  <button class="nav-item" data-page="ff.html" onclick="location.href='ff.html'">
     
-    <span>AI & Edit</span>
+    <span>Free Fire</span>
   </button>
-  <button class="nav-item" data-page="social.html" onclick="location.href='social.html'">
+  <button class="nav-item" data-page="other.html" onclick="location.href='other.html'">
     
-    <span>Social</span>
+    <span>Other</span>
   </button>
   <button class="nav-item" data-page="account.html" onclick="location.href='account.html'">
    
@@ -728,6 +736,16 @@ function saveOrder(order){
 }
 /* --------------------------------------------------------- */
 
+const MIN_QTY = 50;
+
+// 👉 Pricing formula ek hi jagah hai — abhi seedha linear rate hai.
+//    (Demo-tier wala special rule confirm hote hi, bas isi function
+//    ke andar us logic ko add karna hoga, baaki kahin chhedne ki
+//    zaroorat nahi.)
+function calcPrice(rate, qty){
+  return (rate / 1000) * qty;
+}
+
 function openBuyModal(productId){
   const product = window.PRODUCTS && window.PRODUCTS[productId];
   if (!product){ alert('Product data nahi mili — js/products.js check karein.'); return; }
@@ -736,6 +754,8 @@ function openBuyModal(productId){
 
   document.getElementById('bmProductName').textContent = product.name;
   document.getElementById('bmUtr').value = '';
+  document.getElementById('bmCustomQty').value = '';
+  document.getElementById('bmCustomError').textContent = '';
   document.getElementById('bmError').textContent = '';
   document.getElementById('bmInsufficient').classList.remove('show');
   document.getElementById('bmStep2').classList.remove('open');
@@ -744,7 +764,7 @@ function openBuyModal(productId){
   const grid = document.getElementById('bmQtyGrid');
   grid.innerHTML = '';
   QTY_TIERS.forEach(qty => {
-    const price = (product.rate / 1000) * qty;
+    const price = calcPrice(product.rate, qty);
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'qty-chip';
@@ -760,6 +780,8 @@ function openBuyModal(productId){
 function selectQty(qty, price, chipEl){
   document.querySelectorAll('.qty-chip').forEach(c => c.classList.remove('selected'));
   chipEl.classList.add('selected');
+  document.getElementById('bmCustomQty').value = '';
+  document.getElementById('bmCustomError').textContent = '';
 
   bmState.qty = qty;
   bmState.price = price;
@@ -769,6 +791,40 @@ function selectQty(qty, price, chipEl){
   document.getElementById('bmInsufficient').classList.remove('show');
   document.getElementById('bmStep2').classList.add('open');
 }
+
+function handleCustomQty(){
+  const input = document.getElementById('bmCustomQty');
+  const errEl = document.getElementById('bmCustomError');
+  const raw = input.value.trim();
+
+  if (!raw){
+    errEl.textContent = '';
+    return;
+  }
+
+  const val = parseInt(raw, 10);
+
+  if (isNaN(val) || val < MIN_QTY){
+    errEl.textContent = 'Minimum ' + MIN_QTY + ' quantity select karna zaroori hai';
+    document.getElementById('bmStep2').classList.remove('open');
+    bmState.qty = 0;
+    bmState.price = 0;
+    return;
+  }
+
+  errEl.textContent = '';
+  document.querySelectorAll('.qty-chip').forEach(c => c.classList.remove('selected'));
+
+  const price = calcPrice(bmState.rate, val);
+  bmState.qty = val;
+  bmState.price = price;
+
+  document.getElementById('bmPrice').textContent = formatINR(price);
+  document.getElementById('bmError').textContent = '';
+  document.getElementById('bmInsufficient').classList.remove('show');
+  document.getElementById('bmStep2').classList.add('open');
+}
+document.getElementById('bmCustomQty').addEventListener('input', handleCustomQty);
 
 function confirmPurchase(){
   const errorEl = document.getElementById('bmError');
