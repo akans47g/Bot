@@ -15,6 +15,7 @@ import {
   signInWithPopup,
   signOut,
   sendPasswordResetEmail,
+  updateProfile,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 import {
@@ -24,22 +25,26 @@ import {
 /* Naye user ke liye Firestore me profile document banata hai
    (wallet balance 0 se start hoti hai). Agar document pehle se
    hai (purana user), to kuch overwrite nahi karta. */
-async function ensureUserProfile(user){
+async function ensureUserProfile(user, extra = {}){
   const ref = doc(db, "users", user.uid);
   const snap = await getDoc(ref);
   if (!snap.exists()){
     await setDoc(ref, {
       email: user.email || "",
-      name: user.displayName || "",
+      name: extra.name || user.displayName || "",
+      whatsapp: extra.whatsapp || "",
       walletBalance: 0,
       createdAt: new Date().toISOString()
     });
   }
 }
 
-export async function signupWithEmail(email, password){
+export async function signupWithEmail(email, password, name, whatsapp){
   const cred = await createUserWithEmailAndPassword(auth, email, password);
-  await ensureUserProfile(cred.user);
+  if (name){
+    await updateProfile(cred.user, { displayName: name });
+  }
+  await ensureUserProfile(cred.user, { name: name || "", whatsapp: whatsapp || "" });
   return cred.user;
 }
 
