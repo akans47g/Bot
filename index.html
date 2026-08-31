@@ -703,12 +703,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- ========================
      BUY NOW MODAL — LOGIC
-     Temporary local demo: wallet balance & orders are stored in
-     browser localStorage for now. Jab Firebase/Auth/Admin Panel
-     ready ho jaaye, tab sirf yeh 3 functions replace karne honge:
-     getWalletBalance(), setWalletBalance(), saveOrder()
+     Ab real Firebase se juda hai: wallet balance Firestore
+     users/{uid}.walletBalance se aati hai, order Firestore
+     "orders" collection me save hota hai.
 ========================= -->
-<script>
+<script type="module">
+import { auth, db } from "./js/firebase-init.js";
+import {
+  doc, getDoc, updateDoc, collection, addDoc
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
 const QTY_TIERS = [50, 100, 300, 500, 1000, 5000, 10000, 50000];
 let bmState = { productId: null, rate: 0, qty: 0, price: 0 };
 
@@ -720,22 +724,6 @@ function qtyLabel(n){
   return n >= 1000 ? (n / 1000) + "K" : String(n);
 }
 
-/* ---- TEMP DEMO WALLET (replace with Firebase later) ---- */
-function getWalletBalance(){
-  const v = localStorage.getItem('akansWalletBalance');
-  if (v === null){ localStorage.setItem('akansWalletBalance', '500'); return 500; } // demo starting balance
-  return parseFloat(v) || 0;
-}
-function setWalletBalance(bal){
-  localStorage.setItem('akansWalletBalance', String(bal));
-}
-function saveOrder(order){
-  const list = JSON.parse(localStorage.getItem('akansOrders') || '[]');
-  list.push(order);
-  localStorage.setItem('akansOrders', JSON.stringify(list));
-}
-/* --------------------------------------------------------- */
-
 const MIN_QTY = 50;
 
 // 👉 Pricing formula ek hi jagah hai — abhi seedha linear rate hai.
@@ -746,7 +734,7 @@ function calcPrice(rate, qty){
   return (rate / 1000) * qty;
 }
 
-function openBuyModal(productId){
+async function openBuyModal(productId){
   const product = window.PRODUCTS && window.PRODUCTS[productId];
   if (!product){ alert('Product data nahi mili — js/products.js check karein.'); return; }
 
@@ -759,7 +747,21 @@ function openBuyModal(productId){
   document.getElementById('bmError').textContent = '';
   document.getElementById('bmInsufficient').classList.remove('show');
   document.getElementById('bmStep2').classList.remove('open');
-  document.getElementById('bmWalletBal').textContent = formatINR(getWalletBalance());
+
+  // Real wallet balance (agar login hai)
+  const user = auth.currentUser;
+  if (user){
+    document.getElementById('bmWalletBal').textContent = '...';
+    try{
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      const bal = snap.exists() && typeof snap.data().walletBalance === 'number' ? snap.data().walletBalance : 0;
+      document.getElementById('bmWalletBal').textContent = formatINR(bal);
+    } catch(e){
+      document.getElementById('bmWalletBal').textContent = '—';
+    }
+  } else {
+    document.getElementById('bmWalletBal').textContent = 'Login karein';
+  }
 
   const grid = document.getElementById('bmQtyGrid');
   grid.innerHTML = '';
@@ -826,7 +828,7 @@ function handleCustomQty(){
 }
 document.getElementById('bmCustomQty').addEventListener('input', handleCustomQty);
 
-function confirmPurchase(){
+async function confirmPurchase(){
   const errorEl = document.getElementById('bmError');
 
   if (!bmState.qty){
@@ -839,33 +841,54 @@ function confirmPurchase(){
     document.getElementById('bmUtr').focus();
     return;
   }
-  errorEl.textContent = '';
 
-  const balance = getWalletBalance();
-
-  if (balance >= bmState.price){
-    setWalletBalance(balance - bmState.price);
-
-    saveOrder({
-      id: Date.now(),
-      productId: bmState.productId,
-      productName: document.getElementById('bmProductName').textContent,
-      qty: bmState.qty,
-      price: bmState.price,
-      utr: utr,
-      date: new Date().toISOString(),
-      status: 'pending'
-    });
-
-    const snd = document.getElementById('sound-buy');
-    if (snd){ snd.currentTime = 0; snd.play().catch(function(){}); }
-
-    closeBuyModal();
-    showToast('✅ Order request bheja gaya! Admin jaldi approve karega.');
-  } else {
-    document.getElementById('bmShort').textContent = formatINR(bmState.price - balance);
-    document.getElementById('bmInsufficient').classList.add('show');
+  const user = auth.currentUser;
+  if (!user){
+    errorEl.textContent = 'Login karna zaroori hai, redirect ho raha hai...';
+    setTimeout(function(){ window.location.href = 'login.html'; }, 1200);
+    return;
   }
+
+  errorEl.textContent = '';
+  const confirmBtn = document.getElementById('bmConfirmBtn');
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = 'Processing...';
+
+  try{
+    const userRef = doc(db, 'users', user.uid);
+    const snap = await getDoc(userRef);
+    const balance = snap.exists() && typeof snap.data().walletBalance === 'number' ? snap.data().walletBalance : 0;
+
+    if (balance >= bmState.price){
+      await updateDoc(userRef, { walletBalance: balance - bmState.price });
+
+      await addDoc(collection(db, 'orders'), {
+        uid: user.uid,
+        userEmail: user.email || '',
+        productId: bmState.productId,
+        productName: document.getElementById('bmProductName').textContent,
+        qty: bmState.qty,
+        price: bmState.price,
+        utr: utr,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      });
+
+      const snd = document.getElementById('sound-buy');
+      if (snd){ snd.currentTime = 0; snd.play().catch(function(){}); }
+
+      closeBuyModal();
+      showToast('✅ Order request bheja gaya! Admin jaldi approve karega.');
+    } else {
+      document.getElementById('bmShort').textContent = formatINR(bmState.price - balance);
+      document.getElementById('bmInsufficient').classList.add('show');
+    }
+  } catch(err){
+    errorEl.textContent = 'Kuch galat ho gaya, dobara try karein';
+  }
+
+  confirmBtn.disabled = false;
+  confirmBtn.textContent = '✅ Confirm & Buy Now';
 }
 
 function closeBuyModal(){
@@ -885,6 +908,11 @@ function showToast(msg){
   clearTimeout(bmToastTimer);
   bmToastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2600);
 }
+
+// onclick="..." attributes ko module ke bahar se access karne ke liye
+window.openBuyModal = openBuyModal;
+window.closeBuyModal = closeBuyModal;
+window.confirmPurchase = confirmPurchase;
 </script>
 <!-- ✅ Dynamic products from admin panel -->
 <script type="module" src="js/products-loader.js"></script>
