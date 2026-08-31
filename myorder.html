@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Orders | AKANS Social Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/myorder.css">
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <div class="header">
+    <div class="header-text">
+      <h3>AKANS Social Store</h3>
+      <p class="header-tag">Bundles • Deals • Fast Delivery</p>
+    </div>
+    <img src="logo.png" alt="AKANS Logo">
+  </div>
+
+  <div class="mo-title">
+    <h2>📦 My Orders</h2>
+    <p>Apne saare bundle orders ka status yahan dekhein</p>
+  </div>
+
+  <div class="mo-card">
+    <div class="mo-list-header">
+      <h3>Order History</h3>
+      <span class="mo-count" id="moCount">—</span>
+    </div>
+    <div id="moList">
+      <p class="mo-empty">Login check ho raha hai...</p>
+    </div>
+  </div>
+
+  <div class="trust-card">
+    <div class="trust-grid">
+      <div class="trust-item">✅ Safe Payment</div>
+      <div class="trust-item">⚡ Fast Approval</div>
+      <div class="trust-item">🔒 Secure System</div>
+      <div class="trust-item">💬 24/7 Support</div>
+    </div>
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-item" data-page="index.html" onclick="location.href='index.html'">
+    
+    <span>Bundles</span>
+  </button>
+  <button class="nav-item" data-page="ff.html" onclick="location.href='ff.html'">
+    
+    <span>Free Fire</span>
+  </button>
+  <button class="nav-item" data-page="other.html" onclick="location.href='other.html'">
+    
+    <span>Other</span>
+  </button>
+  <button class="nav-item" data-page="account.html" onclick="location.href='account.html'">
+   
+    <span>Account</span>
+  </button>
+</nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const currentPage = window.location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll(".nav-item").forEach(btn => {
+    if (btn.dataset.page === currentPage) btn.classList.add("active");
+  });
+
+  let lastScroll = 0;
+  const nav = document.querySelector(".bottom-nav");
+  if (nav) {
+    window.addEventListener("scroll", () => {
+      const cur = window.pageYOffset;
+      nav.classList.toggle("hide", cur > lastScroll && cur > 80);
+      lastScroll = cur;
+    });
+  }
+});
+</script>
+<script type="module" src="js/myorder.js"></script>
+</body>
+</html>
