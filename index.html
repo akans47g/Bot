@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AKANS Store | Bundles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* =================================================================
+   AKANS STORE — MAIN STYLESHEET (style.css)
+   =================================================================
+   Poori site ki styling yahan hai: header, bundle cards, details
+   box, trending scroll, support/social cards, trust footer, aur
+   bottom nav.
+
+   👉 buy-modal.css alag file hai, usse yahan kuch chhua nahi gaya.
+   👉 Rang badalne ho to bas neeche ":root" wale variables edit karo
+      — pura site automatically update ho jaayega.
+================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --ink:#181428;      /* main text */
+  --sub:#6E6B85;       /* muted/secondary text */
+  --brand:#4F2FCE;     /* primary brand (headings, badges, nav) */
+  --brand-2:#7B4FF0;   /* brand gradient partner */
+  --accent:#FF6B3D;    /* CTA orange — same as buy-modal.css */
+  --accent-2:#FFA751;  /* CTA orange gradient partner */
+  --success:#16C784;   /* trust / positive */
+  --bg:#F6F4FC;        /* page background */
+  --surface:#FFFFFF;   /* card background */
+  --line:#ECEAF5;      /* borders / dividers */
+  --radius:18px;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:80px; /* room for fixed bottom nav */
+}
+
+h1,h2,h3,h4{
+  font-family:'Baloo 2','Inter',sans-serif;
+  margin:0 0 4px;
+  color:var(--ink);
+}
+a{ color:inherit; }
+img{ max-width:100%; display:block; }
+button{ font-family:inherit; }
+
+.page-wrap{
+  max-width:480px;
+  margin:0 auto;
+  padding:16px 16px 4px;
+}
+
+/* ---------------- HEADER ---------------- */
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px 16px;
+  margin:6px 0 20px;
+}
+.header-text h3{
+  font-size:17px;
+  font-weight:800;
+  color:var(--brand);
+  margin-bottom:2px;
+}
+.header-tag{
+  font-size:11px;
+  color:var(--sub);
+  font-weight:600;
+  margin:0;
+}
+.header img{
+  height:42px;
+  width:42px;
+  border-radius:12px;
+  object-fit:cover;
+  background:var(--surface);
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  flex-shrink:0;
+}
+
+/* ---------------- SECTION TITLE ---------------- */
+.section-title{
+  text-align:center;
+  margin:6px 0 20px;
+}
+.section-badge{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  padding:5px 14px;
+  border-radius:20px;
+  margin-bottom:8px;
+}
+.section-title h2{ font-size:22px; font-weight:800; }
+.section-title p{ color:var(--sub); font-size:13px; margin:4px 0 0; }
+
+/* ---------------- BUNDLE CARD ---------------- */
+.bundle-card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:14px;
+  margin-bottom:14px;
+  box-shadow:0 2px 10px rgba(79,47,206,.06);
+}
+.card-top{ display:flex; gap:12px; }
+.card-img{
+  width:84px; height:84px;
+  border-radius:14px;
+  object-fit:cover;
+  background:var(--line);
+  flex-shrink:0;
+}
+.card-text{ flex:1; min-width:0; }
+
+.card-badge{
+  display:inline-block;
+  background:var(--bg);
+  color:var(--brand);
+  border:1px solid var(--line);
+  font-size:10.5px;
+  font-weight:700;
+  padding:3px 9px;
+  border-radius:20px;
+  margin-bottom:6px;
+}
+.card-badge.popular-badge{ background:#FFF7E0; border-color:#FFE7A3; color:#B8860B; }
+.card-badge.hot-badge{ background:#FFEDE8; border-color:#FFCFC0; color:var(--accent); }
+
+.card-text h3{ font-size:15.5px; font-weight:700; line-height:1.25; margin-bottom:4px; }
+.card-count{ font-size:12px; color:var(--sub); margin:0 0 8px; }
+
+.price-row{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#FFF3EC;
+  border:1px dashed #FFCBA8;
+  border-radius:10px;
+  padding:4px 10px;
+  margin-bottom:6px;
+}
+.price-row del{ color:var(--sub); font-size:12.5px; font-weight:500; }
+.price-row .price-now{ color:var(--accent); font-size:17px; font-weight:800; }
+
+.urgent{
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--accent);
+  margin:0 0 10px;
+  animation:urgentPulse 2.2s ease-in-out infinite;
+}
+
+.btn-row{ display:flex; gap:8px; }
+.details-btn{
+  flex:1;
+  background:var(--surface);
+  border:1.5px solid var(--line);
+  color:var(--sub);
+  font-size:12.5px;
+  font-weight:700;
+  padding:9px 6px;
+  border-radius:12px;
+  cursor:pointer;
+}
+.buy-btn, .t-buy-btn{
+  flex:1;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  border:none;
+  color:#fff;
+  font-size:12.5px;
+  font-weight:700;
+  padding:9px 6px;
+  border-radius:12px;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(255,107,61,.3);
+}
+.details-btn:active, .buy-btn:active, .t-buy-btn:active{ transform:scale(.97); }
+
+/* ---------------- DETAILS BOX ---------------- */
+.details-box{
+  display:none;
+  margin-top:10px;
+  padding-top:12px;
+  border-top:1px dashed var(--line);
+}
+.details-grid{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:7px 10px;
+  font-size:12px;
+}
+.details-grid span:nth-child(odd){ color:var(--sub); font-weight:600; white-space:nowrap; }
+.details-grid span:nth-child(even){ color:var(--ink); font-weight:500; }
+
+/* ---------------- TRENDING SCROLL ---------------- */
+.trending-scroll{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding:4px 16px 18px;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+}
+.trending-scroll::-webkit-scrollbar{ display:none; }
+.trending-card{
+  flex:0 0 132px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px;
+  scroll-snap-align:start;
+  box-shadow:0 2px 10px rgba(79,47,206,.06);
+}
+.trending-card img{
+  width:100%; height:90px;
+  border-radius:10px;
+  object-fit:cover;
+  background:var(--line);
+  margin-bottom:8px;
+}
+.trending-card h4{ font-size:12.5px; font-weight:700; margin-bottom:2px; line-height:1.25; }
+.trending-card p{ font-size:11px; color:var(--sub); margin:0 0 6px; }
+.t-price{ color:var(--accent) !important; font-weight:800 !important; font-size:13px !important; }
+
+/* ---------------- SUPPORT / SOCIAL / INFO CARDS ---------------- */
+.info-card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:14px;
+}
+.support-card{ text-align:center; }
+.info-icon{ font-size:28px; margin-bottom:6px; }
+.support-card h3{ font-size:15px; }
+.support-card p{ color:var(--sub); font-size:12.5px; margin:2px 0 10px; }
+.support-email{
+  display:inline-block;
+  background:var(--bg);
+  color:var(--brand);
+  font-weight:700;
+  font-size:13px;
+  padding:8px 16px;
+  border-radius:20px;
+  text-decoration:none;
+}
+
+.proof-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+.proof-row:last-child{ border-bottom:none; }
+.proof-label{ display:flex; align-items:center; gap:10px; font-size:13.5px; font-weight:600; }
+.proof-icon{
+  width:32px; height:32px;
+  border-radius:50%;
+  background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px;
+}
+.blue-btn{
+  background:var(--brand);
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  padding:7px 16px;
+  border-radius:20px;
+  text-decoration:none;
+}
+
+/* ---------------- TRUST FOOTER ---------------- */
+.trust-card{
+  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:20px;
+  text-align:center;
+}
+.trust-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+.trust-item{ font-size:11.5px; font-weight:700; color:var(--ink); }
+.trust-note{ font-size:11px; color:var(--sub); font-style:italic; margin:0; }
+
+/* ---------------- BOTTOM NAV ---------------- */
+.bottom-nav{
+  position:fixed;
+  left:0; right:0; bottom:0;
+  display:flex;
+  justify-content:space-around;
+  background:var(--surface);
+  border-top:1px solid var(--line);
+  padding:8px 0 max(8px, env(safe-area-inset-bottom));
+  z-index:500;
+  transition:transform .25s ease;
+}
+.bottom-nav.hide{ transform:translateY(100%); }
+.nav-item{
+  background:none;
+  border:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  color:var(--sub);
+  font-size:10.5px;
+  font-weight:600;
+  padding:4px 10px;
+  cursor:pointer;
+}
+.nav-item::before{ font-size:19px; }
+.nav-item[data-page="index.html"]::before{ content:"🏠"; }
+.nav-item[data-page="ff.html"]::before{ content:"🎮"; }
+.nav-item[data-page="other.html"]::before{ content:"🗂️"; }
+.nav-item[data-page="dashboard.html"]::before{ content:"📊"; }
+.nav-item[data-page="topups.html"]::before{ content:"💰"; }
+.nav-item[data-page="orders.html"]::before{ content:"📦"; }
+.nav-item[data-page="bundles.html"]::before{ content:"🎁"; }
+.nav-item[data-page="analytics.html"]::before{ content:"📈"; }
+.nav-item[data-page="users.html"]::before{ content:"👥"; }
+.nav-item[data-page="withdrawals.html"]::before{ content:"💸"; }
+.nav-item[data-page="ff-orders.html"]::before{ content:"🎮"; }
+.nav-item[data-page="account.html"]::before{ content:"👤"; }
+.nav-item.active{ color:var(--accent); }
+
+/* ---------------- MOTION & ACCESSIBILITY ---------------- */
+@keyframes urgentPulse{
+  0%,100%{ opacity:1; }
+  50%{ opacity:.55; }
+}
+.details-btn:focus-visible,
+.buy-btn:focus-visible,
+.t-buy-btn:focus-visible,
+.blue-btn:focus-visible,
+.support-email:focus-visible,
+.nav-item:focus-visible{
+  outline:2px solid var(--brand);
+  outline-offset:2px;
+}
+@media (prefers-reduced-motion: reduce){
+  .urgent{ animation:none; }
+  .bottom-nav{ transition:none; }
+}
+</style>
+<style>
+/* ===================================================
+   BUY NOW MODAL — STYLES
+   (quantity select -> price -> UTR -> confirm)
+=================================================== */
+
+:root{
+  --bm-ink:#1A1A2E;
+  --bm-sub:#6B7280;
+  --bm-accent:#FF6B3D;
+  --bm-accent-2:#FFA751;
+  --bm-success:#16C784;
+  --bm-danger:#E63946;
+  --bm-surface:#FFFFFF;
+  --bm-chip:#F4F4F8;
+}
+
+body.bm-open{ overflow:hidden; }
+
+.buy-modal-overlay{
+  position:fixed; inset:0;
+  background:rgba(15,15,23,.55);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:999;
+  backdrop-filter:blur(2px);
+}
+.buy-modal-overlay.active{ display:flex; }
+
+.buy-modal{
+  width:100%;
+  max-width:480px;
+  background:var(--bm-surface);
+  border-radius:22px 22px 0 0;
+  padding:14px 20px 26px;
+  position:relative;
+  max-height:88vh;
+  overflow-y:auto;
+  animation:bmSlideUp .28s ease-out;
+  box-shadow:0 -8px 30px rgba(0,0,0,.2);
+  font-family:inherit;
+}
+@keyframes bmSlideUp{
+  from{ transform:translateY(24px); opacity:0; }
+  to{ transform:translateY(0); opacity:1; }
+}
+
+.buy-modal-handle{
+  width:42px; height:4px; border-radius:4px;
+  background:#E5E5EA; margin:2px auto 14px;
+}
+
+.buy-modal-close{
+  position:absolute; top:12px; right:16px;
+  border:none; background:var(--bm-chip);
+  width:30px; height:30px; border-radius:50%;
+  font-size:15px; color:var(--bm-sub); cursor:pointer;
+}
+
+.buy-modal-eyebrow{
+  font-size:12px; font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--bm-accent); margin:0 0 2px;
+}
+.buy-modal-title{
+  font-size:19px; font-weight:800; color:var(--bm-ink); margin:0 0 16px;
+}
+.buy-modal-label{
+  font-size:13px; font-weight:600; color:var(--bm-sub); margin:0 0 8px;
+}
+
+.qty-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:9px;
+  margin-bottom:6px;
+}
+.qty-chip{
+  border:1.5px solid #ECECF2;
+  background:var(--bm-chip);
+  border-radius:14px;
+  padding:10px 4px;
+  text-align:center;
+  cursor:pointer;
+  font:inherit;
+  transition:.15s ease;
+}
+.qty-chip .q-num{
+  display:block; font-size:14px; font-weight:800; color:var(--bm-ink);
+}
+.qty-chip .q-price{
+  display:block; font-size:11.5px; font-weight:600; color:var(--bm-sub); margin-top:2px;
+}
+.qty-chip.selected{
+  border-color:var(--bm-accent);
+  background:linear-gradient(135deg,#FFF3EC,#FFEDE0);
+}
+.qty-chip.selected .q-num{ color:var(--bm-accent); }
+
+.qty-or{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:14px 0 10px;
+  color:var(--bm-sub);
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+}
+.qty-or::before, .qty-or::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:#ECECF2;
+}
+
+.buy-modal-step2{
+  max-height:0; overflow:hidden; opacity:0;
+  transition:max-height .3s ease, opacity .25s ease;
+}
+.buy-modal-step2.open{
+  max-height:600px; opacity:1; margin-top:16px;
+}
+
+.price-display{
+  display:flex; justify-content:space-between; align-items:center;
+  background:linear-gradient(135deg,var(--bm-accent),var(--bm-accent-2));
+  border-radius:14px; padding:14px 16px; margin-bottom:16px;
+}
+.price-display span{ color:#FFF2EA; font-size:13px; font-weight:600; }
+.price-display strong{ color:#fff; font-size:22px; font-weight:800; }
+
+.buy-modal-input{
+  width:100%; box-sizing:border-box;
+  border:1.5px solid #ECECF2; border-radius:12px;
+  padding:12px 14px; font-size:14px; margin-bottom:4px;
+  font-family:inherit;
+}
+.buy-modal-input:focus{ outline:none; border-color:var(--bm-accent); }
+
+.bm-error{
+  color:var(--bm-danger); font-size:12.5px; font-weight:600;
+  min-height:16px; margin:2px 0 10px;
+}
+
+.wallet-line{ font-size:13px; color:var(--bm-sub); margin:4px 0 14px; }
+.wallet-line strong{ color:var(--bm-ink); }
+
+.insufficient-box{
+  display:none;
+  background:#FDEEEE; border:1px solid #F6C9CB;
+  border-radius:14px; padding:14px; margin-bottom:14px;
+  text-align:center;
+}
+.insufficient-box.show{ display:block; }
+.insufficient-box p{ margin:0 0 10px; color:var(--bm-danger); font-size:13px; font-weight:600; }
+.add-money-btn{
+  border:none; background:var(--bm-success); color:#fff;
+  font-weight:700; font-size:14px; padding:10px 22px;
+  border-radius:24px; cursor:pointer; font:inherit;
+}
+
+.confirm-buy-btn{
+  width:100%; border:none; cursor:pointer;
+  background:linear-gradient(135deg,var(--bm-accent),var(--bm-accent-2));
+  color:#fff; font-size:15px; font-weight:800;
+  padding:14px; border-radius:16px; font-family:inherit;
+  box-shadow:0 8px 20px rgba(255,107,61,.35);
+}
+
+.bm-toast{
+  position:fixed; left:50%; bottom:90px;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--bm-ink); color:#fff;
+  padding:12px 20px; border-radius:30px;
+  font-size:13.5px; font-weight:600;
+  opacity:0; pointer-events:none;
+  transition:.25s ease;
+  z-index:1100; max-width:88%; text-align:center;
+}
+.bm-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+.qty-chip:focus-visible,
+.buy-modal-close:focus-visible,
+.confirm-buy-btn:focus-visible,
+.add-money-btn:focus-visible,
+.buy-modal-input:focus-visible{
+  outline:2px solid var(--bm-accent); outline-offset:2px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .buy-modal{ animation:none; }
+  .buy-modal-step2, .bm-toast{ transition:none; }
+}
+</style>
+
+<script>
+function toggleDetails(id) {
+  const allBoxes = document.querySelectorAll('.details-box');
+  allBoxes.forEach(box => {
+    if (box.id !== id) {
+      box.style.display = 'none';
+      const btn = box.previousElementSibling?.querySelector?.('.details-btn');
+    }
+  });
+
+  const box = document.getElementById(id);
+  const isOpen = box.style.display === 'block';
+  box.style.display = isOpen ? 'none' : 'block';
+
+  // Sound
+  const snd = document.getElementById('sound-details');
+  if (snd) { snd.currentTime = 0; snd.play().catch(() => {}); }
+}
+</script>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script type="module" src="js/auth.js"></script>
+</head>
+
+<body>
+
+<!-- ========================
+     PAGE WRAPPER
+========================= -->
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-text">
+      <h3>AKANS Social Store</h3>
+      <p class="header-tag">Bundles • Deals • Fast Delivery</p>
+    </div>
+    <img src="logo.png" alt="AKANS Logo">
+  </div>
+
+  <!-- ========================
+       SECTION TITLE
+  ========================= -->
+  <div class="section-title">
+    <span class="section-badge">🔥 Hot Deals</span>
+    <h2>Top Video Bundles</h2>
+    <p>Instant delivery • Full HD Quality</p>
+  </div>
+
+  <!-- ========================
+       BUNDLE 1 — HULK
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="hulk.jpg" class="card-img" alt="Hulk Bundle">
+      <div class="card-text">
+        <div class="card-badge">AI Generated</div>
+        <h3>Hulk Videos Bundle</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹39</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-hulk')">Details ▾</button>
+          <button class="buy-btn" id="buy-hulk" onclick="openBuyModal('hulk')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-hulk">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>AI Generated Hulk Videos</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>📱 Type</span><span>Short Reels</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.7 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 1.5 — CRICKET
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="cricket.jpg" class="card-img" alt="Cricket Bundle">
+      <div class="card-text">
+        <div class="card-badge">Sports</div>
+        <h3>Cricket Videos Bundle</h3>
+        <p class="card-count">📦 500+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-cricket')">Details ▾</button>
+          <button class="buy-btn" id="buy-cricket" onclick="openBuyModal('cricket')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-cricket">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Cricket Short Videos</span>
+        <span>🎬 Total</span><span>500+ Videos</span>
+        <span>📱 Type</span><span>Short Reels</span>
+        <span>🖥️ Quality</span><span>HD & Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.7 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 2 — FOOD
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="food.jpg" class="card-img" alt="Food Bundle">
+      <div class="card-text">
+        <div class="card-badge">Satisfying</div>
+        <h3>Food Cutting Videos Bundle</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹39</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-food')">Details ▾</button>
+          <button class="buy-btn" id="buy-food" onclick="openBuyModal('food')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-food">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>AI Food Cutting Videos</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>📱 Type</span><span>Satisfying Reels</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.6 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 3 — CAR
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="car.jpg" class="card-img" alt="Car Bundle">
+      <div class="card-text">
+        <div class="card-badge">Cinematic</div>
+        <h3>Car Videos Bundle</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹45</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-car')">Details ▾</button>
+          <button class="buy-btn" id="buy-car" onclick="openBuyModal('car')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-car">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>AI Car Videos</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>📱 Type</span><span>Cinematic Reels</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.8 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 4 — ANIME
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="anime.jpg" class="card-img" alt="Anime Bundle">
+      <div class="card-text">
+        <div class="card-badge popular-badge">⭐ Most Popular</div>
+        <h3>Anime Videos Bundle</h3>
+        <p class="card-count">📦 3000+ Videos</p>
+        <div class="price-row">
+          <del>₹399</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-anime')">Details ▾</button>
+          <button class="buy-btn" id="buy-anime" onclick="openBuyModal('anime')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-anime">
+      <div class="details-grid">
+        <span>📁 Includes</span><span>Naruto, Jujutsu Kaisen, One Piece</span>
+        <span>🌐 Language</span><span>Hindi, English, Japanese</span>
+        <span>📱 Type</span><span>Short Videos</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.9 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 5 — MORAL STORY
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="moral.jpg" class="card-img" alt="Moral Story Bundle">
+      <div class="card-text">
+        <div class="card-badge">2D Animation</div>
+        <h3>2D Moral Story Long Videos</h3>
+        <p class="card-count">📦 500+ Long Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-moral')">Details ▾</button>
+          <button class="buy-btn" id="buy-moral" onclick="openBuyModal('moral')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-moral">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>2D Animation Viral Cartoon Videos</span>
+        <span>🌐 Language</span><span>Hindi</span>
+        <span>📱 Type</span><span>Long Videos</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.8 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 6 — MONKEY
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="monkey.jpg" class="card-img" alt="Monkey Vlog Bundle">
+      <div class="card-text">
+        <div class="card-badge">Funny</div>
+        <h3>Monkey Vlog Videos</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹399</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-monkey')">Details ▾</button>
+          <button class="buy-btn" id="buy-monkey" onclick="openBuyModal('monkey')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-monkey">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Monkey Vlog Videos</span>
+        <span>🎬 Total</span><span>500+ Videos</span>
+        <span>🌐 Language</span><span>Hindi</span>
+        <span>📱 Type</span><span>Funny & Adventure Vlogs</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.8 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 7 — LIFE HACKS
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="lifehack.jpg" class="card-img" alt="Life Hacks Bundle">
+      <div class="card-text">
+        <div class="card-badge popular-badge">⭐ Best Seller</div>
+        <h3>Daily Life Hacks Videos</h3>
+        <p class="card-count">📦 3000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹55</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-lifehack')">Details ▾</button>
+          <button class="buy-btn" id="buy-lifehack" onclick="openBuyModal('lifehack')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-lifehack">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Smart Daily Life Hacks</span>
+        <span>🎬 Total</span><span>3000+ Videos</span>
+        <span>📋 Content</span><span>Home Tricks, DIY, Tool Hacks, Study Tricks</span>
+        <span>📱 Type</span><span>Short Viral Videos</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.9 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 8 — NATURE
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="nature.jpg" class="card-img" alt="Nature Bundle">
+      <div class="card-text">
+        <div class="card-badge">Relaxing</div>
+        <h3>Nature Videos Bundle</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-nature')">Details ▾</button>
+          <button class="buy-btn" id="buy-nature" onclick="openBuyModal('nature')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-nature">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Beautiful Nature Collection</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>🌿 Includes</span><span>Jungle, Mountains, Waterfalls, Rivers 🌴</span>
+        <span>📱 Type</span><span>Relaxing Shorts & Cinematic Clips</span>
+        <span>🖥️ Quality</span><span>Full HD / 4K</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.8 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 9 — HORROR
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="horror.jpg" class="card-img" alt="Horror Bundle">
+      <div class="card-text">
+        <div class="card-badge">Horror</div>
+        <h3>Horror Videos Bundle</h3>
+        <p class="card-count">📦 800+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">⚡ Offer valid few days only</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-horror')">Details ▾</button>
+          <button class="buy-btn" id="buy-horror" onclick="openBuyModal('horror')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-horror">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Horror Shorts Collection</span>
+        <span>🎬 Total</span><span>800+ Videos</span>
+        <span>📋 Content</span><span>Scary Stories, Paranormal Clips, Horror Shorts</span>
+        <span>🌐 Language</span><span>Hindi</span>
+        <span>📱 Type</span><span>Short Story Videos</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.7 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 10 — ART
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="art.jpg" class="card-img" alt="Art Bundle">
+      <div class="card-text">
+        <div class="card-badge">Creative</div>
+        <h3>ART & Satisfying Videos Bundle</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹49</span>
+        </div>
+        <p class="urgent">📈 Trending Now</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-art')">Details ▾</button>
+          <button class="buy-btn" id="buy-art" onclick="openBuyModal('art')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-art">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Creative + Relaxing Shorts</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>🎨 Art</span><span>500+ Art Shorts</span>
+        <span>✨ Satisfying</span><span>500+ Satisfying Shorts</span>
+        <span>📱 Type</span><span>Reels / Shorts</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant Access</span>
+        <span>⭐ Rating</span><span>4.8 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 11 — GYM
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="gym.jpg" class="card-img" alt="Gym Bundle">
+      <div class="card-text">
+        <div class="card-badge hot-badge">🔥 High Demand</div>
+        <h3>Gym Boy & Attitude Videos</h3>
+        <p class="card-count">📦 1000+ Videos</p>
+        <div class="price-row">
+          <del>₹349</del>
+          <span class="price-now">₹55</span>
+        </div>
+        <p class="urgent">🔥 High Demand Bundle</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-gym')">Details ▾</button>
+          <button class="buy-btn" id="buy-gym" onclick="openBuyModal('gym')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-gym">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>Motivation + Attitude Shorts</span>
+        <span>🎬 Total</span><span>1000+ Videos</span>
+        <span>💪 Gym</span><span>700+ Gym Attitude Videos</span>
+        <span>😤 Attitude</span><span>350+ Attitude Shorts</span>
+        <span>📱 Type</span><span>Reels / Status Videos</span>
+        <span>🖥️ Quality</span><span>HD / Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.7 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       BUNDLE 12 — ROMANTIC
+  ========================= -->
+  <div class="bundle-card">
+    <div class="card-top">
+      <img src="romantic.jpg" class="card-img" alt="Romantic Bundle">
+      <div class="card-text">
+        <div class="card-badge popular-badge">💖 99% Viral</div>
+        <h3>2D Romantic Short Videos</h3>
+        <p class="card-count">📦 800+ Videos</p>
+        <div class="price-row">
+          <del>₹549</del>
+          <span class="price-now">₹69</span>
+        </div>
+        <p class="urgent">💖 99% Viral Content</p>
+        <div class="btn-row">
+          <button class="details-btn" onclick="toggleDetails('d-romantic')">Details ▾</button>
+          <button class="buy-btn" id="buy-romantic" onclick="openBuyModal('romantic')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-box" id="d-romantic">
+      <div class="details-grid">
+        <span>📁 Bundle</span><span>2D Romantic Shorts</span>
+        <span>🎬 Total</span><span>800+ Videos</span>
+        <span>💕 Content</span><span>Emotional + Love Story Shorts</span>
+        <span>🔥 Viral</span><span>99% Viral Ready Content 💯</span>
+        <span>📱 Type</span><span>Short Videos</span>
+        <span>🖥️ Quality</span><span>Full HD</span>
+        <span>🚀 Delivery</span><span>Instant</span>
+        <span>⭐ Rating</span><span>4.9 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================
+       TRENDING BUNDLES
+  ========================= -->
+  <div class="section-title" style="margin-top:28px;">
+    <span class="section-badge">🔥 Hot</span>
+    <h2>Trending Bundles</h2>
+  </div>
+
+</div><!-- page-wrap temporary close -->
+<div class="trending-scroll">
+
+  <div class="trending-card">
+    <img src="Cat.jpg" alt="Cat Story Bundle">
+    <h4>Cat Story's Bundle</h4>
+    <p>1000+ Videos</p>
+    <p class="t-price">₹49 Only</p>
+    <button class="t-buy-btn" id="buy-cat" onclick="openBuyModal('cat')">Buy Now</button>
+  </div>
+
+  <div class="trending-card">
+    <img src="WomanGym.jpg" alt="Woman Gym Bundle">
+    <h4>Woman Gym Bundle</h4>
+    <p>1000+ Videos</p>
+    <p class="t-price">₹49 Only</p>
+    <button class="t-buy-btn" id="buy-womangym" onclick="openBuyModal('womangym')">Buy Now</button>
+  </div>
+
+  <div class="trending-card">
+    <img src="Sanatani.jpg" alt="Sanatani AI Reel Bundle">
+    <h4>Sanatani AI Reel Bundle</h4>
+    <p>1000+ Videos</p>
+    <p class="t-price">₹49 Only</p>
+    <button class="t-buy-btn" id="buy-sanatani" onclick="openBuyModal('sanatani')">Buy Now</button>
+  </div>
+
+  <div class="trending-card">
+    <img src="Stock.jpg" alt="Stock Market Bundle">
+    <h4>Stock Market Bundle</h4>
+    <p>1000+ Videos</p>
+    <p class="t-price">₹49 Only</p>
+    <button class="t-buy-btn" id="buy-stock" onclick="openBuyModal('stock')">Buy Now</button>
+  </div>
+
+</div>
+<div class="page-wrap"><!-- page-wrap resume -->
+
+  <!-- ========================
+       CUSTOMER SUPPORT
+  ========================= -->
+  <div class="info-card support-card">
+    <div class="info-icon">💬</div>
+    <h3>24×7 Customer Support</h3>
+    <p>We're always here to help you!</p>
+    <a href="mailto:Akans47g@gmail.com" class="support-email">Akans47g@gmail.com</a>
+  </div>
+
+  <!-- ========================
+       SELLING PROOF & SOCIAL
+  ========================= -->
+  <div class="info-card">
+    <h3 style="margin-bottom:14px;">📢 Selling Proof & Social Pages</h3>
+
+    <div class="proof-row">
+      <div class="proof-label">
+        <span class="proof-icon">📸</span>
+        <span>Instagram Page</span>
+      </div>
+      <a href="https://www.instagram.com/akans.ai" class="blue-btn" target="_blank">View</a>
+    </div>
+
+    <div class="proof-row">
+      <div class="proof-label">
+        <span class="proof-icon">✈️</span>
+        <span>Telegram Channel</span>
+      </div>
+      <a href="https://t.me/AKANS_AI" class="blue-btn" target="_blank">View</a>
+    </div>
+
+    <div class="proof-row">
+      <div class="proof-label">
+        <span class="proof-icon">💬</span>
+        <span>Telegram Contact</span>
+      </div>
+      <a href="https://t.me/AKANS_Moin" class="blue-btn" target="_blank">View</a>
+    </div>
+
+    <div class="proof-row">
+      <div class="proof-label">
+        <span class="proof-icon">✅</span>
+        <span>Selling Proof</span>
+      </div>
+      <a href="https://t.me/+X8lVU6ZMLZNmMjI1" class="blue-btn" target="_blank">View</a>
+    </div>
+  </div>
+
+  <!-- ========================
+       TRUST FOOTER
+  ========================= -->
+  <div class="trust-card">
+    <div class="trust-grid">
+      <div class="trust-item">✔ Paytm Verified Seller</div>
+      <div class="trust-item">✔ Secure UPI Payment</div>
+      <div class="trust-item">✔ Instant Delivery</div>
+      <div class="trust-item">✔ Privacy Protected</div>
+    </div>
+    <p class="trust-note">Digital Product • No Refund After Access</p>
+  </div>
+
+</div>
+<!-- PAGE END -->
+
+<!-- ========================
+     BUY NOW MODAL
+========================= -->
+<div class="buy-modal-overlay" id="buyModalOverlay">
+  <div class="buy-modal" id="buyModal">
+    <div class="buy-modal-handle"></div>
+    <button type="button" class="buy-modal-close" onclick="closeBuyModal()" aria-label="Close">✕</button>
+
+    <p class="buy-modal-eyebrow">Buy Now</p>
+    <h3 class="buy-modal-title" id="bmProductName">—</h3>
+
+    <p class="buy-modal-label">Content Select Karein</p>
+    <div class="qty-grid" id="bmQtyGrid"></div>
+
+    <div class="qty-or"><span>ya</span></div>
+
+    <input type="number" id="bmCustomQty" class="buy-modal-input" placeholder="Khud quantity likhein (min. 50)" min="50" inputmode="numeric">
+    <p class="bm-error" id="bmCustomError"></p>
+
+    <div class="buy-modal-step2" id="bmStep2">
+      <div class="price-display">
+        <span>Total Price</span>
+        <strong id="bmPrice">₹0</strong>
+      </div>
+
+      <label class="buy-modal-label" for="bmUtr">UTR Number / Payment Link</label>
+      <input type="text" id="bmUtr" class="buy-modal-input" placeholder="Yahan UTR ya link paste karein">
+      <p class="bm-error" id="bmError"></p>
+
+      <p class="wallet-line">Wallet Balance: <strong id="bmWalletBal">₹0</strong></p>
+
+      <div class="insufficient-box" id="bmInsufficient">
+        <p>⚠️ Balance kam hai — ₹<span id="bmShort">0</span> aur chahiye.</p>
+        <button type="button" class="add-money-btn" onclick="location.href='addmoney.html'">💰 Add Money</button>
+      </div>
+
+      <button type="button" class="confirm-buy-btn" id="bmConfirmBtn" onclick="confirmPurchase()">✅ Confirm &amp; Buy Now</button>
+    </div>
+  </div>
+</div>
+
+<div class="bm-toast" id="bmToast"></div>
+
+
+<!-- ========================
+     BOTTOM NAVIGATION
+========================= -->
+<nav class="bottom-nav">
+  <button class="nav-item" data-page="index.html" onclick="location.href='index.html'">
+    
+    <span>Bundles</span>
+  </button>
+  <button class="nav-item" data-page="ff.html" onclick="location.href='ff.html'">
+    
+    <span>Free Fire</span>
+  </button>
+  <button class="nav-item" data-page="other.html" onclick="location.href='other.html'">
+    
+    <span>Other</span>
+  </button>
+  <button class="nav-item" data-page="account.html" onclick="location.href='account.html'">
+   
+    <span>Account</span>
+  </button>
+</nav>
+
+<!-- SOUNDS -->
+<audio id="sound-details" src="assets/sounds/details.mp3" preload="none"></audio>
+<audio id="sound-buy" src="assets/sounds/buy.mp3" preload="none"></audio>
+<audio id="sound-nav" src="assets/sounds/nav.mp3" preload="none"></audio>
+
+<!-- SCRIPTS -->
+<script>
+// Active nav tab
+document.addEventListener("DOMContentLoaded", () => {
+  const currentPage = window.location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll(".nav-item").forEach(btn => {
+    if (btn.dataset.page === currentPage) btn.classList.add("active");
+  });
+
+  // Auto-hide nav on scroll
+  let lastScroll = 0;
+  const nav = document.querySelector(".bottom-nav");
+  if (nav) {
+    window.addEventListener("scroll", () => {
+      const cur = window.pageYOffset;
+      nav.classList.toggle("hide", cur > lastScroll && cur > 80);
+      lastScroll = cur;
+    });
+  }
+});
+</script>
+
+<script type="module" src="js/auth.js"></script>
+<script src="js/products.js"></script>
+
+<!-- ========================
+     BUY NOW MODAL — LOGIC
+     Ab real Firebase se juda hai: wallet balance Firestore
+     users/{uid}.walletBalance se aati hai, order Firestore
+     "orders" collection me save hota hai.
+========================= -->
+<script type="module">
+import { auth, db } from "./js/firebase-init.js";
+import {
+  doc, getDoc, updateDoc, collection, addDoc
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+const QTY_TIERS = [50, 100, 300, 500, 1000, 5000, 10000, 50000];
+let bmState = { productId: null, rate: 0, qty: 0, price: 0 };
+
+function formatINR(n){
+  n = Math.round(n * 100) / 100;
+  return "₹" + (n % 1 === 0 ? n : n.toFixed(2));
+}
+function qtyLabel(n){
+  return n >= 1000 ? (n / 1000) + "K" : String(n);
+}
+
+const MIN_QTY = 50;
+
+// 👉 Pricing formula ek hi jagah hai — abhi seedha linear rate hai.
+//    (Demo-tier wala special rule confirm hote hi, bas isi function
+//    ke andar us logic ko add karna hoga, baaki kahin chhedne ki
+//    zaroorat nahi.)
+function calcPrice(rate, qty){
+  return (rate / 1000) * qty;
+}
+
+async function openBuyModal(productId){
+  const product = window.PRODUCTS && window.PRODUCTS[productId];
+  if (!product){ alert('Product data nahi mili — js/products.js check karein.'); return; }
+
+  bmState = { productId, rate: product.rate, qty: 0, price: 0 };
+
+  document.getElementById('bmProductName').textContent = product.name;
+  document.getElementById('bmUtr').value = '';
+  document.getElementById('bmCustomQty').value = '';
+  document.getElementById('bmCustomError').textContent = '';
+  document.getElementById('bmError').textContent = '';
+  document.getElementById('bmInsufficient').classList.remove('show');
+  document.getElementById('bmStep2').classList.remove('open');
+
+  // Real wallet balance (agar login hai)
+  const user = auth.currentUser;
+  if (user){
+    document.getElementById('bmWalletBal').textContent = '...';
+    try{
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      const bal = snap.exists() && typeof snap.data().walletBalance === 'number' ? snap.data().walletBalance : 0;
+      document.getElementById('bmWalletBal').textContent = formatINR(bal);
+    } catch(e){
+      document.getElementById('bmWalletBal').textContent = '—';
+    }
+  } else {
+    document.getElementById('bmWalletBal').textContent = 'Login karein';
+  }
+
+  const grid = document.getElementById('bmQtyGrid');
+  grid.innerHTML = '';
+  QTY_TIERS.forEach(qty => {
+    const price = calcPrice(product.rate, qty);
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'qty-chip';
+    chip.innerHTML = '<span class="q-num">' + qtyLabel(qty) + '</span><span class="q-price">' + formatINR(price) + '</span>';
+    chip.onclick = function(){ selectQty(qty, price, chip); };
+    grid.appendChild(chip);
+  });
+
+  document.body.classList.add('bm-open');
+  document.getElementById('buyModalOverlay').classList.add('active');
+}
+
+function selectQty(qty, price, chipEl){
+  document.querySelectorAll('.qty-chip').forEach(c => c.classList.remove('selected'));
+  chipEl.classList.add('selected');
+  document.getElementById('bmCustomQty').value = '';
+  document.getElementById('bmCustomError').textContent = '';
+
+  bmState.qty = qty;
+  bmState.price = price;
+
+  document.getElementById('bmPrice').textContent = formatINR(price);
+  document.getElementById('bmError').textContent = '';
+  document.getElementById('bmInsufficient').classList.remove('show');
+  document.getElementById('bmStep2').classList.add('open');
+}
+
+function handleCustomQty(){
+  const input = document.getElementById('bmCustomQty');
+  const errEl = document.getElementById('bmCustomError');
+  const raw = input.value.trim();
+
+  if (!raw){
+    errEl.textContent = '';
+    return;
+  }
+
+  const val = parseInt(raw, 10);
+
+  if (isNaN(val) || val < MIN_QTY){
+    errEl.textContent = 'Minimum ' + MIN_QTY + ' quantity select karna zaroori hai';
+    document.getElementById('bmStep2').classList.remove('open');
+    bmState.qty = 0;
+    bmState.price = 0;
+    return;
+  }
+
+  errEl.textContent = '';
+  document.querySelectorAll('.qty-chip').forEach(c => c.classList.remove('selected'));
+
+  const price = calcPrice(bmState.rate, val);
+  bmState.qty = val;
+  bmState.price = price;
+
+  document.getElementById('bmPrice').textContent = formatINR(price);
+  document.getElementById('bmError').textContent = '';
+  document.getElementById('bmInsufficient').classList.remove('show');
+  document.getElementById('bmStep2').classList.add('open');
+}
+document.getElementById('bmCustomQty').addEventListener('input', handleCustomQty);
+
+async function confirmPurchase(){
+  const errorEl = document.getElementById('bmError');
+
+  if (!bmState.qty){
+    errorEl.textContent = 'Pehle content quantity select karein';
+    return;
+  }
+  const utr = document.getElementById('bmUtr').value.trim();
+  if (!utr){
+    errorEl.textContent = 'UTR number ya payment link dalein';
+    document.getElementById('bmUtr').focus();
+    return;
+  }
+
+  const user = auth.currentUser;
+  if (!user){
+    errorEl.textContent = 'Login karna zaroori hai, redirect ho raha hai...';
+    setTimeout(function(){ window.location.href = 'login.html'; }, 1200);
+    return;
+  }
+
+  errorEl.textContent = '';
+  const confirmBtn = document.getElementById('bmConfirmBtn');
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = 'Processing...';
+
+  try{
+    const userRef = doc(db, 'users', user.uid);
+    const snap = await getDoc(userRef);
+    const balance = snap.exists() && typeof snap.data().walletBalance === 'number' ? snap.data().walletBalance : 0;
+
+    if (balance >= bmState.price){
+      await updateDoc(userRef, { walletBalance: balance - bmState.price });
+
+      await addDoc(collection(db, 'orders'), {
+        uid: user.uid,
+        userEmail: user.email || '',
+        productId: bmState.productId,
+        productName: document.getElementById('bmProductName').textContent,
+        qty: bmState.qty,
+        price: bmState.price,
+        utr: utr,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      });
+
+      const snd = document.getElementById('sound-buy');
+      if (snd){ snd.currentTime = 0; snd.play().catch(function(){}); }
+
+      closeBuyModal();
+      showToast('✅ Order request bheja gaya! Admin jaldi approve karega.');
+    } else {
+      document.getElementById('bmShort').textContent = formatINR(bmState.price - balance);
+      document.getElementById('bmInsufficient').classList.add('show');
+    }
+  } catch(err){
+    errorEl.textContent = 'Kuch galat ho gaya, dobara try karein';
+  }
+
+  confirmBtn.disabled = false;
+  confirmBtn.textContent = '✅ Confirm & Buy Now';
+}
+
+function closeBuyModal(){
+  document.getElementById('buyModalOverlay').classList.remove('active');
+  document.body.classList.remove('bm-open');
+}
+
+document.getElementById('buyModalOverlay').addEventListener('click', function(e){
+  if (e.target === this) closeBuyModal();
+});
+
+let bmToastTimer;
+function showToast(msg){
+  const t = document.getElementById('bmToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(bmToastTimer);
+  bmToastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+
+// onclick="..." attributes ko module ke bahar se access karne ke liye
+window.openBuyModal = openBuyModal;
+window.closeBuyModal = closeBuyModal;
+window.confirmPurchase = confirmPurchase;
+</script>
+<!-- ✅ Dynamic products from admin panel -->
+<script type="module" src="js/products-loader.js"></script>
+
+</body>
+</html>
