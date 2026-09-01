@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Refer &amp; Earn | AKANS Social Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{
+  --ink:#181428;
+  --sub:#6E6B85;
+  --brand:#4F2FCE;
+  --brand-2:#7B4FF0;
+  --accent:#FF6B3D;
+  --accent-2:#FFA751;
+  --success:#16C784;
+  --bg:#F6F4FC;
+  --surface:#FFFFFF;
+  --line:#ECEAF5;
+  --radius:18px;
+}
+*{ box-sizing:border-box; }
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height:1.45; -webkit-font-smoothing:antialiased; padding-bottom:80px;
+}
+h1,h2,h3,h4{ font-family:'Baloo 2','Inter',sans-serif; margin:0 0 4px; color:var(--ink); }
+a{ color:inherit; } img{ max-width:100%; display:block; } button{ font-family:inherit; }
+.page-wrap{ max-width:480px; margin:0 auto; padding:16px 16px 4px; }
+
+.header{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  border:1px solid var(--line); border-radius:18px; padding:14px 16px; margin:6px 0 20px;
+}
+.header-text h3{ font-size:17px; font-weight:800; color:var(--brand); margin-bottom:2px; }
+.header-tag{ font-size:11px; color:var(--sub); font-weight:600; margin:0; }
+.header img{ height:42px; width:42px; border-radius:12px; object-fit:cover; background:var(--surface); box-shadow:0 2px 8px rgba(0,0,0,.08); flex-shrink:0; }
+
+.bottom-nav{
+  position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:space-around;
+  background:var(--surface); border-top:1px solid var(--line);
+  padding:8px 0 max(8px, env(safe-area-inset-bottom)); z-index:500; transition:transform .25s ease;
+}
+.bottom-nav.hide{ transform:translateY(100%); }
+.nav-item{
+  background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px;
+  color:var(--sub); font-size:10.5px; font-weight:600; padding:4px 10px; cursor:pointer; position:relative;
+}
+.nav-item::before{ font-size:19px; }
+.nav-item[data-page="index.html"]::before{ content:"🏠"; }
+.nav-item[data-page="ff.html"]::before{ content:"🎮"; }
+.nav-item[data-page="other.html"]::before{ content:"🗂️"; }
+.nav-item[data-page="account.html"]::before{ content:"👤"; }
+.nav-item.active{ color:var(--accent); }
+
+/* ---------------- REFER PAGE ---------------- */
+.pp-title{ text-align:center; margin:6px 0 16px; }
+.pp-title h2{ font-size:21px; font-weight:800; }
+.pp-title p{ font-size:13px; color:var(--sub); margin-top:2px; }
+
+.pp-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:18px; margin-bottom:14px; box-shadow:0 2px 10px rgba(79,47,206,.06);
+}
+.pp-card h3{ font-size:15px; font-weight:700; margin-bottom:8px; }
+.pp-card p{ font-size:12.5px; color:var(--sub); line-height:1.5; margin:0 0 12px; }
+
+.pp-balance-card{ text-align:center; background:linear-gradient(135deg,var(--accent),var(--accent-2)); }
+.pp-label{ font-size:12.5px; color:rgba(255,255,255,.85); font-weight:600; margin-bottom:4px; }
+.pp-balance{ font-size:32px; font-weight:800; color:#fff; }
+
+.rf-code-box{
+  text-align:center; background:var(--bg); border:2px dashed var(--brand-2);
+  border-radius:16px; padding:18px; margin-bottom:12px;
+}
+.rf-code-label{ font-size:11.5px; color:var(--sub); font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
+.rf-code{ font-size:34px; font-weight:800; color:var(--brand); letter-spacing:.08em; margin-bottom:10px; }
+.rf-code-copy{
+  border:none; border-radius:20px; padding:8px 20px;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit;
+}
+
+.pp-link-box{
+  display:flex; align-items:center; gap:8px;
+  background:var(--bg); border:1.5px dashed var(--brand-2);
+  border-radius:12px; padding:10px 12px; margin-bottom:10px;
+}
+.pp-link-box span{
+  flex:1; min-width:0; font-size:12px; color:var(--ink); font-weight:600;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.pp-copy-btn{
+  border:none; border-radius:8px; padding:7px 14px; flex-shrink:0;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff; font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;
+}
+.pp-hint{ font-size:11.5px; color:var(--sub); margin:0; }
+
+.pp-stat-row{ text-align:center; margin-bottom:12px; }
+.pp-stat-num{ font-size:26px; font-weight:800; color:var(--brand); }
+.pp-stat-label{ font-size:11.5px; color:var(--sub); font-weight:600; }
+
+.pp-ref-item{
+  display:flex; justify-content:space-between; padding:9px 0;
+  border-bottom:1px solid var(--line); font-size:13px; color:var(--ink);
+}
+.pp-ref-item:last-child{ border-bottom:none; }
+.pp-ref-date{ color:var(--sub); font-size:11.5px; }
+
+.pp-input{
+  width:100%; box-sizing:border-box; border:1.5px solid var(--line); border-radius:12px;
+  padding:12px 14px; font-size:14px; font-family:inherit; margin-bottom:10px;
+}
+.pp-input:focus{ outline:none; border-color:var(--brand); }
+
+.pp-btn{
+  width:100%; border:none; cursor:pointer; font-family:inherit; color:#fff;
+  font-size:14px; font-weight:800; padding:13px; border-radius:14px;
+}
+.pp-btn.convert{ background:linear-gradient(135deg,var(--success),#0FA968); }
+.pp-btn.withdraw{ background:linear-gradient(135deg,var(--accent),var(--accent-2)); }
+.pp-btn:active{ transform:scale(.98); }
+.pp-btn:disabled{ opacity:.6; cursor:not-allowed; }
+
+.pp-error{ color:#E63946; font-size:12.5px; font-weight:600; min-height:16px; margin:0 0 8px; }
+
+.pp-withdraw-item{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 0; border-bottom:1px solid var(--line); font-size:13px; color:var(--ink);
+}
+.pp-withdraw-item:last-child{ border-bottom:none; }
+
+.admin-empty{ text-align:center; padding:20px; color:var(--sub); font-size:13px; }
+.admin-status{ display:inline-block; font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; }
+.admin-status.pending{ background:#FFF7E0; color:#B8860B; }
+.admin-status.completed{ background:#E8F9F1; color:var(--success); }
+.admin-status.rejected{ background:#FDEEEE; color:#E63946; }
+
+.rf-code-copy:focus-visible,
+.pp-copy-btn:focus-visible,
+.pp-btn:focus-visible,
+.pp-input:focus-visible{
+  outline:2px solid var(--brand); outline-offset:2px;
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <div class="header">
+    <div class="header-text">
+      <h3>AKANS Social Store</h3>
+      <p class="header-tag">Bundles • Deals • Fast Delivery</p>
+    </div>
+    <img src="logo.png" alt="AKANS Logo">
+  </div>
+
+  <div class="pp-title">
+    <h2>🎯 Refer &amp; Earn</h2>
+    <p>Apna code share karo, dost ke PEHLE deposit par 21% turant kamao</p>
+  </div>
+
+  <div class="pp-card pp-balance-card">
+    <p class="pp-label">Refer Balance</p>
+    <div class="pp-balance" id="rfBalance">₹0</div>
+  </div>
+
+  <div class="pp-card">
+    <h3>🔑 Aapka Refer Code</h3>
+    <div class="rf-code-box">
+      <div class="rf-code-label">Ye code share karo</div>
+      <div class="rf-code" id="rfCode">----</div>
+      <button type="button" class="rf-code-copy" id="rfCodeCopyBtn">Copy Code</button>
+    </div>
+
+    <div class="pp-link-box">
+      <span id="rfLinkText">Load ho raha hai...</span>
+      <button type="button" class="pp-copy-btn" id="rfLinkCopyBtn">Copy Link</button>
+    </div>
+    <p class="pp-hint">Code ya link, jo bhi aasan lage share karo — dono se kaam ho jaata hai. Sirf PEHLE deposit par 21% milta hai.</p>
+  </div>
+
+  <div class="pp-card">
+    <div class="pp-stat-row">
+      <div class="pp-stat-num" id="rfReferralCount">0</div>
+      <div class="pp-stat-label">Total Referrals</div>
+    </div>
+    <div id="rfReferralList"><p class="admin-empty">Load ho raha hai...</p></div>
+  </div>
+
+  <div class="pp-card">
+    <h3>💱 Convert to Wallet</h3>
+    <p>Refer Balance ko seedha apni shopping wallet me daal lein — turant, koi approval ki zaroorat nahi.</p>
+    <input type="number" id="rfConvertAmount" class="pp-input" placeholder="Amount">
+    <p class="pp-error" id="rfConvertError"></p>
+    <button type="button" class="pp-btn convert" id="rfConvertBtn">Convert Now</button>
+  </div>
+
+  <div class="pp-card">
+    <h3>💸 Withdraw via UPI</h3>
+    <p>Apne bank/UPI me paisa nikalna hai to (minimum ₹25) request bhejein — admin verify karke bhej dega.</p>
+    <input type="text" id="rfUpiId" class="pp-input" placeholder="Apna UPI ID (jaise name@bank)">
+    <input type="number" id="rfWithdrawAmount" class="pp-input" placeholder="Amount (min ₹25)" min="25">
+    <p class="pp-error" id="rfError"></p>
+    <button type="button" class="pp-btn withdraw" id="rfWithdrawBtn">Submit Withdrawal Request</button>
+  </div>
+
+  <div class="pp-card">
+    <h3>📋 Withdrawal History</h3>
+    <div id="rfWithdrawHistory"><p class="admin-empty">Load ho raha hai...</p></div>
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-item" data-page="index.html" onclick="location.href='index.html'">
+    
+    <span>Bundles</span>
+  </button>
+  <button class="nav-item" data-page="ff.html" onclick="location.href='ff.html'">
+    
+    <span>Free Fire</span>
+  </button>
+  <button class="nav-item" data-page="other.html" onclick="location.href='other.html'">
+    
+    <span>Other</span>
+  </button>
+  <button class="nav-item" data-page="account.html" onclick="location.href='account.html'">
+   
+    <span>Account</span>
+  </button>
+</nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let lastScroll = 0;
+  const nav = document.querySelector(".bottom-nav");
+  if (nav) {
+    window.addEventListener("scroll", () => {
+      const cur = window.pageYOffset;
+      nav.classList.toggle("hide", cur > lastScroll && cur > 80);
+      lastScroll = cur;
+    });
+  }
+});
+</script>
+<script type="module" src="js/refer.js"></script>
+</body>
+</html>
