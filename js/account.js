@@ -40,3 +40,33 @@ document.getElementById('acLogoutBtn').addEventListener('click', async function(
   await logout();
   window.location.href = 'login.html';
 });
+
+/* ---------- INSTALL APP BUTTON ---------- */
+function isStandaloneMode(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function isIOSDevice(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+(function setupInstallButton(){
+  const btn = document.getElementById('acInstallBtn');
+  if (!btn) return;
+
+  if (isStandaloneMode()){
+    btn.style.display = 'none';
+    return;
+  }
+
+  btn.addEventListener('click', async function(){
+    if (window.deferredInstallPrompt){
+      window.deferredInstallPrompt.prompt();
+      await window.deferredInstallPrompt.userChoice;
+      window.deferredInstallPrompt = null;
+    } else if (isIOSDevice()){
+      alert('📲 iPhone par install karne ke liye:\n\nNeeche diye Share button (⬆️) par tap karein, phir "Add to Home Screen" choose karein.');
+    } else {
+      alert('📲 Apne browser ke menu (⋮ ya ...) me jaakar "Install App" ya "Add to Home Screen" option dhoondein.');
+    }
+  });
+})();
