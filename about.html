@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About Us | AKANS Social Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{
+  --ink:#181428;
+  --sub:#6E6B85;
+  --brand:#4F2FCE;
+  --brand-2:#7B4FF0;
+  --accent:#FF6B3D;
+  --accent-2:#FFA751;
+  --success:#16C784;
+  --bg:#F6F4FC;
+  --surface:#FFFFFF;
+  --line:#ECEAF5;
+  --radius:18px;
+}
+*{ box-sizing:border-box; }
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height:1.5; -webkit-font-smoothing:antialiased; padding-bottom:80px;
+}
+h1,h2,h3,h4{ font-family:'Baloo 2','Inter',sans-serif; margin:0 0 4px; color:var(--ink); }
+a{ color:inherit; } img{ max-width:100%; display:block; } button{ font-family:inherit; }
+.page-wrap{ max-width:480px; margin:0 auto; padding:16px 16px 4px; }
+
+.header{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  border:1px solid var(--line); border-radius:18px; padding:14px 16px; margin:6px 0 20px;
+}
+.header-text h3{ font-size:17px; font-weight:800; color:var(--brand); margin-bottom:2px; }
+.header-tag{ font-size:11px; color:var(--sub); font-weight:600; margin:0; }
+.header img{ height:42px; width:42px; border-radius:12px; object-fit:cover; background:var(--surface); box-shadow:0 2px 8px rgba(0,0,0,.08); flex-shrink:0; }
+
+.bottom-nav{
+  position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:space-around;
+  background:var(--surface); border-top:1px solid var(--line);
+  padding:8px 0 max(8px, env(safe-area-inset-bottom)); z-index:500; transition:transform .25s ease;
+}
+.bottom-nav.hide{ transform:translateY(100%); }
+.nav-item{
+  background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px;
+  color:var(--sub); font-size:10.5px; font-weight:600; padding:4px 10px; cursor:pointer; position:relative;
+}
+.nav-item::before{ font-size:19px; }
+.nav-item[data-page="index.html"]::before{ content:"🏠"; }
+.nav-item[data-page="ff.html"]::before{ content:"🎮"; }
+.nav-item[data-page="other.html"]::before{ content:"🗂️"; }
+.nav-item[data-page="account.html"]::before{ content:"👤"; }
+.nav-item.active{ color:var(--accent); }
+
+/* ---------------- ABOUT PAGE ---------------- */
+.ab-hero{ text-align:center; margin:6px 0 20px; }
+.ab-hero-icon{ font-size:38px; margin-bottom:8px; }
+.ab-hero h1{ font-size:22px; font-weight:800; margin-bottom:6px; }
+.ab-hero p{ font-size:13.5px; color:var(--sub); line-height:1.6; max-width:380px; margin:0 auto; }
+
+.ab-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:20px; margin-bottom:16px; box-shadow:0 2px 10px rgba(79,47,206,.06);
+}
+.ab-card h2{ font-size:17px; font-weight:800; margin-bottom:10px; }
+.ab-card p{ font-size:13.5px; color:var(--sub); line-height:1.65; margin:0 0 10px; }
+.ab-card p:last-child{ margin-bottom:0; }
+
+.ab-step{ display:flex; gap:14px; margin-bottom:18px; }
+.ab-step:last-child{ margin-bottom:0; }
+.ab-step-num{
+  width:34px; height:34px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff; font-size:15px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+.ab-step-text h4{ font-size:14.5px; font-weight:700; margin-bottom:3px; }
+.ab-step-text p{ font-size:12.5px; color:var(--sub); line-height:1.55; margin:0; }
+
+.trust-card{
+  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  border-radius:var(--radius); padding:20px; margin-bottom:16px;
+}
+.trust-card h2{ font-size:17px; font-weight:800; text-align:center; margin-bottom:14px; }
+.trust-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.trust-point{ background:var(--surface); border-radius:14px; padding:14px; text-align:center; }
+.trust-point-icon{ font-size:22px; margin-bottom:6px; }
+.trust-point h5{ font-size:12.5px; font-weight:700; margin-bottom:3px; }
+.trust-point p{ font-size:10.5px; color:var(--sub); line-height:1.4; margin:0; }
+
+.ab-closing{
+  text-align:center; padding:22px 16px; margin-bottom:16px;
+}
+.ab-closing p{ font-size:13.5px; color:var(--sub); line-height:1.65; font-style:italic; max-width:380px; margin:0 auto; }
+.ab-signature{ font-size:12px; font-weight:700; color:var(--brand); margin-top:10px; }
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4F2FCE">
+<script src="js/pwa-install.js"></script>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <div class="header">
+    <div class="header-text">
+      <h3>AKANS Social Store</h3>
+      <p class="header-tag">Bundles • Deals • Fast Delivery</p>
+    </div>
+    <img src="logo.png" alt="AKANS Logo">
+  </div>
+
+  <div class="ab-hero">
+    <div class="ab-hero-icon">🤝</div>
+    <h1>About AKANS Social Store</h1>
+    <p>Built on one simple promise — you should never have to worry about being cheated.</p>
+  </div>
+
+  <div class="ab-card">
+    <h2>Who We Are</h2>
+    <p>AKANS Social Store is a reselling platform. We don't manufacture or host every service ourselves — instead, we work as a trusted bridge between you and established supplier platforms, so you don't have to hunt across multiple vendors, compare prices, or gamble on which source is safe to buy from.</p>
+    <p>Think of us as your personal sourcing team: you tell us what you need, and we take care of the rest.</p>
+  </div>
+
+  <div class="ab-card">
+    <h2>How It Works</h2>
+
+    <div class="ab-step">
+      <div class="ab-step-num">1</div>
+      <div class="ab-step-text">
+        <h4>You Place an Order</h4>
+        <p>Browse our bundles or plans and submit your request through our secure wallet system.</p>
+      </div>
+    </div>
+
+    <div class="ab-step">
+      <div class="ab-step-num">2</div>
+      <div class="ab-step-text">
+        <h4>We Receive Your Request</h4>
+        <p>A real member of our team reviews every single order personally — no bot decides what you get.</p>
+      </div>
+    </div>
+
+    <div class="ab-step">
+      <div class="ab-step-num">3</div>
+      <div class="ab-step-text">
+        <h4>We Source It On Your Behalf</h4>
+        <p>We purchase the service from trusted platforms for you, so you never have to deal with unfamiliar or risky vendors directly.</p>
+      </div>
+    </div>
+
+    <div class="ab-step">
+      <div class="ab-step-num">4</div>
+      <div class="ab-step-text">
+        <h4>You Receive It</h4>
+        <p>Delivered to you with a small, transparent commission added — the fee that keeps this entire process safe, fast, and personally verified.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ab-card">
+    <h2>Why We're Upfront About Our Commission</h2>
+    <p>Every reselling business adds a margin somewhere — it's simply how the model works. We'd rather tell you this plainly than let you assume we're the original manufacturer of every product we offer.</p>
+    <p>That small commission is what funds real humans reviewing your orders, manually verifying every payment, and being available when something needs fixing. We believe honesty about how we operate is the first step toward earning your trust.</p>
+  </div>
+
+  <div class="trust-card">
+    <h2>Our Commitment To You</h2>
+    <div class="trust-grid">
+      <div class="trust-point">
+        <div class="trust-point-icon">🛡️</div>
+        <h5>Zero-Fraud Promise</h5>
+        <p>Every payment is manually checked before any funds are added or spent.</p>
+      </div>
+      <div class="trust-point">
+        <div class="trust-point-icon">👀</div>
+        <h5>Human-Reviewed Orders</h5>
+        <p>A real person verifies every request — nothing goes through blindly.</p>
+      </div>
+      <div class="trust-point">
+        <div class="trust-point-icon">🔒</div>
+        <h5>Secure Wallet</h5>
+        <p>Your balance is protected and can never be silently altered.</p>
+      </div>
+      <div class="trust-point">
+        <div class="trust-point-icon">💬</div>
+        <h5>Real Support</h5>
+        <p>Reach out any time — you'll get a real reply, not an autoresponder.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ab-closing">
+    <p>"We built AKANS Social Store because we believe reselling shouldn't mean risk. Every step — from payment to delivery — is designed so you always know exactly what's happening with your order and your money."</p>
+    <div class="ab-signature">— The AKANS Social Store Team</div>
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-item" data-page="index.html" onclick="location.href='index.html'">
+    
+    <span>Bundles</span>
+  </button>
+  <button class="nav-item" data-page="ff.html" onclick="location.href='ff.html'">
+    
+    <span>Free Fire</span>
+  </button>
+  <button class="nav-item" data-page="other.html" onclick="location.href='other.html'">
+    
+    <span>Other</span>
+  </button>
+  <button class="nav-item" data-page="account.html" onclick="location.href='account.html'">
+   
+    <span>Account</span>
+  </button>
+</nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let lastScroll = 0;
+  const nav = document.querySelector(".bottom-nav");
+  if (nav) {
+    window.addEventListener("scroll", () => {
+      const cur = window.pageYOffset;
+      nav.classList.toggle("hide", cur > lastScroll && cur > 80);
+      lastScroll = cur;
+    });
+  }
+});
+</script>
+</body>
+</html>
