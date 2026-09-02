@@ -1,0 +1,17 @@
+{
+  "name": "AKANS Social Store",
+  "short_name": "AKANS Store",
+  "description": "AI video bundles, Free Fire plans, and digital deals — all in one place.",
+  "start_url": "index.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F4FC",
+  "theme_color": "#4F2FCE",
+  "icons": [
+    { "src": "logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "logo.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
