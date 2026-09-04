@@ -6,7 +6,7 @@
 ================================================================= */
 
 import { db } from "./firebase-init.js";
-import { watchAuthState } from "./auth.js";
+import { watchAuthState, assignUniquePartnerCode } from "./auth.js";
 import {
   doc, getDoc, onSnapshot, updateDoc, collection, addDoc, getDocs, query, where
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
@@ -23,38 +23,58 @@ watchAuthState(function(user){
 });
 
 async function checkPartnerAccess(user){
-  const snap = await getDoc(doc(db, 'users', user.uid));
+  const ref = doc(db, 'users', user.uid);
+  const snap = await getDoc(ref);
   const data = snap.data() || {};
   if (!data.isPartner){
     alert('Ye page sirf Partner Program members ke liye hai');
     window.location.href = 'index.html';
     return;
   }
-  setupReferralLink(user.uid);
+
+  // Purane partners jinko code kabhi assign nahi hua tha, unke liye
+  // abhi generate karke save kar do (naye partners ko admin ne
+  // "Make Partner" karte hi de diya hoga).
+  let myPartnerCode = data.partnerCode;
+  if (!myPartnerCode){
+    myPartnerCode = await assignUniquePartnerCode(user.uid);
+    await updateDoc(ref, { partnerCode: myPartnerCode });
+  }
+
+  setupCodeAndLink(myPartnerCode);
   listenBalance(user.uid);
   loadReferrals(user.uid);
   loadWithdrawHistory(user.uid);
 }
 
-function setupReferralLink(uid){
+function setupCodeAndLink(code){
+  document.getElementById('ppCode').textContent = code;
+
   const loginPath = window.location.pathname.replace(/p\.html$/, 'login.html');
-  const link = window.location.origin + loginPath + '?ref=' + uid;
+  const link = window.location.origin + loginPath + '?pc=' + code;
   document.getElementById('ppLinkText').textContent = link;
-  document.getElementById('ppCopyBtn').addEventListener('click', async function(){
-    try{
-      await navigator.clipboard.writeText(link);
-    } catch(e){
-      const ta = document.createElement('textarea');
-      ta.value = link;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-    }
-    const btn = document.getElementById('ppCopyBtn');
-    btn.textContent = '✅';
-    setTimeout(function(){ btn.textContent = 'Copy'; }, 2000);
+
+  document.getElementById('ppCodeCopyBtn').addEventListener('click', function(){
+    copyText(code, this, 'Copy Code');
   });
+  document.getElementById('ppCopyBtn').addEventListener('click', function(){
+    copyText(link, this, 'Copy');
+  });
+}
+
+async function copyText(text, btn, resetLabel){
+  try{
+    await navigator.clipboard.writeText(text);
+  } catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  btn.textContent = '✅';
+  setTimeout(function(){ btn.textContent = resetLabel; }, 2000);
 }
 
 function listenBalance(uid){
