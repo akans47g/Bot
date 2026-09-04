@@ -7,7 +7,7 @@
 ================================================================= */
 
 import { db } from "./firebase-init.js";
-import { watchAuthState } from "./auth.js";
+import { watchAuthState, assignUniqueReferCode } from "./auth.js";
 import {
   doc, getDoc, onSnapshot, updateDoc, collection, addDoc, getDocs, query, where
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
@@ -25,9 +25,18 @@ watchAuthState(function(user){
 });
 
 async function init(user){
-  const snap = await getDoc(doc(db, 'users', user.uid));
+  const ref = doc(db, 'users', user.uid);
+  const snap = await getDoc(ref);
   const data = snap.data() || {};
-  myReferCode = data.referCode || '----';
+
+  // Purane accounts jinko Refer System banne se PEHLE signup kiya
+  // tha, unke paas referCode nahi hoga — abhi generate karke save
+  // kar do, taaki link kabhi "----" jaisa placeholder na dikhaye.
+  myReferCode = data.referCode;
+  if (!myReferCode){
+    myReferCode = await assignUniqueReferCode(user.uid);
+    await updateDoc(ref, { referCode: myReferCode });
+  }
 
   document.getElementById('rfCode').textContent = myReferCode;
   setupLink();
