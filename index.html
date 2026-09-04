@@ -122,8 +122,15 @@ button{ font-family:inherit; }
   box-shadow:0 2px 10px rgba(79,47,206,.06);
 }
 .card-top{ display:flex; gap:12px; align-items:flex-start; }
+.card-img-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:7px;
+  flex-shrink:0;
+}
 .card-img{
-  width:84px;
+  width:86px;
   aspect-ratio:3/4;
   height:auto;
   border-radius:14px;
@@ -133,22 +140,39 @@ button{ font-family:inherit; }
 }
 .card-text{ flex:1; min-width:0; }
 
-.card-badge{
-  display:inline-block;
+/* ---------------- TIER BADGES (under image) ---------------- */
+/* Standard / Premium / Professional — har tier ka apna alag look */
+.tier-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  font-size:9.5px;
+  font-weight:800;
+  white-space:nowrap;
+  padding:4px 9px;
+  border-radius:7px;
+  line-height:1.3;
+}
+.tier-badge.tier-standard{
   background:var(--bg);
   color:var(--brand);
   border:1px solid var(--line);
-  font-size:10.5px;
-  font-weight:700;
-  padding:3px 9px;
-  border-radius:20px;
-  margin-bottom:6px;
 }
-.card-badge.popular-badge{ background:#FFF7E0; border-color:#FFE7A3; color:#B8860B; }
-.card-badge.hot-badge{ background:#FFEDE8; border-color:#FFCFC0; color:var(--accent); }
+.tier-badge.tier-premium{
+  background:linear-gradient(135deg,#FFD97A,#FFB349);
+  color:#7A4300;
+  border:1px solid #FFC966;
+  box-shadow:0 2px 6px rgba(255,179,73,.35);
+}
+.tier-badge.tier-professional{
+  background:linear-gradient(135deg,#2B2B45,#14121F);
+  color:#FFD97A;
+  border:1px solid #3B3B57;
+  box-shadow:0 2px 8px rgba(20,18,31,.35);
+}
 
 .card-text h3{ font-size:15.5px; font-weight:700; line-height:1.25; margin-bottom:4px; }
-.card-count{ font-size:12px; color:var(--sub); margin:0 0 8px; }
 
 .price-row{
   display:inline-flex;
@@ -242,7 +266,6 @@ button{ font-family:inherit; }
   margin-bottom:8px;
 }
 .trending-card h4{ font-size:12.5px; font-weight:700; margin-bottom:2px; line-height:1.25; }
-.trending-card p{ font-size:11px; color:var(--sub); margin:0 0 6px; }
 .t-price{ color:var(--accent) !important; font-weight:800 !important; font-size:13px !important; }
 
 /* ---------------- SUPPORT / SOCIAL / INFO CARDS ---------------- */
@@ -619,11 +642,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig1.jpg" class="card-img" alt="Hulk Bundle">
+      <div class="card-img-wrap">
+        <img src="ig1.jpg" class="card-img" alt="Hulk Bundle">
+        <div class="tier-badge tier-standard">Standard</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge">AI Generated</div>
         <h3>Hulk Videos Bundle</h3>
-        <p class="card-count">📦 1000+ Videos</p>
         <div class="price-row">
           <del>₹349</del>
           <span class="price-now">₹39</span>
@@ -652,11 +676,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig2.jpg" class="card-img" alt="Cricket Bundle">
+      <div class="card-img-wrap">
+        <img src="ig2.jpg" class="card-img" alt="Cricket Bundle">
+        <div class="tier-badge tier-standard">Standard</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge">Sports</div>
         <h3>Cricket Videos Bundle</h3>
-        <p class="card-count">📦 500+ Videos</p>
         <div class="price-row">
           <del>₹349</del>
           <span class="price-now">₹49</span>
@@ -685,11 +710,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig3.jpg" class="card-img" alt="Food Bundle">
+      <div class="card-img-wrap">
+        <img src="ig3.jpg" class="card-img" alt="Food Bundle">
+        <div class="tier-badge tier-standard">Standard</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge">Satisfying</div>
         <h3>Food Cutting Videos Bundle</h3>
-        <p class="card-count">📦 1000+ Videos</p>
         <div class="price-row">
           <del>₹349</del>
           <span class="price-now">₹39</span>
@@ -718,11 +744,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig4.jpg" class="card-img" alt="Car Bundle">
+      <div class="card-img-wrap">
+        <img src="ig4.jpg" class="card-img" alt="Car Bundle">
+        <div class="tier-badge tier-standard">Standard</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge">Cinematic</div>
         <h3>Car Videos Bundle</h3>
-        <p class="card-count">📦 1000+ Videos</p>
         <div class="price-row">
           <del>₹349</del>
           <span class="price-now">₹45</span>
@@ -751,11 +778,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig5.jpg" class="card-img" alt="Anime Bundle">
+      <div class="card-img-wrap">
+        <img src="ig5.jpg" class="card-img" alt="Anime Bundle">
+        <div class="tier-badge tier-premium">⭐ Premium</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge popular-badge">⭐ Most Popular</div>
         <h3>Anime Videos Bundle</h3>
-        <p class="card-count">📦 3000+ Videos</p>
         <div class="price-row">
           <del>₹399</del>
           <span class="price-now">₹49</span>
@@ -783,11 +811,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig6.jpg" class="card-img" alt="Moral Story Bundle">
+      <div class="card-img-wrap">
+        <img src="ig6.jpg" class="card-img" alt="Moral Story Bundle">
+        <div class="tier-badge tier-premium">⭐ Premium</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge">2D Animation</div>
         <h3>2D Moral Story Long Videos</h3>
-        <p class="card-count">📦 500+ Long Videos</p>
         <div class="price-row">
           <del>₹349</del>
           <span class="price-now">₹49</span>
@@ -815,11 +844,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig7.jpg" class="card-img" alt="Monkey Vlog Bundle">
+      <div class="card-img-wrap">
+        <img src="ig7.jpg" class="card-img" alt="Monkey Vlog Bundle">
+        <div class="tier-badge tier-premium">⭐ Premium</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge">Funny</div>
         <h3>Monkey Vlog Videos</h3>
-        <p class="card-count">📦 1000+ Videos</p>
         <div class="price-row">
           <del>₹399</del>
           <span class="price-now">₹49</span>
@@ -849,11 +879,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig8.jpg" class="card-img" alt="Life Hacks Bundle">
+      <div class="card-img-wrap">
+        <img src="ig8.jpg" class="card-img" alt="Life Hacks Bundle">
+        <div class="tier-badge tier-premium">⭐ Premium</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge popular-badge">⭐ Best Seller</div>
         <h3>Daily Life Hacks Videos</h3>
-        <p class="card-count">📦 3000+ Videos</p>
         <div class="price-row">
           <del>₹349</del>
           <span class="price-now">₹55</span>
@@ -883,11 +914,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig9.jpg" class="card-img" alt="Nature Bundle">
+      <div class="card-img-wrap">
+        <img src="ig9.jpg" class="card-img" alt="Nature Bundle">
+        <div class="tier-badge tier-professional">👑 Professional</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge">Relaxing</div>
         <h3>Nature Videos Bundle</h3>
-        <p class="card-count">📦 1000+ Videos</p>
         <div class="price-row">
           <del>₹349</del>
           <span class="price-now">₹49</span>
@@ -917,11 +949,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig10.jpg" class="card-img" alt="Horror Bundle">
+      <div class="card-img-wrap">
+        <img src="ig10.jpg" class="card-img" alt="Horror Bundle">
+        <div class="tier-badge tier-professional">👑 Professional</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge">Horror</div>
         <h3>Horror Videos Bundle</h3>
-        <p class="card-count">📦 800+ Videos</p>
         <div class="price-row">
           <del>₹349</del>
           <span class="price-now">₹49</span>
@@ -951,11 +984,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig11.jpg" class="card-img" alt="Art Bundle">
+      <div class="card-img-wrap">
+        <img src="ig11.jpg" class="card-img" alt="Art Bundle">
+        <div class="tier-badge tier-professional">👑 Professional</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge">Creative</div>
         <h3>ART & Satisfying Videos Bundle</h3>
-        <p class="card-count">📦 1000+ Videos</p>
         <div class="price-row">
           <del>₹349</del>
           <span class="price-now">₹49</span>
@@ -986,11 +1020,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig12.jpg" class="card-img" alt="Gym Bundle">
+      <div class="card-img-wrap">
+        <img src="ig12.jpg" class="card-img" alt="Gym Bundle">
+        <div class="tier-badge tier-professional">👑 Professional</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge hot-badge">🔥 High Demand</div>
         <h3>Gym Boy & Attitude Videos</h3>
-        <p class="card-count">📦 1000+ Videos</p>
         <div class="price-row">
           <del>₹349</del>
           <span class="price-now">₹55</span>
@@ -1021,11 +1056,12 @@ function toggleDetails(id) {
   ========================= -->
   <div class="bundle-card">
     <div class="card-top">
-      <img src="ig13.jpg" class="card-img" alt="Romantic Bundle">
+      <div class="card-img-wrap">
+        <img src="ig13.jpg" class="card-img" alt="Romantic Bundle">
+        <div class="tier-badge tier-professional">👑 Professional</div>
+      </div>
       <div class="card-text">
-        <div class="card-badge popular-badge">💖 99% Viral</div>
         <h3>2D Romantic Short Videos</h3>
-        <p class="card-count">📦 800+ Videos</p>
         <div class="price-row">
           <del>₹549</del>
           <span class="price-now">₹69</span>
@@ -1065,7 +1101,6 @@ function toggleDetails(id) {
   <div class="trending-card">
     <img src="ig14.jpg" alt="Cat Story Bundle">
     <h4>Cat Story's Bundle</h4>
-    <p>1000+ Videos</p>
     <p class="t-price">₹49 Only</p>
     <button class="t-buy-btn" id="buy-cat" onclick="openBuyModal('cat')">Buy Now</button>
   </div>
@@ -1073,7 +1108,6 @@ function toggleDetails(id) {
   <div class="trending-card">
     <img src="ig15.jpg" alt="Woman Gym Bundle">
     <h4>Woman Gym Bundle</h4>
-    <p>1000+ Videos</p>
     <p class="t-price">₹49 Only</p>
     <button class="t-buy-btn" id="buy-womangym" onclick="openBuyModal('womangym')">Buy Now</button>
   </div>
@@ -1081,7 +1115,6 @@ function toggleDetails(id) {
   <div class="trending-card">
     <img src="ig16.jpg" alt="Sanatani AI Reel Bundle">
     <h4>Sanatani AI Reel Bundle</h4>
-    <p>1000+ Videos</p>
     <p class="t-price">₹49 Only</p>
     <button class="t-buy-btn" id="buy-sanatani" onclick="openBuyModal('sanatani')">Buy Now</button>
   </div>
@@ -1089,7 +1122,6 @@ function toggleDetails(id) {
   <div class="trending-card">
     <img src="ig17.jpg" alt="Stock Market Bundle">
     <h4>Stock Market Bundle</h4>
-    <p>1000+ Videos</p>
     <p class="t-price">₹49 Only</p>
     <button class="t-buy-btn" id="buy-stock" onclick="openBuyModal('stock')">Buy Now</button>
   </div>
