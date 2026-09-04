@@ -3,10 +3,10 @@
 ================================================================= */
 
 import { db } from "../../js/firebase-init.js";
-import { logout } from "../../js/auth.js";
+import { logout, assignUniquePartnerCode } from "../../js/auth.js";
 import { requireAdmin, logAdminAction } from "./admin-guard.js";
 import {
-  collection, getDocs, doc, updateDoc
+  collection, getDocs, doc, getDoc, updateDoc
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
 let allUsers = [];
@@ -60,7 +60,7 @@ function render(searchTerm){
         '<div>' +
           '<div class="um-name">' + escapeHtml(u.name || 'Unnamed') + (isPartner ? ' <span class="admin-status approved">PARTNER</span>' : '') + '</div>' +
           '<div class="um-email">' + escapeHtml(u.email || '') + '</div>' +
-          '<div class="um-meta">Joined: ' + joined + (u.whatsapp ? ' • WA: ' + escapeHtml(u.whatsapp) : '') + (isPartner ? ' • Partner Bal: ₹' + partnerBal : '') + '</div>' +
+          '<div class="um-meta">Joined: ' + joined + (u.whatsapp ? ' • WA: ' + escapeHtml(u.whatsapp) : '') + (isPartner ? ' • Code: ' + escapeHtml(u.partnerCode || '—') + ' • Bal: ₹' + partnerBal : '') + '</div>' +
           '<div class="um-meta">Refer Code: ' + escapeHtml(u.referCode || '—') + ' • Refer Bal: ₹' + referBal + '</div>' +
         '</div>' +
         '<div class="um-balance">₹' + bal + '</div>' +
@@ -86,7 +86,18 @@ document.getElementById('usersList').addEventListener('click', async function(e)
     if (!confirm((isCurrentlyPartner ? 'Remove' : 'Make') + ' ' + email + ' as Partner?')) return;
 
     try{
-      await updateDoc(doc(db, 'users', uid), { isPartner: !isCurrentlyPartner });
+      const updates = { isPartner: !isCurrentlyPartner };
+
+      if (!isCurrentlyPartner){
+        // Partner banaya jaa raha hai — agar code pehle se nahi hai to abhi generate karo
+        const userSnap = await getDoc(doc(db, 'users', uid));
+        const existingCode = userSnap.exists() ? userSnap.data().partnerCode : null;
+        if (!existingCode){
+          updates.partnerCode = await assignUniquePartnerCode(uid);
+        }
+      }
+
+      await updateDoc(doc(db, 'users', uid), updates);
       await logAdminAction(
         isCurrentlyPartner ? 'partner_removed' : 'partner_added',
         isCurrentlyPartner ? ('❌ Removed partner status from ' + email) : ('🤝 Made ' + email + ' a Partner')
