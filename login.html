@@ -590,7 +590,7 @@ button{ font-family:inherit; }
   import { signupWithEmail, loginWithEmail, loginWithGoogle, watchAuthState, resetPassword } from './js/auth.js';
 
   let mode = 'login';
-  const referredBy = new URLSearchParams(window.location.search).get('ref');
+  const partnerCode = new URLSearchParams(window.location.search).get('pc');
   const referCode = new URLSearchParams(window.location.search).get('rc');
 
   window.switchTab = function(newMode){
@@ -659,7 +659,7 @@ button{ font-family:inherit; }
           return;
         }
 
-        await signupWithEmail(email, password, name, whatsapp, referredBy, referCode);
+        await signupWithEmail(email, password, name, whatsapp, partnerCode, referCode);
       }
       window.location.href = 'index.html';
     } catch(err){
@@ -672,7 +672,7 @@ button{ font-family:inherit; }
     errEl.style.color = '';
     errEl.textContent = '';
     try{
-      await loginWithGoogle(referredBy, referCode);
+      await loginWithGoogle(partnerCode, referCode);
       window.location.href = 'index.html';
     } catch(err){
       errEl.textContent = friendlyAuthError(err);
@@ -703,7 +703,7 @@ button{ font-family:inherit; }
   });
 
   // Referral link se aaye hain to seedha Sign Up tab khol do
-  if (referredBy || referCode){
+  if (partnerCode || referCode){
     switchTab('signup');
     const banner = document.getElementById('referralBanner');
     banner.textContent = '🎉 Aap ek Partner ke referral se aaye hain!';
