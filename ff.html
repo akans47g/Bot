@@ -400,12 +400,6 @@ button{ font-family:inherit; }
 }
 .ff-banner-wrap{ position:relative; }
 .ff-banner{ width:100%; height:170px; object-fit:cover; display:block; background:var(--bg); }
-.ff-badge{
-  position:absolute; top:12px; left:12px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff; font-size:11px; font-weight:800;
-  padding:5px 12px; border-radius:20px;
-}
 
 .ff-body{ padding:16px; }
 .ff-title{ font-size:17px; font-weight:800; color:var(--ink); margin-bottom:8px; }
@@ -413,6 +407,13 @@ button{ font-family:inherit; }
 .ff-price-row{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
 .ff-price{ font-size:22px; font-weight:800; color:var(--accent); }
 .ff-price-sub{ font-size:11.5px; color:var(--sub); font-weight:600; }
+.ff-badge{
+  margin-left:auto;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff; font-size:11px; font-weight:800;
+  padding:5px 12px; border-radius:20px;
+  white-space:nowrap;
+}
 
 .ff-pills{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:12px; }
 .ff-pill{
@@ -568,11 +569,10 @@ button{ font-family:inherit; }
   <div class="ff-card">
     <div class="ff-banner-wrap">
       <img src="image/f1.jpg" alt="1 Day Plan" class="ff-banner">
-      <span class="ff-badge">🔥 Quick Trial</span>
     </div>
     <div class="ff-body">
       <div class="ff-title">1 Day Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹25</span><span class="ff-price-sub">/ 1 day</span></div>
+      <div class="ff-price-row"><span class="ff-price">₹25</span><span class="ff-price-sub">/ 1 day</span><span class="ff-badge">🔥 Quick Trial</span></div>
       <div class="ff-pills">
         <span class="ff-pill">📅 1 Day</span>
         <span class="ff-pill">📦 220 Total</span>
@@ -595,11 +595,10 @@ button{ font-family:inherit; }
   <div class="ff-card">
     <div class="ff-banner-wrap">
       <img src="image/f2.jpg" alt="5 Days Plan" class="ff-banner">
-      <span class="ff-badge">⭐ Popular</span>
     </div>
     <div class="ff-body">
       <div class="ff-title">5 Days Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹99</span><span class="ff-price-sub">/ 5 days</span></div>
+      <div class="ff-price-row"><span class="ff-price">₹99</span><span class="ff-price-sub">/ 5 days</span><span class="ff-badge">⭐ Popular</span></div>
       <div class="ff-pills">
         <span class="ff-pill">📅 5 Days</span>
         <span class="ff-pill">📦 1100 Total</span>
@@ -622,11 +621,10 @@ button{ font-family:inherit; }
   <div class="ff-card">
     <div class="ff-banner-wrap">
       <img src="image/f3.jpg" alt="15 Days Plan" class="ff-banner">
-      <span class="ff-badge">💎 Best Value</span>
     </div>
     <div class="ff-body">
       <div class="ff-title">15 Days Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹219</span><span class="ff-price-sub">/ 15 days</span></div>
+      <div class="ff-price-row"><span class="ff-price">₹219</span><span class="ff-price-sub">/ 15 days</span><span class="ff-badge">💎 Best Value</span></div>
       <div class="ff-pills">
         <span class="ff-pill">📅 15 Days</span>
         <span class="ff-pill">📦 3300 Total</span>
@@ -649,11 +647,10 @@ button{ font-family:inherit; }
   <div class="ff-card">
     <div class="ff-banner-wrap">
       <img src="image/f4.jpg" alt="30 Days Plan" class="ff-banner">
-      <span class="ff-badge">👑 Ultimate</span>
     </div>
     <div class="ff-body">
       <div class="ff-title">30 Days Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹399</span><span class="ff-price-sub">/ 30 days</span></div>
+      <div class="ff-price-row"><span class="ff-price">₹399</span><span class="ff-price-sub">/ 30 days</span><span class="ff-badge">👑 Ultimate</span></div>
       <div class="ff-pills">
         <span class="ff-pill">📅 30 Days</span>
         <span class="ff-pill">📦 6600 Total</span>
