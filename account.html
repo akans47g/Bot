@@ -72,6 +72,15 @@ button{ font-family:inherit; }
   padding:14px 16px;
   margin:6px 0 20px;
 }
+.header-status{
+  display:flex; align-items:center; gap:6px; flex-shrink:0;
+  font-size:11.5px; font-weight:700; color:var(--success);
+}
+.header-status .status-dot{
+  width:8px; height:8px; border-radius:50%; background:var(--success);
+  display:inline-block;
+}
+.header-text{ flex:1; text-align:center; }
 .header-text h3{
   font-size:17px;
   font-weight:800;
@@ -368,28 +377,51 @@ button{ font-family:inherit; }
    (style.css ke variables/fonts use karta hai)
 ================================================================= */
 
-.ac-profile-card{ text-align:center; margin:10px 0 16px; }
-.ac-avatar{
-  width:64px; height:64px; border-radius:50%;
+.ac-profile-card{
+  display:flex; align-items:center; gap:14px;
   background:linear-gradient(135deg,var(--brand),var(--brand-2));
-  color:#fff; font-size:26px; font-weight:800;
-  display:flex; align-items:center; justify-content:center;
-  margin:0 auto 10px;
+  border-radius:var(--radius);
+  padding:16px;
+  margin:10px 0 16px;
+  box-shadow:0 8px 22px rgba(79,47,206,.28);
 }
-.ac-profile-card h3{ font-size:17px; font-weight:800; }
-.ac-profile-card p{ font-size:13px; color:var(--sub); margin-top:2px; }
+.ac-avatar{
+  width:56px; height:56px; border-radius:50%;
+  background:rgba(255,255,255,.18);
+  border:2px solid rgba(255,255,255,.55);
+  color:#fff; font-size:22px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.ac-profile-info{ flex:1; min-width:0; text-align:left; }
+.ac-profile-info h3{ font-size:16px; font-weight:800; color:#fff; margin-bottom:2px; }
+.ac-profile-info p{ font-size:12.5px; color:rgba(255,255,255,.82); margin:0; }
+.ac-edit-btn{
+  width:38px; height:38px; border-radius:12px; flex-shrink:0;
+  border:none; background:rgba(255,255,255,.22);
+  color:#fff; font-size:16px; cursor:pointer; font-family:inherit;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .15s ease, background .15s ease;
+}
+.ac-edit-btn:active{ transform:scale(.9); background:rgba(255,255,255,.32); }
 
 .ac-card{
   background:var(--surface);
   border:1px solid var(--line);
   border-radius:var(--radius);
-  padding:16px;
+  padding:8px 16px;
   margin-bottom:14px;
   box-shadow:0 2px 10px rgba(79,47,206,.06);
+}
+.ac-section-label{
+  font-size:11.5px; font-weight:700; letter-spacing:.03em;
+  text-transform:uppercase; color:var(--sub);
+  margin:10px 2px 4px;
 }
 .ac-balance-card{
   display:flex; align-items:center; justify-content:space-between;
   background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  padding:16px;
 }
 .ac-label{ font-size:12px; color:var(--sub); margin-bottom:4px; }
 .ac-balance{ font-size:26px; font-weight:800; color:var(--brand); }
@@ -401,16 +433,41 @@ button{ font-family:inherit; }
 .ac-addmoney-btn:active{ transform:scale(.97); }
 
 .ac-menu-item{
-  width:100%; display:flex; justify-content:space-between; align-items:center;
+  width:100%; display:flex; align-items:center; gap:12px;
   border:none; background:none; padding:12px 2px;
   border-bottom:1px solid var(--line);
-  font-size:14.5px; font-weight:600; color:var(--ink);
   cursor:pointer; font-family:inherit; text-align:left;
+  transition:background .15s ease, transform .1s ease;
+  border-radius:10px;
 }
 .ac-menu-item:last-child{ border-bottom:none; }
-.ac-arrow{ color:var(--sub); }
+.ac-menu-icon{
+  width:40px; height:40px; border-radius:12px; flex-shrink:0;
+  background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px;
+  transition:background .15s ease;
+}
+.ac-menu-text{ flex:1; min-width:0; }
+.ac-menu-title{ display:block; font-size:14.5px; font-weight:700; color:var(--ink); }
+.ac-menu-sub{ display:block; font-size:11.5px; color:var(--sub); margin-top:1px; }
+.ac-arrow{ color:var(--sub); font-size:17px; flex-shrink:0; }
+
+/* Unique tap state — same idea as the FF cards: something visibly changes on click */
+.ac-menu-item:active{
+  background:var(--bg);
+  transform:scale(.98);
+}
+.ac-menu-item:active .ac-menu-icon{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+}
 
 .ac-whatsapp-value{ font-size:14.5px; font-weight:600; color:var(--ink); }
+
+.ac-footer-note{
+  text-align:center; font-size:11px; color:var(--sub);
+  margin:0 0 16px;
+}
 
 .ac-logout-btn{
   width:100%; border:1.5px solid #F6C9CB; background:#FDEEEE;
@@ -421,6 +478,7 @@ button{ font-family:inherit; }
 .ac-logout-btn:active{ transform:scale(.98); }
 
 .ac-menu-item:focus-visible,
+.ac-edit-btn:focus-visible,
 .ac-addmoney-btn:focus-visible,
 .ac-logout-btn:focus-visible{
   outline:2px solid var(--brand); outline-offset:2px;
@@ -435,6 +493,7 @@ button{ font-family:inherit; }
 <div class="page-wrap">
 
   <div class="header">
+    <div class="header-status"><span class="status-dot"></span>Active</div>
     <div class="header-text">
       <h3>AKANS Social Store</h3>
       <p class="header-tag">Bundles • Deals • Fast Delivery</p>
@@ -444,8 +503,11 @@ button{ font-family:inherit; }
 
   <div class="ac-profile-card">
     <div class="ac-avatar" id="acAvatar">A</div>
-    <h3 id="acName">—</h3>
-    <p id="acEmail">—</p>
+    <div class="ac-profile-info">
+      <h3 id="acName">—</h3>
+      <p id="acEmail">—</p>
+    </div>
+    <button type="button" class="ac-edit-btn" aria-label="Edit profile">✏️</button>
   </div>
 
   <div class="ac-card ac-balance-card">
@@ -457,32 +519,41 @@ button{ font-family:inherit; }
   </div>
 
   <div class="ac-card">
-     
+    <p class="ac-section-label">Account</p>
     <button type="button" class="ac-menu-item" onclick="location.href='myorder.html'">
-      <span>📦 My Orders</span><span class="ac-arrow">→</span>
+      <span class="ac-menu-icon">📦</span>
+      <span class="ac-menu-text"><span class="ac-menu-title">My Orders</span><span class="ac-menu-sub">Track your orders</span></span>
+      <span class="ac-arrow">›</span>
     </button>
-     
     <button type="button" class="ac-menu-item" onclick="location.href='addmoney.html'">
-      <span>➕ Add Money</span><span class="ac-arrow">→</span>
+      <span class="ac-menu-icon">➕</span>
+      <span class="ac-menu-text"><span class="ac-menu-title">Add Money</span><span class="ac-menu-sub">Top up your wallet</span></span>
+      <span class="ac-arrow">›</span>
     </button>
-     
     <button type="button" class="ac-menu-item" onclick="location.href='refer.html'">
-      <span>🎯 Refer &amp; Earn</span><span class="ac-arrow">→</span>
+      <span class="ac-menu-icon">🎯</span>
+      <span class="ac-menu-text"><span class="ac-menu-title">Refer &amp; Earn</span><span class="ac-menu-sub">Invite friends, earn rewards</span></span>
+      <span class="ac-arrow">›</span>
     </button>
-     
     <button type="button" class="ac-menu-item" id="acPartnerLink" onclick="location.href='p.html'" style="display:none">
-      <span>🤝 Partner Program</span><span class="ac-arrow">→</span>
+      <span class="ac-menu-icon">🤝</span>
+      <span class="ac-menu-text"><span class="ac-menu-title">Partner Program</span><span class="ac-menu-sub">Grow with AKANS</span></span>
+      <span class="ac-arrow">›</span>
     </button>
+  </div>
 
-     
+  <div class="ac-card">
+    <p class="ac-section-label">General</p>
     <button type="button" class="ac-menu-item" id="acInstallBtn">
-      <span>📲 Install App</span><span class="ac-arrow">→</span>
+      <span class="ac-menu-icon">📲</span>
+      <span class="ac-menu-text"><span class="ac-menu-title">Install App</span><span class="ac-menu-sub">Add to your home screen</span></span>
+      <span class="ac-arrow">›</span>
     </button>
-
-     <button type="button" class="ac-menu-item" onclick="location.href='about.html'">
-      <span>❕ about Information</span><span class="ac-arrow">→</span>
-     </button>
-     
+    <button type="button" class="ac-menu-item" onclick="location.href='about.html'">
+      <span class="ac-menu-icon">❕</span>
+      <span class="ac-menu-text"><span class="ac-menu-title">About Information</span><span class="ac-menu-sub">Learn more about AKANS</span></span>
+      <span class="ac-arrow">›</span>
+    </button>
   </div>
 
   <div class="ac-card" id="acWhatsappCard" style="display:none">
@@ -491,6 +562,8 @@ button{ font-family:inherit; }
   </div>
 
   <button type="button" class="ac-logout-btn" id="acLogoutBtn">🚪 Logout</button>
+
+  <p class="ac-footer-note">AKANS Social Store · v1.0</p>
 
   <div class="trust-card">
     <div class="trust-grid">
