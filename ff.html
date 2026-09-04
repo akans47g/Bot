@@ -398,8 +398,12 @@ button{ font-family:inherit; }
   overflow:hidden; margin-bottom:16px;
   box-shadow:0 2px 10px rgba(79,47,206,.06);
 }
+.ff-card-highlight{
+  border:2px solid var(--accent);
+  box-shadow:0 6px 22px rgba(255,107,61,.28);
+}
 .ff-banner-wrap{ position:relative; }
-.ff-banner{ width:100%; height:170px; object-fit:cover; display:block; background:var(--bg); }
+.ff-banner{ width:100%; height:170px; object-fit:cover; display:block; background:linear-gradient(135deg,var(--bg),var(--line)); }
 
 .ff-body{ padding:16px; }
 .ff-title{ font-size:17px; font-weight:800; color:var(--ink); margin-bottom:8px; }
@@ -407,6 +411,13 @@ button{ font-family:inherit; }
 .ff-price-row{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
 .ff-price{ font-size:22px; font-weight:800; color:var(--accent); }
 .ff-price-sub{ font-size:11.5px; color:var(--sub); font-weight:600; }
+.ff-save{
+  background:#E8FBF3;
+  color:var(--success);
+  font-size:10.5px; font-weight:800;
+  padding:3px 8px; border-radius:12px;
+  white-space:nowrap;
+}
 .ff-badge{
   margin-left:auto;
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
@@ -421,6 +432,14 @@ button{ font-family:inherit; }
   color:var(--ink); font-size:11px; font-weight:700;
   padding:5px 11px; border-radius:20px;
 }
+.ff-urgent{
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--accent);
+  margin:0 0 12px;
+  animation:urgentPulse 2.2s ease-in-out infinite;
+}
+
 
 .ff-details-btn{
   width:100%; display:flex; align-items:center; justify-content:center; gap:6px;
@@ -454,7 +473,39 @@ button{ font-family:inherit; }
 }
 .ff-buy-btn:active{ transform:scale(.98); }
 
-/* ---------------- FF CONFIRM MODAL ---------------- */
+/* ---------------- STICKY BUY BAR ---------------- */
+.sticky-buybar{
+  position:fixed;
+  left:0; right:0;
+  bottom:var(--stickybar-bottom, 58px);
+  z-index:480;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:var(--surface);
+  border-top:1px solid var(--line);
+  box-shadow:0 -6px 18px rgba(15,15,23,.1);
+  padding:10px 14px;
+  transform:translateY(120%);
+  transition:transform .25s ease;
+}
+.sticky-buybar.show{ transform:translateY(0); }
+.sticky-buybar-info{ display:flex; flex-direction:column; min-width:0; }
+.sticky-buybar-title{ font-size:11px; font-weight:700; color:var(--sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sticky-buybar-price{ font-size:18px; font-weight:800; color:var(--accent); }
+.sticky-buybar-btn{
+  flex-shrink:0;
+  border:none; cursor:pointer; font-family:inherit;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff; font-size:14px; font-weight:800;
+  padding:11px 20px; border-radius:12px;
+  display:flex; align-items:center; gap:6px;
+  box-shadow:0 6px 16px rgba(255,107,61,.35);
+}
+.sticky-buybar-btn:active{ transform:scale(.98); }
+@media (prefers-reduced-motion: reduce){
+  .sticky-buybar{ transition:none; }
+}
+
+
 .ff-modal-overlay{
   position:fixed; inset:0; background:rgba(15,15,23,.55);
   display:none; align-items:flex-end; justify-content:center;
@@ -566,7 +617,7 @@ button{ font-family:inherit; }
   </div>
 
   <!-- PLAN 1 -->
-  <div class="ff-card">
+  <div class="ff-card" data-plan="ff1">
     <div class="ff-banner-wrap">
       <img src="image/f1.jpg" alt="1 Day Plan" class="ff-banner">
     </div>
@@ -578,6 +629,7 @@ button{ font-family:inherit; }
         <span class="ff-pill">📦 220 Total</span>
         <span class="ff-pill">⚡ 220/day</span>
       </div>
+      <p class="ff-urgent">🔥 18 logo ne aaj ye plan liya</p>
       <button type="button" class="ff-details-btn" data-target="ffDetails1">Details <span class="chev">▾</span></button>
       <div class="ff-details-box" id="ffDetails1">
         <div class="ff-detail-item">✔ 220 content per day</div>
@@ -592,18 +644,19 @@ button{ font-family:inherit; }
   </div>
 
   <!-- PLAN 2 -->
-  <div class="ff-card">
+  <div class="ff-card ff-card-highlight" data-plan="ff2">
     <div class="ff-banner-wrap">
       <img src="image/f2.jpg" alt="5 Days Plan" class="ff-banner">
     </div>
     <div class="ff-body">
       <div class="ff-title">5 Days Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹99</span><span class="ff-price-sub">/ 5 days</span><span class="ff-badge">⭐ Popular</span></div>
+      <div class="ff-price-row"><span class="ff-price">₹99</span><span class="ff-price-sub">/ 5 days</span><span class="ff-save">Save 21%</span><span class="ff-badge">⭐ Popular</span></div>
       <div class="ff-pills">
         <span class="ff-pill">📅 5 Days</span>
         <span class="ff-pill">📦 1100 Total</span>
         <span class="ff-pill">⚡ 220/day</span>
       </div>
+      <p class="ff-urgent">🔥 41 logo ne aaj ye plan liya</p>
       <button type="button" class="ff-details-btn" data-target="ffDetails2">Details <span class="chev">▾</span></button>
       <div class="ff-details-box" id="ffDetails2">
         <div class="ff-detail-item">✔ 220 content per day</div>
@@ -618,18 +671,19 @@ button{ font-family:inherit; }
   </div>
 
   <!-- PLAN 3 -->
-  <div class="ff-card">
+  <div class="ff-card" data-plan="ff3">
     <div class="ff-banner-wrap">
       <img src="image/f3.jpg" alt="15 Days Plan" class="ff-banner">
     </div>
     <div class="ff-body">
       <div class="ff-title">15 Days Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹219</span><span class="ff-price-sub">/ 15 days</span><span class="ff-badge">💎 Best Value</span></div>
+      <div class="ff-price-row"><span class="ff-price">₹219</span><span class="ff-price-sub">/ 15 days</span><span class="ff-save">Save 42%</span><span class="ff-badge">💎 Best Value</span></div>
       <div class="ff-pills">
         <span class="ff-pill">📅 15 Days</span>
         <span class="ff-pill">📦 3300 Total</span>
         <span class="ff-pill">⚡ 220/day</span>
       </div>
+      <p class="ff-urgent">🔥 27 logo ne aaj ye plan liya</p>
       <button type="button" class="ff-details-btn" data-target="ffDetails3">Details <span class="chev">▾</span></button>
       <div class="ff-details-box" id="ffDetails3">
         <div class="ff-detail-item">✔ 220 content per day</div>
@@ -644,18 +698,19 @@ button{ font-family:inherit; }
   </div>
 
   <!-- PLAN 4 -->
-  <div class="ff-card">
+  <div class="ff-card" data-plan="ff4">
     <div class="ff-banner-wrap">
       <img src="image/f4.jpg" alt="30 Days Plan" class="ff-banner">
     </div>
     <div class="ff-body">
       <div class="ff-title">30 Days Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹399</span><span class="ff-price-sub">/ 30 days</span><span class="ff-badge">👑 Ultimate</span></div>
+      <div class="ff-price-row"><span class="ff-price">₹399</span><span class="ff-price-sub">/ 30 days</span><span class="ff-save">Save 47%</span><span class="ff-badge">👑 Ultimate</span></div>
       <div class="ff-pills">
         <span class="ff-pill">📅 30 Days</span>
         <span class="ff-pill">📦 6600 Total</span>
         <span class="ff-pill">⚡ 220/day</span>
       </div>
+      <p class="ff-urgent">🔥 15 logo ne aaj ye plan liya</p>
       <button type="button" class="ff-details-btn" data-target="ffDetails4">Details <span class="chev">▾</span></button>
       <div class="ff-details-box" id="ffDetails4">
         <div class="ff-detail-item">✔ 220 content per day</div>
@@ -709,6 +764,16 @@ button{ font-family:inherit; }
   </div>
 </div>
 
+<div class="sticky-buybar" id="stickyBuyBar">
+  <div class="sticky-buybar-info">
+    <span class="sticky-buybar-title" id="stickyBuyTitle">Plan</span>
+    <span class="sticky-buybar-price" id="stickyBuyPrice">₹0</span>
+  </div>
+  <button type="button" class="sticky-buybar-btn" id="stickyBuyBtn">
+    🛒 Buy Now
+  </button>
+</div>
+
 <div class="ff-toast" id="ffToast"></div>
 
 <nav class="bottom-nav">
@@ -747,12 +812,67 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let lastScroll = 0;
   const nav = document.querySelector(".bottom-nav");
+  let navHidden = false;
   if (nav) {
     window.addEventListener("scroll", () => {
       const cur = window.pageYOffset;
-      nav.classList.toggle("hide", cur > lastScroll && cur > 80);
+      navHidden = cur > lastScroll && cur > 80;
+      nav.classList.toggle("hide", navHidden);
       lastScroll = cur;
+      syncBar();
     });
+  }
+
+  // ---- Sticky buy bar: sits above the nav, follows whichever plan is on screen ----
+  const bar = document.getElementById("stickyBuyBar");
+  const barTitle = document.getElementById("stickyBuyTitle");
+  const barPrice = document.getElementById("stickyBuyPrice");
+  const barBtn = document.getElementById("stickyBuyBtn");
+  const cards = document.querySelectorAll(".ff-card[data-plan]");
+  let barInZone = false;
+  let activePlan = null;
+
+  function setBarOffset() {
+    if (nav && bar) {
+      bar.style.setProperty("--stickybar-bottom", nav.getBoundingClientRect().height + "px");
+    }
+  }
+  function syncBar() {
+    if (!bar) return;
+    bar.classList.toggle("show", barInZone && !navHidden);
+  }
+  if (bar && cards.length) {
+    setBarOffset();
+    window.addEventListener("resize", setBarOffset);
+
+    barBtn.addEventListener("click", () => {
+      if (activePlan) openFFModal(activePlan);
+    });
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const card = entry.target;
+          const title = card.querySelector(".ff-title");
+          const price = card.querySelector(".ff-price");
+          activePlan = card.dataset.plan;
+          if (title) barTitle.textContent = title.textContent;
+          if (price) barPrice.textContent = price.textContent;
+          barInZone = true;
+          syncBar();
+        }
+      });
+      const anyVisible = Array.from(cards).some((c) => {
+        const r = c.getBoundingClientRect();
+        return r.top < window.innerHeight * 0.6 && r.bottom > window.innerHeight * 0.4;
+      });
+      if (!anyVisible) {
+        barInZone = false;
+        syncBar();
+      }
+    }, { rootMargin: "-40% 0px -40% 0px", threshold: 0 });
+
+    cards.forEach((card) => io.observe(card));
   }
 });
 </script>
