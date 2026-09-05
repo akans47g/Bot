@@ -641,7 +641,7 @@ button{ font-family:inherit; }
     <label class="am-field-label" for="amConfirmAmount">Amount Paid (₹)</label>
     <div class="am-input-wrap">
       <span class="am-input-prefix">₹</span>
-      <input type="number" id="amConfirmAmount" placeholder="Amount select karne ke baad fill hoga" readonly>
+      <input type="number" id="amConfirmAmount" placeholder="Amount select karne ke baad fill hoga" inputmode="numeric">
     </div>
 
     <label class="am-field-label" for="amUtr">UTR / Transaction ID</label>
@@ -696,5 +696,20 @@ button{ font-family:inherit; }
 </nav>
 
 <script type="module" src="js/addmoney.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const customInput = document.getElementById("amCustomAmount");
+  const confirmInput = document.getElementById("amConfirmAmount");
+  if (customInput && confirmInput) {
+    customInput.addEventListener("input", () => {
+      confirmInput.value = customInput.value;
+    });
+    confirmInput.addEventListener("input", () => {
+      customInput.value = confirmInput.value;
+      customInput.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  }
+});
+</script>
 </body>
 </html>
