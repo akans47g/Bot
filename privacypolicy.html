@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Privacy Policy | AKANS Social Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* =================================================================
+   AKANS STORE — MAIN STYLESHEET (style.css)
+================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --ink:#181428;
+  --sub:#6E6B85;
+  --brand:#4F2FCE;
+  --brand-2:#7B4FF0;
+  --accent:#FF6B3D;
+  --accent-2:#FFA751;
+  --success:#16C784;
+  --bg:#F6F4FC;
+  --surface:#FFFFFF;
+  --line:#ECEAF5;
+  --radius:18px;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:80px;
+}
+
+h1,h2,h3,h4{
+  font-family:'Baloo 2','Inter',sans-serif;
+  margin:0 0 4px;
+  color:var(--ink);
+}
+a{ color:inherit; }
+img{ max-width:100%; display:block; }
+button{ font-family:inherit; }
+
+.page-wrap{
+  max-width:480px;
+  margin:0 auto;
+  padding:16px 16px 4px;
+}
+
+/* ---------------- BACK LINK ---------------- */
+.back-link{
+  display:inline-flex; align-items:center; gap:6px;
+  color:var(--brand); font-size:13px; font-weight:700;
+  text-decoration:none; margin:6px 0 4px;
+}
+
+/* ---------------- HEADER ---------------- */
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px 16px;
+  margin:6px 0 20px;
+}
+.header-status{
+  display:flex; align-items:center; gap:6px; flex-shrink:0;
+  font-size:11.5px; font-weight:700; color:var(--success);
+}
+.header-status .status-dot{
+  width:8px; height:8px; border-radius:50%; background:var(--success);
+  display:inline-block;
+}
+.header-text{ flex:1; text-align:center; }
+.header-text h3{
+  font-size:17px;
+  font-weight:800;
+  color:var(--brand);
+  margin-bottom:2px;
+}
+.header-tag{
+  font-size:11px;
+  color:var(--sub);
+  font-weight:600;
+  margin:0;
+}
+.header img{
+  height:42px;
+  width:42px;
+  border-radius:12px;
+  object-fit:cover;
+  background:var(--surface);
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  flex-shrink:0;
+}
+
+/* ---------------- POLICY HERO ---------------- */
+.policy-hero{
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  border-radius:var(--radius);
+  padding:24px 20px;
+  text-align:center;
+  color:#fff;
+  margin:0 0 20px;
+  box-shadow:0 10px 26px rgba(79,47,206,.28);
+}
+.policy-hero-icon{
+  width:56px; height:56px; border-radius:50%;
+  background:rgba(255,255,255,.18);
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px; margin:0 auto 10px;
+}
+.policy-hero h2{ color:#fff; font-size:19px; margin-bottom:4px; }
+.policy-hero p{ color:rgba(255,255,255,.85); font-size:12.5px; margin:0; }
+
+/* ---------------- POLICY SECTIONS ---------------- */
+.policy-section{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:14px;
+  box-shadow:0 2px 10px rgba(79,47,206,.06);
+}
+.policy-section-title{
+  display:flex; align-items:center; gap:8px;
+  font-size:15px; font-weight:800; color:var(--ink);
+  margin-bottom:8px;
+}
+.policy-icon{
+  width:32px; height:32px; border-radius:10px; flex-shrink:0;
+  background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px;
+}
+.policy-section p{
+  font-size:13px; color:var(--sub); line-height:1.65; margin:0 0 8px;
+}
+.policy-section p:last-child{ margin-bottom:0; }
+.policy-section ul{ margin:6px 0 8px; padding-left:20px; }
+.policy-section li{ font-size:13px; color:var(--sub); line-height:1.65; margin-bottom:5px; }
+.policy-section li:last-child{ margin-bottom:0; }
+.policy-section b{ color:var(--ink); }
+
+.policy-contact-btn{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;
+  font-size:12.5px;
+  font-weight:700;
+  padding:9px 18px;
+  border-radius:20px;
+  text-decoration:none;
+  margin-top:4px;
+}
+
+.policy-updated{
+  text-align:center; font-size:11.5px; color:var(--sub);
+  margin:0 0 20px;
+}
+
+/* ---------------- BOTTOM NAV ---------------- */
+.bottom-nav{
+  position:fixed;
+  left:0; right:0; bottom:0;
+  display:flex;
+  justify-content:space-around;
+  background:var(--surface);
+  border-top:1px solid var(--line);
+  padding:8px 0 max(8px, env(safe-area-inset-bottom));
+  z-index:500;
+  transition:transform .25s ease;
+}
+.bottom-nav.hide{ transform:translateY(100%); }
+.nav-item{
+  background:none;
+  border:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  color:var(--sub);
+  font-size:10.5px;
+  font-weight:600;
+  padding:4px 10px;
+  cursor:pointer;
+}
+.nav-item::before{ font-size:19px; }
+.nav-item[data-page="index.html"]::before{ content:"🏠"; }
+.nav-item[data-page="ff.html"]::before{ content:"🎮"; }
+.nav-item[data-page="other.html"]::before{ content:"🗂️"; }
+.nav-item[data-page="account.html"]::before{ content:"👤"; }
+.nav-item.active{ color:var(--accent); }
+
+/* ---------------- MOTION & ACCESSIBILITY ---------------- */
+.policy-contact-btn:focus-visible,
+.nav-item:focus-visible,
+.back-link:focus-visible{
+  outline:2px solid var(--brand);
+  outline-offset:2px;
+}
+@media (prefers-reduced-motion: reduce){
+  .bottom-nav{ transition:none; }
+}
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4F2FCE">
+<script src="js/pwa-install.js"></script>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <a class="back-link" href="account.html">← Back to Account</a>
+
+  <div class="header">
+    <div class="header-status"><span class="status-dot"></span>Active</div>
+    <div class="header-text">
+      <h3>AKANS Social Store</h3>
+      <p class="header-tag">Bundles • Deals • Fast Delivery</p>
+    </div>
+    <img src="image/logo.png" alt="AKANS Logo">
+  </div>
+
+  <div class="policy-hero">
+    <div class="policy-hero-icon">🔒</div>
+    <h2>Privacy Policy</h2>
+    <p>How we collect, use and protect your information</p>
+  </div>
+
+  <div class="policy-section">
+    <div class="policy-section-title"><span class="policy-icon">📋</span>Information We Collect</div>
+    <p>When you use AKANS Social Store, we may collect:</p>
+    <ul>
+      <li><b>Account details</b> — your name and email address (via Google sign-in)</li>
+      <li><b>WhatsApp number</b> — if you provide one for order updates</li>
+      <li><b>Order details</b> — the service purchased and the destination link or in-game UID you submit</li>
+      <li><b>Wallet & transaction history</b> — your balance and Add Money records</li>
+      <li><b>Referral data</b> — if you use Refer & Earn or the Partner Program</li>
+    </ul>
+  </div>
+
+  <div class="policy-section">
+    <div class="policy-section-title"><span class="policy-icon">⚙️</span>How We Use Your Information</div>
+    <ul>
+      <li>To process, deliver and track your orders</li>
+      <li>To manage your wallet balance and transactions</li>
+      <li>To track referrals and Partner Program earnings</li>
+      <li>To contact you about your orders or account</li>
+      <li>To improve and secure our services</li>
+    </ul>
+  </div>
+
+  <div class="policy-section">
+    <div class="policy-section-title"><span class="policy-icon">🔗</span>Data Sharing & Third Parties</div>
+    <p>We do not sell your personal information. We may share limited data with:</p>
+    <ul>
+      <li><b>Google Firebase</b> — for secure sign-in and data storage</li>
+      <li><b>Payment gateways</b> — to process Add Money / wallet top-ups</li>
+      <li><b>Telegram / WhatsApp</b> — only if you message us directly; those platforms have their own privacy policies</li>
+    </ul>
+  </div>
+
+  <div class="policy-section">
+    <div class="policy-section-title"><span class="policy-icon">🛡️</span>Data Security</div>
+    <p>We use reasonable technical measures, including secure storage and encrypted connections, to protect your data. Access to account data is limited to authorized personnel only.</p>
+  </div>
+
+  <div class="policy-section">
+    <div class="policy-section-title"><span class="policy-icon">🙋</span>Your Rights</div>
+    <p>You can request to view, correct, or delete your account data at any time by reaching out through Help & Support.</p>
+  </div>
+
+  <div class="policy-section">
+    <div class="policy-section-title"><span class="policy-icon">🍪</span>Cookies & Local Storage</div>
+    <p>Our app may use local storage on your device to remember your session and app preferences (e.g. for the installable app experience). We do not use third-party advertising cookies.</p>
+  </div>
+
+  <div class="policy-section">
+    <div class="policy-section-title"><span class="policy-icon">🔞</span>Age Restriction</div>
+    <p>Our services are not intended for children under 13. If you are under 18, please use our services only with the consent of a parent or guardian.</p>
+  </div>
+
+  <div class="policy-section">
+    <div class="policy-section-title"><span class="policy-icon">📝</span>Changes to This Policy</div>
+    <p>We may update this policy from time to time. Continued use of our services after changes means you accept the updated policy.</p>
+  </div>
+
+  <div class="policy-section">
+    <div class="policy-section-title"><span class="policy-icon">💬</span>Contact Us</div>
+    <p>For any privacy-related questions or data requests, reach out to us:</p>
+    <a class="policy-contact-btn" href="help.html">Go to Help & Support</a>
+  </div>
+
+  <p class="policy-updated">Last updated: September 2026 · AKANS Social Store</p>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-item" data-page="index.html" onclick="location.href='index.html'">
+    <span>Bundles</span>
+  </button>
+  <button class="nav-item" data-page="ff.html" onclick="location.href='ff.html'">
+    <span>Free Fire</span>
+  </button>
+  <button class="nav-item" data-page="other.html" onclick="location.href='other.html'">
+    <span>Other</span>
+  </button>
+  <button class="nav-item" data-page="account.html" onclick="location.href='account.html'">
+    <span>Account</span>
+  </button>
+</nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const currentPage = window.location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll(".nav-item").forEach(btn => {
+    if (btn.dataset.page === currentPage) btn.classList.add("active");
+  });
+
+  let lastScroll = 0;
+  const nav = document.querySelector(".bottom-nav");
+  if (nav) {
+    window.addEventListener("scroll", () => {
+      const cur = window.pageYOffset;
+      nav.classList.toggle("hide", cur > lastScroll && cur > 80);
+      lastScroll = cur;
+    });
+  }
+});
+</script>
+</body>
+</html>
