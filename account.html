@@ -369,6 +369,8 @@ button{ font-family:inherit; }
 @media (prefers-reduced-motion: reduce){
   .urgent{ animation:none; }
   .bottom-nav{ transition:none; }
+  .ac-menu-item.partner-premium{ animation:none; }
+  .ac-menu-item.partner-premium::after{ animation:none; display:none; }
 }
 </style>
 <style>
@@ -462,6 +464,62 @@ button{ font-family:inherit; }
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
 }
 
+/* ---------------- PARTNER PROGRAM — premium/VIP row ---------------- */
+/* Gold, same tier-premium language as the bundle/FF badges elsewhere on the site */
+.ac-menu-item.partner-premium{
+  background:linear-gradient(135deg,#FFD97A,#FFB349);
+  border-radius:14px;
+  padding:14px 12px;
+  margin:6px 0 2px;
+  border-bottom:none;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 6px 18px rgba(255,179,73,.4);
+  animation:partnerGlow 2.4s ease-in-out infinite;
+}
+.ac-menu-item.partner-premium::after{
+  content:"";
+  position:absolute; top:0; left:-60%;
+  width:45%; height:100%;
+  background:linear-gradient(120deg, transparent, rgba(255,255,255,.6), transparent);
+  transform:skewX(-20deg);
+  animation:partnerShine 3s ease-in-out infinite;
+}
+.ac-menu-item.partner-premium .ac-menu-icon{
+  background:rgba(255,255,255,.4);
+}
+.ac-menu-item.partner-premium .ac-menu-title{ color:#5A3600; }
+.ac-menu-item.partner-premium .ac-menu-sub{ color:#7A4300; }
+.ac-menu-item.partner-premium .ac-arrow{ color:#7A4300; }
+.ac-menu-item.partner-premium:active{
+  background:linear-gradient(135deg,#FFC966,#FFA733);
+  transform:scale(.97);
+}
+.ac-menu-item.partner-premium:active .ac-menu-icon{
+  background:rgba(255,255,255,.5);
+}
+.partner-badge{
+  display:inline-block;
+  background:rgba(122,67,0,.16);
+  color:#5A3600;
+  font-size:9px;
+  font-weight:800;
+  padding:2px 7px;
+  border-radius:8px;
+  margin-left:6px;
+  vertical-align:middle;
+  letter-spacing:.02em;
+}
+@keyframes partnerGlow{
+  0%,100%{ box-shadow:0 6px 18px rgba(255,179,73,.4); }
+  50%{ box-shadow:0 6px 26px rgba(255,179,73,.68); }
+}
+@keyframes partnerShine{
+  0%{ left:-60%; }
+  45%{ left:130%; }
+  100%{ left:130%; }
+}
+
 .ac-whatsapp-value{ font-size:14.5px; font-weight:600; color:var(--ink); }
 
 .ac-footer-note{
@@ -535,9 +593,9 @@ button{ font-family:inherit; }
       <span class="ac-menu-text"><span class="ac-menu-title">Refer &amp; Earn</span><span class="ac-menu-sub">Invite friends, earn rewards</span></span>
       <span class="ac-arrow">›</span>
     </button>
-    <button type="button" class="ac-menu-item" id="acPartnerLink" onclick="location.href='p.html'" style="display:none">
+    <button type="button" class="ac-menu-item partner-premium" id="acPartnerLink" onclick="location.href='p.html'" style="display:none">
       <span class="ac-menu-icon">🤝</span>
-      <span class="ac-menu-text"><span class="ac-menu-title">Partner Program</span><span class="ac-menu-sub">Grow with AKANS</span></span>
+      <span class="ac-menu-text"><span class="ac-menu-title">Partner Program <span class="partner-badge">👑 VIP</span></span><span class="ac-menu-sub">Grow with AKANS</span></span>
       <span class="ac-arrow">›</span>
     </button>
   </div>
