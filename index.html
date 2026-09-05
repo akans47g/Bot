@@ -1158,7 +1158,7 @@ function toggleDetails(id) {
         <span class="proof-icon">✈️</span>
         <span>Telegram Channel</span>
       </div>
-      <a href="https://t.me/MV_Suggester/44" class="blue-btn" target="_blank">View</a>
+      <a href="https://t.me/AKANS_AI" class="blue-btn" target="_blank">View</a>
     </div>
 
     <div class="proof-row">
@@ -1166,7 +1166,7 @@ function toggleDetails(id) {
         <span class="proof-icon">💬</span>
         <span>Telegram Contact</span>
       </div>
-      <a href="https://t.me/AKANS_M7" class="blue-btn" target="_blank">View</a>
+      <a href="https://t.me/AKANS_Moin" class="blue-btn" target="_blank">View</a>
     </div>
 
     <div class="proof-row">
@@ -1174,7 +1174,7 @@ function toggleDetails(id) {
         <span class="proof-icon">✅</span>
         <span>Selling Proof</span>
       </div>
-      <a href="https://t.me/c/2221683378/19" class="blue-btn" target="_blank">View</a>
+      <a href="https://t.me/+X8lVU6ZMLZNmMjI1" class="blue-btn" target="_blank">View</a>
     </div>
   </div>
 
@@ -1315,19 +1315,25 @@ function qtyLabel(n){
 
 const MIN_QTY = 50;
 
-// 👉 Pricing formula ek hi jagah hai — abhi seedha linear rate hai.
-//    (Demo-tier wala special rule confirm hote hi, bas isi function
-//    ke andar us logic ko add karna hoga, baaki kahin chhedne ki
-//    zaroorat nahi.)
-function calcPrice(rate, qty){
-  return (rate / 1000) * qty;
+// 👉 Pricing logic yahin hai. Agar product ke "tierPrices" me is
+//    exact quantity (jaise 50, 100, 1000) ka koi custom price set
+//    hai, to wahi use hota hai — warna normal linear rate se
+//    calculate hota hai. Custom-typed quantity (jo in 8 tiers me
+//    nahi hai) hamesha linear rate se hi calculate hoti hai.
+//    Tier prices Admin Panel → Bundles se set/edit ho sakte hain.
+function calcPrice(product, qty){
+  const override = product.tierPrices && product.tierPrices[String(qty)];
+  if (typeof override === 'number' && !isNaN(override)){
+    return override;
+  }
+  return (product.rate / 1000) * qty;
 }
 
 async function openBuyModal(productId){
   const product = window.PRODUCTS && window.PRODUCTS[productId];
   if (!product){ alert('Product data nahi mili — js/products.js check karein.'); return; }
 
-  bmState = { productId, rate: product.rate, qty: 0, price: 0 };
+  bmState = { productId, product, qty: 0, price: 0 };
 
   document.getElementById('bmProductName').textContent = product.name;
   document.getElementById('bmUtr').value = '';
@@ -1355,7 +1361,7 @@ async function openBuyModal(productId){
   const grid = document.getElementById('bmQtyGrid');
   grid.innerHTML = '';
   QTY_TIERS.forEach(qty => {
-    const price = calcPrice(product.rate, qty);
+    const price = calcPrice(product, qty);
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'qty-chip';
@@ -1406,7 +1412,7 @@ function handleCustomQty(){
   errEl.textContent = '';
   document.querySelectorAll('.qty-chip').forEach(c => c.classList.remove('selected'));
 
-  const price = calcPrice(bmState.rate, val);
+  const price = calcPrice(bmState.product, val);
   bmState.qty = val;
   bmState.price = price;
 
