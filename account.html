@@ -371,6 +371,7 @@ button{ font-family:inherit; }
   .bottom-nav{ transition:none; }
   .ac-menu-item.partner-premium{ animation:none; }
   .ac-menu-item.partner-premium::after{ animation:none; display:none; }
+  .ac-menu-item.install-highlight .ac-menu-icon{ animation:none; }
 }
 </style>
 <style>
@@ -525,6 +526,46 @@ button{ font-family:inherit; }
   100%{ left:130%; }
 }
 
+/* ---------------- INSTALL APP — distinct call-to-action row ---------------- */
+.ac-menu-item.install-highlight{
+  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  border-radius:14px;
+  padding:14px 12px;
+  margin:6px 0 2px;
+  border-bottom:none;
+  box-shadow:0 4px 14px rgba(79,47,206,.12);
+}
+.ac-menu-item.install-highlight .ac-menu-icon{
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff;
+  animation:installBounce 1.8s ease-in-out infinite;
+}
+.ac-menu-item.install-highlight .ac-menu-title{ color:var(--brand); }
+.ac-menu-item.install-highlight:active{
+  background:linear-gradient(135deg,#EBE3FF,#FFE9DC);
+  transform:scale(.97);
+}
+.ac-menu-item.install-highlight:active .ac-menu-icon{
+  background:linear-gradient(135deg,var(--brand-2),var(--brand));
+  animation:none;
+}
+.install-badge{
+  display:inline-block;
+  background:rgba(79,47,206,.12);
+  color:var(--brand);
+  font-size:9px;
+  font-weight:800;
+  padding:2px 7px;
+  border-radius:8px;
+  margin-left:6px;
+  vertical-align:middle;
+  letter-spacing:.02em;
+}
+@keyframes installBounce{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-3px); }
+}
+
 .ac-whatsapp-value{ font-size:14.5px; font-weight:600; color:var(--ink); }
 
 .ac-footer-note{
@@ -608,9 +649,14 @@ button{ font-family:inherit; }
 
   <div class="ac-card">
     <p class="ac-section-label">General</p>
-    <button type="button" class="ac-menu-item" id="acInstallBtn">
+    <button type="button" class="ac-menu-item install-highlight" id="acInstallBtn">
       <span class="ac-menu-icon">📲</span>
-      <span class="ac-menu-text"><span class="ac-menu-title">Install App</span><span class="ac-menu-sub">Add to your home screen</span></span>
+      <span class="ac-menu-text"><span class="ac-menu-title">Install App <span class="install-badge">⚡ Fast</span></span><span class="ac-menu-sub">Add to your home screen</span></span>
+      <span class="ac-arrow">›</span>
+    </button>
+    <button type="button" class="ac-menu-item" onclick="location.href='privacypolicy.html'">
+      <span class="ac-menu-icon">🔒</span>
+      <span class="ac-menu-text"><span class="ac-menu-title">Privacy Policy</span><span class="ac-menu-sub">How we handle your data</span></span>
       <span class="ac-arrow">›</span>
     </button>
     <button type="button" class="ac-menu-item" onclick="location.href='about.html'">
@@ -643,7 +689,7 @@ button{ font-family:inherit; }
 <nav class="bottom-nav">
   <button class="nav-item" data-page="index.html" onclick="location.href='index.html'">
     
-    <span>Bundles</span>
+    <span>Insta</span>
   </button>
   <button class="nav-item" data-page="ff.html" onclick="location.href='ff.html'">
     
