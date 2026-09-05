@@ -4,6 +4,11 @@
    index.html ab js/products-loader.js ke through Firestore ke
    "products" collection se live data padhta hai (agar khaali hai
    to products.js ki static values fallback ban jaati hain).
+
+   Har bundle ka "rate" (normal linear price) hota hai, aur
+   optional "tierPrices" — jisme specific quantities (50/100/300/
+   500/1000/5000/10000/50000) ka apna fixed price set kiya jaa
+   sakta hai, jo linear formula ko override kar deta hai.
 ================================================================= */
 
 import { db } from "../../js/firebase-init.js";
@@ -13,7 +18,10 @@ import {
   collection, getDocs, doc, setDoc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
+const QTY_TIERS = [50, 100, 300, 500, 1000, 5000, 10000, 50000];
+
 let bundles = {};
+let editingId = null;
 
 requireAdmin(function(){
   loadBundles();
@@ -33,6 +41,10 @@ async function loadBundles(){
   render();
 }
 
+function tierLabel(n){
+  return n >= 1000 ? (n / 1000) + 'K' : String(n);
+}
+
 function render(){
   const list = document.getElementById('bundleList');
   const ids = Object.keys(bundles);
@@ -46,12 +58,13 @@ function render(){
   list.innerHTML = '';
   ids.forEach(function(id){
     const b = bundles[id];
+    const overrideCount = b.tierPrices ? Object.keys(b.tierPrices).filter(function(k){ return b.tierPrices[k] != null; }).length : 0;
     const row = document.createElement('div');
     row.className = 'bundle-item';
     row.innerHTML =
       '<div>' +
         '<div class="bundle-item-name">' + escapeHtml(b.name) + '</div>' +
-        '<div class="bundle-item-rate">₹' + b.rate + ' / 1000 • id: ' + escapeHtml(id) + '</div>' +
+        '<div class="bundle-item-rate">₹' + b.rate + ' / 1000 • id: ' + escapeHtml(id) + (overrideCount ? ' • 🎯 ' + overrideCount + ' custom price' + (overrideCount > 1 ? 's' : '') : '') + '</div>' +
       '</div>' +
       '<div class="bundle-item-actions">' +
         '<button type="button" class="bundle-icon-btn" data-edit="' + id + '" aria-label="Edit">✏️</button>' +
@@ -66,20 +79,7 @@ document.getElementById('bundleList').addEventListener('click', async function(e
   const deleteBtn = e.target.closest('[data-delete]');
 
   if (editBtn){
-    const id = editBtn.dataset.edit;
-    const b = bundles[id];
-    const newName = prompt('Bundle ka naam:', b.name);
-    if (newName === null) return;
-    const newRateStr = prompt('Rate (₹ per 1000):', b.rate);
-    if (newRateStr === null) return;
-    const newRate = parseFloat(newRateStr);
-    if (!newName.trim() || isNaN(newRate) || newRate <= 0){
-      alert('Sahi naam aur rate dalein');
-      return;
-    }
-    await setDoc(doc(db, 'products', id), { name: newName.trim(), rate: newRate });
-    await logAdminAction('bundle_edited', '✏️ Edited "' + newName.trim() + '" (id: ' + id + ') → ₹' + newRate + '/1000');
-    await loadBundles();
+    openBundleEditModal(editBtn.dataset.edit);
   }
 
   if (deleteBtn){
@@ -92,6 +92,87 @@ document.getElementById('bundleList').addEventListener('click', async function(e
   }
 });
 
+/* ---------- EDIT MODAL ---------- */
+function openBundleEditModal(id){
+  const b = bundles[id];
+  editingId = id;
+
+  document.getElementById('bemError').textContent = '';
+  document.getElementById('bemName').value = b.name;
+  document.getElementById('bemRate').value = b.rate;
+
+  const grid = document.getElementById('bemTierGrid');
+  grid.innerHTML = '';
+  QTY_TIERS.forEach(function(qty){
+    const autoPrice = Math.round((b.rate / 1000) * qty * 100) / 100;
+    const existing = b.tierPrices && b.tierPrices[String(qty)] != null ? b.tierPrices[String(qty)] : '';
+    const item = document.createElement('div');
+    item.className = 'bem-tier-item';
+    item.innerHTML =
+      '<label>' + tierLabel(qty) + ' <span class="bem-auto">(auto: ₹' + autoPrice + ')</span></label>' +
+      '<input type="number" data-tier="' + qty + '" placeholder="Auto" value="' + existing + '">';
+    grid.appendChild(item);
+  });
+
+  document.getElementById('bemOverlay').classList.add('active');
+}
+
+window.closeBundleEditModal = function(){
+  document.getElementById('bemOverlay').classList.remove('active');
+  editingId = null;
+};
+
+document.getElementById('bemOverlay').addEventListener('click', function(e){
+  if (e.target === this) window.closeBundleEditModal();
+});
+
+document.getElementById('bemSaveBtn').addEventListener('click', async function(){
+  if (!editingId) return;
+  const errEl = document.getElementById('bemError');
+  const name = document.getElementById('bemName').value.trim();
+  const rate = parseFloat(document.getElementById('bemRate').value);
+
+  if (!name){
+    errEl.textContent = 'Bundle ka naam likhein';
+    return;
+  }
+  if (isNaN(rate) || rate <= 0){
+    errEl.textContent = 'Sahi rate daalein';
+    return;
+  }
+
+  const tierPrices = {};
+  const tierInputs = document.querySelectorAll('#bemTierGrid input[data-tier]');
+  tierInputs.forEach(function(input){
+    const raw = input.value.trim();
+    if (raw !== ''){
+      const val = parseFloat(raw);
+      if (!isNaN(val) && val >= 0){
+        tierPrices[input.dataset.tier] = val;
+      }
+    }
+  });
+
+  errEl.textContent = '';
+  const btn = this;
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try{
+    await setDoc(doc(db, 'products', editingId), { name: name, rate: rate, tierPrices: tierPrices });
+    const overrideCount = Object.keys(tierPrices).length;
+    await logAdminAction('bundle_edited', '✏️ Edited "' + name + '" (id: ' + editingId + ') → ₹' + rate + '/1000' + (overrideCount ? ' + ' + overrideCount + ' custom price(s)' : ''));
+    window.closeBundleEditModal();
+    await loadBundles();
+  } catch(err){
+    errEl.textContent = 'Kuch galat ho gaya, dobara try karein';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Save Changes';
+});
+
+/* ---------- IMPORT FROM products.js ---------- */
 document.getElementById('importBtn').addEventListener('click', async function(){
   const staticProducts = window.PRODUCTS || {};
   const ids = Object.keys(staticProducts);
@@ -113,6 +194,7 @@ document.getElementById('importBtn').addEventListener('click', async function(){
   await loadBundles();
 });
 
+/* ---------- ADD NEW BUNDLE ---------- */
 document.getElementById('addBundleBtn').addEventListener('click', async function(){
   const nameEl = document.getElementById('newBundleName');
   const rateEl = document.getElementById('newBundleRate');
@@ -140,7 +222,7 @@ document.getElementById('addBundleBtn').addEventListener('click', async function
   }
 
   errEl.style.display = 'none';
-  await setDoc(doc(db, 'products', id), { name: name, rate: rate });
+  await setDoc(doc(db, 'products', id), { name: name, rate: rate, tierPrices: {} });
   await logAdminAction('bundle_added', '➕ Added new bundle: ' + name + ' (₹' + rate + '/1000)');
 
   nameEl.value = '';
