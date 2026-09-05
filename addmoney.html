@@ -448,24 +448,24 @@ button{ font-family:inherit; }
   background:var(--bg); border-radius:10px; padding:10px 12px; margin-bottom:14px;
 }
 
-.am-upi-apps{ display:flex; flex-direction:column; gap:9px; margin-bottom:16px; }
+.am-upi-apps{
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:10px; margin-bottom:16px;
+}
 .am-upi-btn{
-  display:flex; align-items:center; gap:12px;
-  width:100%; padding:12px 14px;
+  display:flex; flex-direction:column; align-items:center; gap:7px;
+  padding:14px 8px;
   border:1.5px solid var(--line); border-radius:14px;
-  background:var(--surface); cursor:pointer; text-align:left;
+  background:var(--surface); cursor:pointer;
   font-family:inherit;
 }
-.am-upi-btn:active{ transform:scale(.98); }
+.am-upi-btn:active{ transform:scale(.97); background:var(--bg); }
 .am-upi-icon{
-  width:40px; height:40px; border-radius:11px; flex-shrink:0;
+  width:38px; height:38px; border-radius:11px; flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
   font-size:12px; font-weight:800; color:#fff;
 }
-.am-upi-info{ flex:1; display:flex; flex-direction:column; }
-.am-upi-info strong{ font-size:14px; color:var(--ink); }
-.am-upi-info small{ font-size:11px; color:var(--sub); margin-top:1px; }
-.am-upi-arrow{ color:var(--sub); font-size:16px; }
+.am-upi-info strong{ font-size:12.5px; color:var(--ink); }
 
 .am-or{
   display:flex; align-items:center; gap:10px; margin:14px 0;
@@ -587,7 +587,16 @@ button{ font-family:inherit; }
   <div class="am-card">
     <div class="am-step-header"><span class="am-step-badge">1</span><h3>Amount Select Karein</h3></div>
 
-    <div class="am-preset-grid" id="amPresetGrid"></div>
+    <div class="am-preset-grid" id="amPresetGrid">
+      <button type="button" class="am-preset-btn" data-amount="25">₹25</button>
+      <button type="button" class="am-preset-btn" data-amount="50">₹50</button>
+      <button type="button" class="am-preset-btn" data-amount="100">₹100</button>
+      <button type="button" class="am-preset-btn" data-amount="250">₹250</button>
+      <button type="button" class="am-preset-btn" data-amount="500">₹500</button>
+      <button type="button" class="am-preset-btn" data-amount="1000">₹1000</button>
+      <button type="button" class="am-preset-btn" data-amount="2000">₹2000</button>
+      <button type="button" class="am-preset-btn" data-amount="4000">₹4000</button>
+    </div>
 
     <label class="am-field-label" for="amCustomAmount">Custom Amount (₹)</label>
     <div class="am-input-wrap">
@@ -604,23 +613,19 @@ button{ font-family:inherit; }
     <div class="am-upi-apps">
       <button type="button" class="am-upi-btn" id="amPhonePe">
         <span class="am-upi-icon" style="background:#5f259f">Pe</span>
-        <span class="am-upi-info"><strong>PhonePe</strong><small>Tap to open &amp; pay</small></span>
-        <span class="am-upi-arrow">→</span>
+        <span class="am-upi-info"><strong>PhonePe</strong></span>
       </button>
       <button type="button" class="am-upi-btn" id="amPaytm">
         <span class="am-upi-icon" style="background:#002970;color:#00baf2">PAY</span>
-        <span class="am-upi-info"><strong>Paytm</strong><small>Tap to open &amp; pay</small></span>
-        <span class="am-upi-arrow">→</span>
+        <span class="am-upi-info"><strong>Paytm</strong></span>
       </button>
       <button type="button" class="am-upi-btn" id="amGPay">
         <span class="am-upi-icon" style="background:#fff;color:#4285f4;border:1px solid #eee">G</span>
-        <span class="am-upi-info"><strong>Google Pay</strong><small>Tap to open &amp; pay</small></span>
-        <span class="am-upi-arrow">→</span>
+        <span class="am-upi-info"><strong>Google Pay</strong></span>
       </button>
       <button type="button" class="am-upi-btn" id="amOther">
         <span class="am-upi-icon" style="background:var(--brand)">UPI</span>
-        <span class="am-upi-info"><strong>Any UPI App</strong><small>Tap to open &amp; pay</small></span>
-        <span class="am-upi-arrow">→</span>
+        <span class="am-upi-info"><strong>Any UPI App</strong></span>
       </button>
     </div>
 
@@ -700,5 +705,29 @@ button{ font-family:inherit; }
 </nav>
 
 <script type="module" src="js/addmoney.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const presetBtns = document.querySelectorAll(".am-preset-btn");
+  const customInput = document.getElementById("amCustomAmount");
+  const confirmInput = document.getElementById("amConfirmAmount");
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      presetBtns.forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      const amt = btn.dataset.amount;
+      if (customInput) customInput.value = amt;
+      if (confirmInput) confirmInput.value = amt;
+    });
+  });
+
+  if (customInput) {
+    customInput.addEventListener("input", (e) => {
+      presetBtns.forEach(b => b.classList.remove("selected"));
+      if (confirmInput) confirmInput.value = e.target.value;
+    });
+  }
+});
+</script>
 </body>
 </html>
