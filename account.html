@@ -398,6 +398,11 @@ button{ font-family:inherit; }
 .ac-profile-info{ flex:1; min-width:0; text-align:left; }
 .ac-profile-info h3{ font-size:16px; font-weight:800; color:#fff; margin-bottom:2px; }
 .ac-profile-info p{ font-size:12.5px; color:rgba(255,255,255,.82); margin:0; }
+.ac-profile-whatsapp{
+  display:flex; align-items:center; gap:5px;
+}
+.ac-profile-info p.ac-profile-whatsapp{ margin-top:4px; }
+.ac-whatsapp-value{ font-weight:700; color:#fff; }
 .ac-edit-btn{
   width:38px; height:38px; border-radius:12px; flex-shrink:0;
   border:none; background:rgba(255,255,255,.22);
@@ -433,18 +438,6 @@ button{ font-family:inherit; }
   color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit;
 }
 .ac-addmoney-btn:active{ transform:scale(.97); }
-
-.ac-whatsapp-card{
-  display:flex; align-items:center; gap:12px;
-  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
-}
-.ac-whatsapp-icon{
-  width:44px; height:44px; border-radius:12px; flex-shrink:0;
-  background:linear-gradient(135deg,var(--success),#0FA968);
-  color:#fff; font-size:19px;
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:0 4px 12px rgba(22,199,132,.3);
-}
 
 .ac-menu-item{
   width:100%; display:flex; align-items:center; gap:12px;
@@ -576,6 +569,7 @@ button{ font-family:inherit; }
     <div class="ac-profile-info">
       <h3 id="acName">—</h3>
       <p id="acEmail">—</p>
+      <p class="ac-profile-whatsapp" id="acWhatsappCard" style="display:none">💬 <span id="acWhatsapp">—</span></p>
     </div>
     <button type="button" class="ac-edit-btn" aria-label="Edit profile">✏️</button>
   </div>
@@ -629,14 +623,6 @@ button{ font-family:inherit; }
       <span class="ac-menu-text"><span class="ac-menu-title">Help &amp; Support</span><span class="ac-menu-sub">We're here for you</span></span>
       <span class="ac-arrow">›</span>
     </button>
-  </div>
-
-  <div class="ac-card ac-whatsapp-card" id="acWhatsappCard" style="display:none">
-    <div class="ac-whatsapp-icon">📱</div>
-    <div>
-      <p class="ac-label">WhatsApp Number</p>
-      <p class="ac-whatsapp-value" id="acWhatsapp">—</p>
-    </div>
   </div>
 
   <button type="button" class="ac-logout-btn" id="acLogoutBtn">🚪 Logout</button>
