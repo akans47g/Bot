@@ -587,16 +587,7 @@ button{ font-family:inherit; }
   <div class="am-card">
     <div class="am-step-header"><span class="am-step-badge">1</span><h3>Amount Select Karein</h3></div>
 
-    <div class="am-preset-grid" id="amPresetGrid">
-      <button type="button" class="am-preset-btn" data-amount="25">₹25</button>
-      <button type="button" class="am-preset-btn" data-amount="50">₹50</button>
-      <button type="button" class="am-preset-btn" data-amount="100">₹100</button>
-      <button type="button" class="am-preset-btn" data-amount="250">₹250</button>
-      <button type="button" class="am-preset-btn" data-amount="500">₹500</button>
-      <button type="button" class="am-preset-btn" data-amount="1000">₹1000</button>
-      <button type="button" class="am-preset-btn" data-amount="2000">₹2000</button>
-      <button type="button" class="am-preset-btn" data-amount="4000">₹4000</button>
-    </div>
+    <div class="am-preset-grid" id="amPresetGrid"></div>
 
     <label class="am-field-label" for="amCustomAmount">Custom Amount (₹)</label>
     <div class="am-input-wrap">
@@ -705,29 +696,5 @@ button{ font-family:inherit; }
 </nav>
 
 <script type="module" src="js/addmoney.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const presetBtns = document.querySelectorAll(".am-preset-btn");
-  const customInput = document.getElementById("amCustomAmount");
-  const confirmInput = document.getElementById("amConfirmAmount");
-
-  presetBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      presetBtns.forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
-      const amt = btn.dataset.amount;
-      if (customInput) customInput.value = amt;
-      if (confirmInput) confirmInput.value = amt;
-    });
-  });
-
-  if (customInput) {
-    customInput.addEventListener("input", (e) => {
-      presetBtns.forEach(b => b.classList.remove("selected"));
-      if (confirmInput) confirmInput.value = e.target.value;
-    });
-  }
-});
-</script>
 </body>
 </html>
