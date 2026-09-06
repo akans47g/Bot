@@ -20,6 +20,23 @@ import {
 
 const QTY_TIERS = [50, 100, 300, 500, 1000, 5000, 10000, 50000];
 
+// index.html jaisa hi range-multiplier — admin ko accurate preview
+// dikhane ke liye (index.html me hi asli calculation hoti hai, ye
+// sirf preview ke liye duplicate hai).
+const RANGE_MULTIPLIERS = [
+  { min: 50,  max: 250,      multiplier: 1.75 },
+  { min: 251, max: 500,      multiplier: 1.5  },
+  { min: 501, max: 750,      multiplier: 1.25 },
+  { min: 751, max: Infinity, multiplier: 1    }
+];
+function getRangeMultiplier(qty){
+  for (let i = 0; i < RANGE_MULTIPLIERS.length; i++){
+    const r = RANGE_MULTIPLIERS[i];
+    if (qty >= r.min && qty <= r.max) return r.multiplier;
+  }
+  return 1;
+}
+
 let bundles = {};
 let editingId = null;
 
@@ -104,7 +121,7 @@ function openBundleEditModal(id){
   const grid = document.getElementById('bemTierGrid');
   grid.innerHTML = '';
   QTY_TIERS.forEach(function(qty){
-    const autoPrice = Math.round((b.rate / 1000) * qty * 100) / 100;
+    const autoPrice = Math.round((b.rate / 1000) * qty * getRangeMultiplier(qty) * 100) / 100;
     const existing = b.tierPrices && b.tierPrices[String(qty)] != null ? b.tierPrices[String(qty)] : '';
     const item = document.createElement('div');
     item.className = 'bem-tier-item';
