@@ -1219,8 +1219,8 @@ function toggleDetails(id) {
         <strong id="bmPrice">₹0</strong>
       </div>
 
-      <label class="buy-modal-label" for="bmUtr">Jis par Order Lagana hai us ki Link</label>
-      <input type="text" id="bmUtr" class="buy-modal-input" placeholder="post / Reel / account Ki Link">
+      <label class="buy-modal-label" for="bmUtr">UTR Number / Payment Link</label>
+      <input type="text" id="bmUtr" class="buy-modal-input" placeholder="Yahan UTR ya link paste karein">
       <p class="bm-error" id="bmError"></p>
 
       <p class="wallet-line">Wallet Balance: <strong id="bmWalletBal">₹0</strong></p>
@@ -1315,18 +1315,43 @@ function qtyLabel(n){
 
 const MIN_QTY = 50;
 
-// 👉 Pricing logic yahin hai. Agar product ke "tierPrices" me is
-//    exact quantity (jaise 50, 100, 1000) ka koi custom price set
-//    hai, to wahi use hota hai — warna normal linear rate se
-//    calculate hota hai. Custom-typed quantity (jo in 8 tiers me
-//    nahi hai) hamesha linear rate se hi calculate hoti hai.
+// 👉 Range-wise multiplier — kam quantity lene par thoda zyada
+//    rate lagta hai, jyada lene par normal rate. Ye HAR product
+//    pe same lagta hai (rate sirf product ka apna hota hai, ye
+//    multiplier universal hai).
+//    50-250   → 1.75x
+//    251-500  → 1.5x
+//    501-750  → 1.25x
+//    751+     → 1x (normal rate)
+const RANGE_MULTIPLIERS = [
+  { min: 50,  max: 250,      multiplier: 1.75 },
+  { min: 251, max: 500,      multiplier: 1.5  },
+  { min: 501, max: 750,      multiplier: 1.25 },
+  { min: 751, max: Infinity, multiplier: 1    }
+];
+
+function getRangeMultiplier(qty){
+  for (let i = 0; i < RANGE_MULTIPLIERS.length; i++){
+    const r = RANGE_MULTIPLIERS[i];
+    if (qty >= r.min && qty <= r.max) return r.multiplier;
+  }
+  return 1;
+}
+
+// 👉 Pricing logic yahin hai. Priority:
+//    1. Agar product ke "tierPrices" me is EXACT quantity ka koi
+//       custom fixed price admin ne set kiya hai, to wahi use
+//       hota hai (sabse zyada priority).
+//    2. Warna normal rate se linear price nikal ke, upar wala
+//       RANGE_MULTIPLIERS wala multiplier laga diya jaata hai.
 //    Tier prices Admin Panel → Bundles se set/edit ho sakte hain.
 function calcPrice(product, qty){
   const override = product.tierPrices && product.tierPrices[String(qty)];
   if (typeof override === 'number' && !isNaN(override)){
     return override;
   }
-  return (product.rate / 1000) * qty;
+  const linear = (product.rate / 1000) * qty;
+  return linear * getRangeMultiplier(qty);
 }
 
 async function openBuyModal(productId){
