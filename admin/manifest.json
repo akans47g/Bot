@@ -1,0 +1,17 @@
+{
+  "name": "AKANS Admin Panel",
+  "short_name": "AKANS Admin",
+  "description": "Admin panel for AKANS Social Store — manage orders, top-ups, bundles, and payouts.",
+  "start_url": "dashboard.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F4FC",
+  "theme_color": "#4F2FCE",
+  "icons": [
+    { "src": "../logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../logo.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "../logo.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
