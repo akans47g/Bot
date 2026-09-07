@@ -72,29 +72,52 @@ export async function assignUniquePartnerCode(uid){
    extra.partnerCode — Partner Program link (?pc=CODE) se aaya to,
                         us CODE ka asli owner "referredBy" bnta hai
    extra.referCode   — Refer System link (?rc=CODE) se aaya to,
-                        us CODE ka asli owner "referredByUid" bnta hai */
+                        us CODE ka asli owner "referredByUid" bnta hai
+
+   ⚠️ IMPORTANT: referCode generate karna aur partner/refer code
+   lookup karna — dono ko try/catch me wrap kiya hai. Agar in me se
+   kuch bhi fail ho jaaye (jaise Firestore rules abhi tak publish
+   nahi hui), to bhi user ka MAIN profile (wallet, email, name)
+   zaroor ban jaayega — sirf referCode khaali reh jaayega, jo
+   refer.html khulte hi khud-ba-khud generate ho jaata hai. Isse
+   koi bhi naya signup silently fail nahi hoga. */
 async function ensureUserProfile(user, extra = {}){
   const ref = doc(db, "users", user.uid);
   const snap = await getDoc(ref);
   if (!snap.exists()){
-    const myReferCode = await assignUniqueReferCode(user.uid);
+    let myReferCode = null;
+    try{
+      myReferCode = await assignUniqueReferCode(user.uid);
+    } catch(e){
+      console.warn('Refer code generate nahi ho paya, baad me refer.html khulte hi ban jaayega', e);
+    }
 
     let referredBy = null;
     if (extra.partnerCode){
-      const codeSnap = await getDoc(doc(db, 'partnerCodes', extra.partnerCode.toUpperCase()));
-      if (codeSnap.exists()){
-        referredBy = codeSnap.data().uid;
+      try{
+        const codeSnap = await getDoc(doc(db, 'partnerCodes', extra.partnerCode.toUpperCase()));
+        if (codeSnap.exists()){
+          referredBy = codeSnap.data().uid;
+        }
+      } catch(e){
+        console.warn('Partner code lookup fail hua', e);
       }
     }
 
     let referredByUid = null;
     if (extra.referCode){
-      const codeSnap = await getDoc(doc(db, 'referCodes', extra.referCode.toUpperCase()));
-      if (codeSnap.exists()){
-        referredByUid = codeSnap.data().uid;
+      try{
+        const codeSnap = await getDoc(doc(db, 'referCodes', extra.referCode.toUpperCase()));
+        if (codeSnap.exists()){
+          referredByUid = codeSnap.data().uid;
+        }
+      } catch(e){
+        console.warn('Refer code lookup fail hua', e);
       }
     }
 
+    // Ye MAIN profile write hai — ye kabhi skip nahi hona chahiye,
+    // isliye upar ki koi bhi cheez fail ho, yahan tak zaroor pahunchega.
     await setDoc(ref, {
       email: user.email || "",
       name: extra.name || user.displayName || "",
