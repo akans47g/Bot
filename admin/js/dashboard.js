@@ -85,3 +85,30 @@ function escapeHtml(str){
   div.textContent = str || '';
   return div.innerHTML;
 }
+
+/* ---------- INSTALL ADMIN APP BUTTON ---------- */
+function isStandaloneMode(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function isIOSDevice(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+(function setupInstallButton(){
+  const btn = document.getElementById('adminInstallBtn');
+  if (!btn || isStandaloneMode()) return;
+
+  btn.style.display = 'block';
+
+  btn.addEventListener('click', async function(){
+    if (window.deferredInstallPrompt){
+      window.deferredInstallPrompt.prompt();
+      await window.deferredInstallPrompt.userChoice;
+      window.deferredInstallPrompt = null;
+    } else if (isIOSDevice()){
+      alert('📲 iPhone par install karne ke liye:\n\nNeeche Share button (⬆️) dabayein, phir "Add to Home Screen" choose karein.');
+    } else {
+      alert('📲 Apne browser ke menu (⋮ ya ...) me jaakar "Install App" ya "Add to Home Screen" option dhoondein.');
+    }
+  });
+})();
