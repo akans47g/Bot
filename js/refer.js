@@ -21,7 +21,11 @@ watchAuthState(function(user){
     return;
   }
   currentUser = user;
-  init(user);
+  init(user).catch(function(err){
+    console.error('Refer page load fail hua:', err);
+    document.getElementById('rfCode').textContent = 'ERR';
+    document.getElementById('rfLinkText').textContent = '⚠️ Load nahi ho paya — Firestore Rules check karein';
+  });
 });
 
 async function init(user){
