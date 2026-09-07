@@ -19,7 +19,11 @@ watchAuthState(function(user){
     return;
   }
   currentUser = user;
-  checkPartnerAccess(user);
+  checkPartnerAccess(user).catch(function(err){
+    console.error('Partner page load fail hua:', err);
+    document.getElementById('ppCode').textContent = 'ERR';
+    document.getElementById('ppLinkText').textContent = '⚠️ Load nahi ho paya — Firestore Rules check karein';
+  });
 });
 
 async function checkPartnerAccess(user){
