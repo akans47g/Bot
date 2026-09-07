@@ -598,6 +598,9 @@ button{ font-family:inherit; }
 .log-summary{ font-size:12.5px; color:var(--ink); line-height:1.4; }
 .log-time{ font-size:10.5px; color:var(--sub); margin-top:3px; }
 </style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4F2FCE">
+<script src="js/pwa-install.js"></script>
 </head>
 <body>
 
@@ -607,6 +610,8 @@ button{ font-family:inherit; }
     <h3>⚙️ Admin Panel</h3>
     <button type="button" class="admin-logout-btn" id="adminLogoutBtn">Logout</button>
   </div>
+
+  <button type="button" class="import-btn" id="adminInstallBtn" style="display:none;width:100%;margin-bottom:16px;">📲 Install Admin App</button>
 
   <div class="stat-grid">
     <div class="stat-card" onclick="location.href='topups.html'">
