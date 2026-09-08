@@ -176,6 +176,34 @@ button{ font-family:inherit; }
   box-shadow:0 2px 8px rgba(20,18,31,.35);
 }
 
+/* ---------------- TIER GROUP COLLAPSE (Show More Packs) ---------------- */
+.tier-group{ display:none; }
+.tier-group.open{ display:block; }
+.tier-toggle-btn{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--brand);
+  font-size:13.5px; font-weight:700;
+  padding:13px;
+  border-radius:var(--radius);
+  margin:0 0 14px;
+  cursor:pointer;
+  font-family:inherit;
+  box-shadow:0 2px 10px rgba(79,47,206,.06);
+  transition:background .15s ease;
+}
+.tier-toggle-btn:active{ transform:scale(.98); background:var(--bg); }
+.tier-toggle-btn .chev{
+  display:flex; align-items:center; justify-content:center;
+  width:20px; height:20px; border-radius:50%;
+  background:var(--bg);
+  font-size:11px; color:var(--brand);
+  transition:transform .2s ease;
+}
+.tier-toggle-btn.open .chev{ transform:rotate(180deg); }
+
 .card-text h3{ font-size:15.5px; font-weight:700; line-height:1.25; margin-bottom:4px; }
 
 .price-row{
@@ -607,6 +635,19 @@ function toggleDetails(id) {
   const snd = document.getElementById('sound-details');
   if (snd) { snd.currentTime = 0; snd.play().catch(() => {}); }
 }
+
+function toggleTierGroup(id) {
+  const group = document.getElementById(id);
+  if (!group) return;
+  const isOpen = group.classList.toggle('open');
+  const btn = document.getElementById(id + '-btn');
+  const label = document.getElementById(id + '-label');
+  if (btn) btn.classList.toggle('open', isOpen);
+  if (label) {
+    const tier = label.dataset.tier;
+    label.textContent = isOpen ? `Hide ${tier} Packs` : `Show More ${tier} Packs`;
+  }
+}
 </script>
 
 <script type="module" src="js/firebase-init.js"></script>
@@ -627,7 +668,7 @@ function toggleDetails(id) {
   <div class="header">
     <div class="header-text">
       <h3>AKANS Social Store</h3>
-      <p class="header-tag">Bundles • Deals • Fast Delivery</p>
+      <p class="header-tag">Insta • Sarvice • Fast Delivery</p>
     </div>
     <img src="image/logo.png" alt="AKANS Logo">
   </div>
@@ -637,8 +678,8 @@ function toggleDetails(id) {
   ========================= -->
   <div class="section-title">
     <span class="section-badge">🔥 Hot Deals</span>
-    <h2>Top Video Bundles</h2>
-    <p>Instant delivery • Full HD Quality</p>
+    <h2>Boost Your Insta Profile</h2>
+    <p>Instant delivery • 100% Safe Service</p>
   </div>
 
   <!-- ========================
@@ -781,6 +822,10 @@ function toggleDetails(id) {
   <!-- ========================
        BUNDLE 4 — ANIME
   ========================= -->
+  <button type="button" class="tier-toggle-btn" id="tier-premium-more-btn" onclick="toggleTierGroup('tier-premium-more')">
+    <span id="tier-premium-more-label" data-tier="Premium">Show More Premium Packs</span>
+    <span class="chev">▾</span>
+  </button>
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
@@ -811,6 +856,8 @@ function toggleDetails(id) {
       </div>
     </div>
   </div>
+
+  <div class="tier-group" id="tier-premium-more">
 
   <!-- ========================
        BUNDLE 5 — MORAL STORY
@@ -915,9 +962,15 @@ function toggleDetails(id) {
     </div>
   </div>
 
+  </div>
+
   <!-- ========================
        BUNDLE 8 — NATURE
   ========================= -->
+  <button type="button" class="tier-toggle-btn" id="tier-professional-more-btn" onclick="toggleTierGroup('tier-professional-more')">
+    <span id="tier-professional-more-label" data-tier="Professional">Show More Professional Packs</span>
+    <span class="chev">▾</span>
+  </button>
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
@@ -948,6 +1001,8 @@ function toggleDetails(id) {
       </div>
     </div>
   </div>
+
+  <div class="tier-group" id="tier-professional-more">
 
   <!-- ========================
        BUNDLE 9 — HORROR
@@ -1086,6 +1141,8 @@ function toggleDetails(id) {
     </div>
   </div>
 
+  </div>
+
   <!-- ========================
        TRENDING BUNDLES
   ========================= -->
@@ -1098,30 +1155,30 @@ function toggleDetails(id) {
 <div class="trending-scroll">
 
   <div class="trending-card">
-    <img src="image/ig14.jpg" alt="Cat Story Bundle">
-    <h4>Cat Story's Bundle</h4>
-    <p class="t-price">₹49 Only</p>
+    <img src="image/ig14.jpg" alt="Instagram Shares">
+    <h4>Instagram Shares</h4>
+    <p class="t-price">₹19 Only</p>
     <button class="t-buy-btn" id="buy-cat" onclick="openBuyModal('cat')">Buy Now</button>
   </div>
 
   <div class="trending-card">
-    <img src="image/ig15.jpg" alt="Woman Gym Bundle">
-    <h4>Woman Gym Bundle</h4>
-    <p class="t-price">₹49 Only</p>
+    <img src="image/ig15.jpg" alt="Instagram Reach Impression">
+    <h4>Instagram Reach Impression</h4>
+    <p class="t-price">₹10 Only</p>
     <button class="t-buy-btn" id="buy-womangym" onclick="openBuyModal('womangym')">Buy Now</button>
   </div>
 
   <div class="trending-card">
-    <img src="image/ig16.jpg" alt="Sanatani AI Reel Bundle">
-    <h4>Sanatani AI Reel Bundle</h4>
-    <p class="t-price">₹49 Only</p>
+    <img src="image/ig16.jpg" alt="Instagram Repost">
+    <h4>Instagram Repost</h4>
+    <p class="t-price">₹99 Only</p>
     <button class="t-buy-btn" id="buy-sanatani" onclick="openBuyModal('sanatani')">Buy Now</button>
   </div>
 
   <div class="trending-card">
-    <img src="image/ig17.jpg" alt="Stock Market Bundle">
-    <h4>Stock Market Bundle</h4>
-    <p class="t-price">₹49 Only</p>
+    <img src="image/ig17.jpg" alt="Instagram Channel Member">
+    <h4>Instagram Channel Member</h4>
+    <p class="t-price">₹169 Only</p>
     <button class="t-buy-btn" id="buy-stock" onclick="openBuyModal('stock')">Buy Now</button>
   </div>
 
@@ -1218,8 +1275,8 @@ function toggleDetails(id) {
         <strong id="bmPrice">₹0</strong>
       </div>
 
-      <label class="buy-modal-label" for="bmUtr">UTR Number / Payment Link</label>
-      <input type="text" id="bmUtr" class="buy-modal-input" placeholder="Yahan UTR ya link paste karein">
+      <label class="buy-modal-label" for="bmUtr">Instagram Link 🔗</label>
+      <input type="text" id="bmUtr" class="buy-modal-input" placeholder="Yaha apni Link Paste Kare">
       <p class="bm-error" id="bmError"></p>
 
       <p class="wallet-line">Wallet Balance: <strong id="bmWalletBal">₹0</strong></p>
