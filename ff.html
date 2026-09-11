@@ -597,7 +597,7 @@ button{ font-family:inherit; }
   <div class="header">
     <div class="header-text">
       <h3>AKANS Social Store</h3>
-      <p class="header-tag">Bundles • Deals • Fast Delivery</p>
+      <p class="header-tag">FF Profile Likes • Deals • Fast Delivery</p>
     </div>
     <img src="image/logo.png" alt="AKANS Logo">
   </div>
@@ -614,8 +614,8 @@ button{ font-family:inherit; }
 
   <div class="section-title">
     <span class="section-badge">🎮 Free Fire</span>
-    <h2>Daily F.F. Profile Likes Plans</h2>
-    <p>Per Day 220 Free Fire Profile Likes</p>
+    <h2>Daily Content Plans</h2>
+    <p>Roz 220 content milega, jitne din ka plan utna milega</p>
   </div>
 
   <!-- PLAN 1 -->
@@ -751,8 +751,8 @@ button{ font-family:inherit; }
       <strong id="ffModalPrice">₹0</strong>
     </div>
 
-    <label class="ff-modal-label" for="ffUtr">Apni Free Fire Profile Ki UID Daale</label>
-    <input type="text" id="ffUtr" class="ff-modal-input" placeholder="Free Fire UID">
+    <label class="ff-modal-label" for="ffUtr">UTR Number / Payment Link</label>
+    <input type="text" id="ffUtr" class="ff-modal-input" placeholder="Yahan UTR ya link paste karein">
     <p class="ff-error" id="ffError"></p>
 
     <p class="ff-wallet-line">Wallet Balance: <strong id="ffWalletBal">₹0</strong></p>
@@ -781,7 +781,7 @@ button{ font-family:inherit; }
 <nav class="bottom-nav">
   <button class="nav-item" data-page="index.html" onclick="location.href='index.html'">
     
-    <span>Insta</span>
+    <span>Bundles</span>
   </button>
   <button class="nav-item" data-page="ff.html" onclick="location.href='ff.html'">
     
@@ -881,5 +881,69 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 <script type="module" src="js/ff.js"></script>
+
+<script>
+// ---- Mechanical keyboard style click sound (synthesized, no audio file needed) ----
+// Fires on every <button> click across the whole page. Same system as index.html.
+(function(){
+  let clickCtx = null;
+  function getCtx(){
+    if (!clickCtx) clickCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (clickCtx.state === 'suspended') clickCtx.resume();
+    return clickCtx;
+  }
+  function playMechClick(){
+    try {
+      const ctx = getCtx();
+      const now = ctx.currentTime;
+
+      // Sharp noise burst = the switch "click"
+      const bufferSize = Math.floor(ctx.sampleRate * 0.03);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const bandpass = ctx.createBiquadFilter();
+      bandpass.type = 'bandpass';
+      bandpass.frequency.value = 3200;
+      bandpass.Q.value = 1.1;
+
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.32, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+      noise.connect(bandpass);
+      bandpass.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noise.start(now);
+      noise.stop(now + 0.05);
+
+      // Short tonal "tick" = the switch snap
+      const osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(1400, now);
+      osc.frequency.exponentialRampToValueAtTime(350, now + 0.02);
+
+      const oscGain = ctx.createGain();
+      oscGain.gain.setValueAtTime(0.1, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+
+      osc.connect(oscGain);
+      oscGain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.03);
+    } catch (e) { /* Web Audio unsupported — fail silently */ }
+  }
+
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('button');
+    if (btn) playMechClick();
+  });
+})();
+</script>
 </body>
 </html>
