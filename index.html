@@ -84,6 +84,18 @@ button{ font-family:inherit; }
   font-weight:600;
   margin:0;
 }
+
+/* ---------------- STATS ROW ---------------- */
+.stats-row{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  background:var(--surface); border:1px solid var(--line); border-radius:18px;
+  padding:14px 6px; margin-bottom:20px;
+}
+.stat-item{ text-align:center; }
+.stat-item-icon{ font-size:18px; margin-bottom:4px; }
+.stat-item-val{ font-size:13px; font-weight:800; color:var(--brand); }
+.stat-item-label{ font-size:9.5px; color:var(--sub); font-weight:600; margin-top:1px; }
+
 .header img{
   height:42px;
   width:42px;
@@ -138,6 +150,7 @@ button{ font-family:inherit; }
   aspect-ratio:3/4;
   height:auto;
   border-radius:14px;
+  border:1.5px solid var(--line);
   object-fit:cover;
   background:var(--line);
   flex-shrink:0;
@@ -177,13 +190,34 @@ button{ font-family:inherit; }
 }
 
 /* ---------------- TIER GROUP COLLAPSE (Show More Packs) ---------------- */
-.tier-group{ display:none; }
-.tier-group.open{ display:block; }
+.tier-group{
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+  transition:max-height .55s cubic-bezier(.4,0,.2,1), opacity .4s ease;
+}
+.tier-group.open{
+  max-height:4000px;
+  opacity:1;
+}
+.tier-group .bundle-card{ opacity:0; }
+.tier-group.open .bundle-card{
+  animation:cardRevealIn .45s ease forwards;
+}
+.tier-group.open .bundle-card:nth-of-type(1){ animation-delay:.08s; }
+.tier-group.open .bundle-card:nth-of-type(2){ animation-delay:.18s; }
+.tier-group.open .bundle-card:nth-of-type(3){ animation-delay:.28s; }
+.tier-group.open .bundle-card:nth-of-type(4){ animation-delay:.38s; }
+@keyframes cardRevealIn{
+  from{ opacity:0; transform:translateY(14px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
 .tier-toggle-btn{
   display:flex; align-items:center; justify-content:center; gap:8px;
   width:100%;
-  background:var(--surface);
-  border:1px solid var(--line);
+  background:linear-gradient(135deg,#F3EEFF,#FFF3EC);
+  border:1.5px solid rgba(79,47,206,.28);
   color:var(--brand);
   font-size:13.5px; font-weight:700;
   padding:13px;
@@ -191,18 +225,33 @@ button{ font-family:inherit; }
   margin:0 0 14px;
   cursor:pointer;
   font-family:inherit;
-  box-shadow:0 2px 10px rgba(79,47,206,.06);
-  transition:background .15s ease;
+  box-shadow:0 4px 14px rgba(79,47,206,.12);
+  transition:background .2s ease, box-shadow .2s ease;
 }
-.tier-toggle-btn:active{ transform:scale(.98); background:var(--bg); }
+.tier-toggle-btn:active{
+  transform:scale(.97);
+  background:linear-gradient(135deg,#EBE3FF,#FFE9DC);
+}
+.tier-toggle-btn.open{ animation:toggleFlash .5s ease; }
+@keyframes toggleFlash{
+  0%{ box-shadow:0 4px 14px rgba(79,47,206,.12); }
+  35%{ box-shadow:0 6px 20px rgba(79,47,206,.26); }
+  100%{ box-shadow:0 4px 14px rgba(79,47,206,.12); }
+}
 .tier-toggle-btn .chev{
   display:flex; align-items:center; justify-content:center;
   width:20px; height:20px; border-radius:50%;
-  background:var(--bg);
-  font-size:11px; color:var(--brand);
-  transition:transform .2s ease;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff;
+  font-size:11px;
+  animation:tierChevBounce 1.8s ease-in-out infinite;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
 }
-.tier-toggle-btn.open .chev{ transform:rotate(180deg); }
+.tier-toggle-btn.open .chev{ transform:rotate(180deg); animation:none; }
+@keyframes tierChevBounce{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-3px); }
+}
 
 .card-text h3{ font-size:15.5px; font-weight:700; line-height:1.25; margin-bottom:4px; }
 
@@ -241,7 +290,7 @@ button{ font-family:inherit; }
 }
 .buy-btn, .t-buy-btn{
   flex:1;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  background:linear-gradient(135deg,var(--brand),var(--accent));
   border:none;
   color:#fff;
   font-size:12.5px;
@@ -249,7 +298,7 @@ button{ font-family:inherit; }
   padding:9px 6px;
   border-radius:12px;
   cursor:pointer;
-  box-shadow:0 4px 12px rgba(255,107,61,.3);
+  box-shadow:0 4px 12px rgba(79,47,206,.25);
 }
 .details-btn:active, .buy-btn:active, .t-buy-btn:active{ transform:scale(.97); }
 
@@ -419,6 +468,7 @@ button{ font-family:inherit; }
 @media (prefers-reduced-motion: reduce){
   .urgent{ animation:none; }
   .bottom-nav{ transition:none; }
+  .tier-toggle-btn .chev{ animation:none; }
 }
 </style>
 <style>
@@ -630,10 +680,6 @@ function toggleDetails(id) {
   const box = document.getElementById(id);
   const isOpen = box.style.display === 'block';
   box.style.display = isOpen ? 'none' : 'block';
-
-  // Sound
-  const snd = document.getElementById('sound-details');
-  if (snd) { snd.currentTime = 0; snd.play().catch(() => {}); }
 }
 
 function toggleTierGroup(id) {
@@ -668,9 +714,17 @@ function toggleTierGroup(id) {
   <div class="header">
     <div class="header-text">
       <h3>AKANS Social Store</h3>
-      <p class="header-tag">Insta • Sarvice • Fast Delivery</p>
+      <p class="header-tag">Social Sarvice • Fast Delivery</p>
     </div>
     <img src="image/logo.png" alt="AKANS Logo">
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-item"><div class="stat-item-icon">👥</div><div class="stat-item-val">1000+</div><div class="stat-item-label">Users</div></div>
+    <div class="stat-item"><div class="stat-item-icon">⭐</div><div class="stat-item-val">4.8</div><div class="stat-item-label">Rating</div></div>
+    <div class="stat-item"><div class="stat-item-icon">⚡</div><div class="stat-item-val">Instant</div><div class="stat-item-label">Delivery</div></div>
+    <div class="stat-item"><div class="stat-item-icon">🔒</div><div class="stat-item-val">Secure</div><div class="stat-item-label">Payment</div></div>
   </div>
 
   <!-- ========================
@@ -1316,10 +1370,69 @@ function toggleTierGroup(id) {
   </button>
 </nav>
 
-<!-- SOUNDS -->
-<audio id="sound-details" src="assets/sounds/details.mp3" preload="none"></audio>
-<audio id="sound-buy" src="assets/sounds/buy.mp3" preload="none"></audio>
-<audio id="sound-nav" src="assets/sounds/nav.mp3" preload="none"></audio>
+<script>
+// ---- Mechanical keyboard style click sound (synthesized, no audio file needed) ----
+// Fires on every <button> click across the whole page.
+(function(){
+  let clickCtx = null;
+  function getCtx(){
+    if (!clickCtx) clickCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (clickCtx.state === 'suspended') clickCtx.resume();
+    return clickCtx;
+  }
+  function playMechClick(){
+    try {
+      const ctx = getCtx();
+      const now = ctx.currentTime;
+
+      // Sharp noise burst = the switch "click"
+      const bufferSize = Math.floor(ctx.sampleRate * 0.03);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const bandpass = ctx.createBiquadFilter();
+      bandpass.type = 'bandpass';
+      bandpass.frequency.value = 3200;
+      bandpass.Q.value = 1.1;
+
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.32, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+      noise.connect(bandpass);
+      bandpass.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noise.start(now);
+      noise.stop(now + 0.05);
+
+      // Short tonal "tick" = the switch snap
+      const osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(1400, now);
+      osc.frequency.exponentialRampToValueAtTime(350, now + 0.02);
+
+      const oscGain = ctx.createGain();
+      oscGain.gain.setValueAtTime(0.1, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+
+      osc.connect(oscGain);
+      oscGain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.03);
+    } catch (e) { /* Web Audio unsupported — fail silently */ }
+  }
+
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('button, #bmQtyGrid > *');
+    if (btn) playMechClick();
+  });
+})();
+</script>
 
 <!-- SCRIPTS -->
 <script>
@@ -1549,9 +1662,6 @@ async function confirmPurchase(){
         status: 'pending',
         createdAt: new Date().toISOString()
       });
-
-      const snd = document.getElementById('sound-buy');
-      if (snd){ snd.currentTime = 0; snd.play().catch(function(){}); }
 
       closeBuyModal();
       showToast('✅ Order request bheja gaya! Admin jaldi approve karega.');
