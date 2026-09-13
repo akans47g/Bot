@@ -413,6 +413,7 @@ button{ font-family:inherit; }
 .ff-price-row{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
 .ff-price{ font-size:22px; font-weight:800; color:var(--accent); }
 .ff-price-sub{ font-size:11.5px; color:var(--sub); font-weight:600; }
+.ff-price-old{ font-size:14px; color:var(--sub); font-weight:600; }
 .ff-save{
   background:#E8FBF3;
   color:var(--success);
@@ -474,6 +475,50 @@ button{ font-family:inherit; }
   padding:6px 12px; border-radius:20px; display:flex; align-items:center; gap:5px;
 }
 .ff-buy-btn:active{ transform:scale(.98); }
+
+/* ---------------- INSTALL GATE MODAL ---------------- */
+.install-gate-overlay{
+  position:fixed; inset:0; background:rgba(15,15,23,.55);
+  display:none; align-items:center; justify-content:center;
+  z-index:600; padding:20px;
+}
+.install-gate-overlay.show{ display:flex; }
+.install-gate-box{
+  background:var(--surface);
+  border-radius:var(--radius);
+  padding:26px 22px;
+  max-width:340px;
+  width:100%;
+  text-align:center;
+  box-shadow:0 20px 50px rgba(15,15,23,.3);
+}
+.install-gate-icon{
+  width:64px; height:64px; border-radius:50%;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; margin:0 auto 14px;
+  color:#fff;
+}
+.install-gate-box h3{ font-size:17px; margin-bottom:6px; }
+.install-gate-box p{ font-size:13px; color:var(--sub); margin:0 0 18px; }
+.install-gate-btn{
+  display:block; width:100%;
+  border:none; border-radius:14px;
+  padding:12px; font-size:13.5px; font-weight:800;
+  cursor:pointer; font-family:inherit;
+  margin-bottom:10px;
+}
+.install-gate-btn.primary{
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff;
+  box-shadow:0 6px 16px rgba(79,47,206,.3);
+}
+.install-gate-btn.secondary{
+  background:var(--bg);
+  color:var(--sub);
+  margin-bottom:0;
+}
+.install-gate-btn:active{ transform:scale(.98); }
 
 /* ---------------- STICKY BUY BAR ---------------- */
 .sticky-buybar{
@@ -625,7 +670,12 @@ button{ font-family:inherit; }
     </div>
     <div class="ff-body">
       <div class="ff-title">1 Day Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹25</span><span class="ff-price-sub">/ 1 day</span><span class="ff-badge">🔥 Quick Trial</span></div>
+      <div class="ff-price-row">
+        <del class="ff-price-old" id="ff1OldPrice" style="display:none">₹25</del>
+        <span class="ff-price" id="ff1Price">₹25</span>
+        <span class="ff-price-sub">/ 1 day</span>
+        <span class="ff-badge" id="ff1Badge">🔥 Quick Trial</span>
+      </div>
       <div class="ff-pills">
         <span class="ff-pill">📅 1 Day</span>
         <span class="ff-pill">📦 220 Total</span>
@@ -638,9 +688,9 @@ button{ font-family:inherit; }
         <div class="ff-detail-item">✔ Admin approval ke baad turant shuru</div>
         <div class="ff-detail-item">✔ 1 din me plan complete</div>
       </div>
-      <button type="button" class="ff-buy-btn" onclick="openFFModal('ff1')">
+      <button type="button" class="ff-buy-btn" id="ff1BuyBtn" onclick="handleBuyClick('ff1')">
         <span class="ff-buy-btn-left">🛒 Buy Now</span>
-        <span class="ff-buy-btn-right">🪙 ₹25</span>
+        <span class="ff-buy-btn-right" id="ff1BuyPrice">🪙 ₹25</span>
       </button>
     </div>
   </div>
@@ -665,7 +715,7 @@ button{ font-family:inherit; }
         <div class="ff-detail-item">✔ Admin approval ke baad turant shuru</div>
         <div class="ff-detail-item">✔ 5 din me plan complete</div>
       </div>
-      <button type="button" class="ff-buy-btn" onclick="openFFModal('ff2')">
+      <button type="button" class="ff-buy-btn" onclick="handleBuyClick('ff2')">
         <span class="ff-buy-btn-left">🛒 Buy Now</span>
         <span class="ff-buy-btn-right">🪙 ₹99</span>
       </button>
@@ -692,7 +742,7 @@ button{ font-family:inherit; }
         <div class="ff-detail-item">✔ Admin approval ke baad turant shuru</div>
         <div class="ff-detail-item">✔ 15 din me plan complete</div>
       </div>
-      <button type="button" class="ff-buy-btn" onclick="openFFModal('ff3')">
+      <button type="button" class="ff-buy-btn" onclick="handleBuyClick('ff3')">
         <span class="ff-buy-btn-left">🛒 Buy Now</span>
         <span class="ff-buy-btn-right">🪙 ₹219</span>
       </button>
@@ -719,7 +769,7 @@ button{ font-family:inherit; }
         <div class="ff-detail-item">✔ Admin approval ke baad turant shuru</div>
         <div class="ff-detail-item">✔ 30 din me plan complete</div>
       </div>
-      <button type="button" class="ff-buy-btn" onclick="openFFModal('ff4')">
+      <button type="button" class="ff-buy-btn" onclick="handleBuyClick('ff4')">
         <span class="ff-buy-btn-left">🛒 Buy Now</span>
         <span class="ff-buy-btn-right">🪙 ₹399</span>
       </button>
@@ -766,6 +816,16 @@ button{ font-family:inherit; }
   </div>
 </div>
 
+<div class="install-gate-overlay" id="installGateModal">
+  <div class="install-gate-box">
+    <div class="install-gate-icon">📲</div>
+    <h3>App Install Nahi Kiya?</h3>
+    <p>Fast order tracking aur best experience ke liye pehle hamara app install kar lijiye.</p>
+    <button type="button" class="install-gate-btn primary" onclick="location.href='account.html'">📲 Install App</button>
+    <button type="button" class="install-gate-btn secondary" onclick="continueWithoutInstall()">Continue Without Installing</button>
+  </div>
+</div>
+
 <div class="sticky-buybar" id="stickyBuyBar">
   <div class="sticky-buybar-info">
     <span class="sticky-buybar-title" id="stickyBuyTitle">Plan</span>
@@ -796,6 +856,32 @@ button{ font-family:inherit; }
     <span>Account</span>
   </button>
 </nav>
+
+<script>
+// ---- Install-app gate: shown before purchase if the site isn't running as an installed app ----
+let pendingBuyPlan = null;
+
+function isRunningAsInstalledApp(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
+function handleBuyClick(planId){
+  if (isRunningAsInstalledApp()) {
+    openFFModal(planId);
+    return;
+  }
+  pendingBuyPlan = planId;
+  const modal = document.getElementById('installGateModal');
+  if (modal) modal.classList.add('show');
+}
+
+function continueWithoutInstall(){
+  const modal = document.getElementById('installGateModal');
+  if (modal) modal.classList.remove('show');
+  if (pendingBuyPlan) openFFModal(pendingBuyPlan);
+  pendingBuyPlan = null;
+}
+</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -850,7 +936,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("resize", setBarOffset);
 
     barBtn.addEventListener("click", () => {
-      if (activePlan) openFFModal(activePlan);
+      if (activePlan) handleBuyClick(activePlan);
     });
 
     const io = new IntersectionObserver((entries) => {
@@ -943,6 +1029,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const btn = e.target.closest('button');
     if (btn) playMechClick();
   });
+})();
+</script>
+
+<script>
+// ---- First-time buyer offer: 1 Day Plan is ₹9 on a customer's first purchase, ₹25 after ----
+// NOTE: this only controls what the CARD shows. The actual amount charged in the
+// Buy popup depends on js/ff.js — check that it also reads/accepts ₹10 for 'ff1'
+// the first time, otherwise the popup may still ask for ₹25.
+(function(){
+  const FIRST_TIME_KEY = 'akans_ff1_first_time_used';
+
+  function applyFirstTimeOffer(){
+    const alreadyUsed = localStorage.getItem(FIRST_TIME_KEY);
+    if (alreadyUsed) return; // normal ₹25 pricing stays as-is
+
+    const priceEl = document.getElementById('ff1Price');
+    const oldPriceEl = document.getElementById('ff1OldPrice');
+    const badgeEl = document.getElementById('ff1Badge');
+    const buyPriceEl = document.getElementById('ff1BuyPrice');
+
+    if (priceEl) priceEl.textContent = '₹10';
+    if (oldPriceEl) oldPriceEl.style.display = 'inline';
+    if (badgeEl) badgeEl.textContent = '🆕 First Order Special';
+    if (buyPriceEl) buyPriceEl.textContent = '🪙 ₹10';
+  }
+
+  document.addEventListener('DOMContentLoaded', applyFirstTimeOffer);
+
+  const ff1BuyBtn = document.getElementById('ff1BuyBtn');
+  if (ff1BuyBtn) {
+    ff1BuyBtn.addEventListener('click', function(){
+      localStorage.setItem(FIRST_TIME_KEY, 'true');
+    });
+  }
 })();
 </script>
 </body>
