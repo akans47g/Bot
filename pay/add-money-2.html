@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Money — AKANS Social Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --purple:#4F2FCE;
+    --purple-dark:#3A20A0;
+    --purple-soft:#EFEBFC;
+    --orange:#FF6B3D;
+    --bg:#F6F5FB;
+    --card:#FFFFFF;
+    --text:#1A1533;
+    --muted:#8B87A6;
+    --border:#E7E4F5;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Poppins',system-ui,-apple-system,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .wrap{width:100%;max-width:420px;padding:28px 16px 36px;}
+  .site-footer{
+    width:100%;
+    margin-top:auto;
+    background:var(--purple-soft);
+    border-top:1px solid var(--border);
+    padding:16px 16px;
+    text-align:center;
+  }
+  .site-footer a{
+    color:var(--purple-dark);
+    font-size:12.5px;
+    font-weight:600;
+    text-decoration:none;
+  }
+  .site-footer a:hover{text-decoration:underline;}
+
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:22px;}
+  .brand .logo{
+    width:44px;height:44px;border-radius:12px;
+    background:var(--purple);
+    color:#fff;font-weight:700;font-size:16px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .brand h1{font-size:17px;margin:0;font-weight:600;}
+  .brand p{margin:2px 0 0;font-size:12.5px;color:var(--muted);}
+  .trust-badge{
+    display:inline-block;
+    margin-top:5px;
+    padding:3px 10px;
+    border-radius:20px;
+    background:var(--purple-soft);
+    color:var(--purple-dark);
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:.2px;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 2px 14px rgba(79,47,206,0.06);
+  }
+
+  .step-title{
+    display:flex;align-items:center;gap:10px;
+    margin:0 0 16px;
+    font-size:15px;font-weight:600;
+  }
+  .step-title .num{
+    width:24px;height:24px;border-radius:50%;
+    background:var(--purple);color:#fff;
+    font-size:12.5px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+
+  .amt-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
+    margin-bottom:18px;
+  }
+  .amt{
+    padding:12px 0;
+    border-radius:11px;
+    border:1.5px solid var(--border);
+    background:#fff;
+    color:var(--text);
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+    transition:border-color .15s, background .15s, color .15s;
+  }
+  .amt:hover{border-color:var(--purple);}
+  .amt.active{
+    background:var(--purple);
+    border-color:var(--purple);
+    color:#fff;
+  }
+
+  .custom-label{
+    display:block;
+    font-size:12.5px;
+    color:var(--muted);
+    margin-bottom:8px;
+    letter-spacing:.2px;
+  }
+  .custom-row{
+    display:flex;align-items:center;
+    border:1.5px solid var(--border);
+    border-radius:11px;
+    overflow:hidden;
+  }
+  .custom-row span{
+    padding:12px 12px;
+    color:var(--muted);
+    font-weight:600;
+    border-right:1.5px solid var(--border);
+  }
+  .custom-row input{
+    flex:1;
+    border:none;
+    outline:none;
+    padding:12px;
+    font-family:inherit;
+    font-size:14px;
+    color:var(--text);
+    min-width:0;
+  }
+  .hint{font-size:11.5px;color:var(--muted);margin:8px 2px 0;}
+
+  #paySection{display:none;}
+  #paySection.show{display:block;}
+
+  .qr-frame{
+    background:linear-gradient(135deg,var(--purple),var(--orange));
+    padding:3px;
+    border-radius:20px;
+    width:220px;
+    margin:4px auto 14px;
+  }
+  .qr-inner{
+    background:#fff;
+    border-radius:17px;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #qrcode{display:flex;align-items:center;justify-content:center;}
+  #qrcode img{display:block;}
+
+  .amount-display{
+    text-align:center;
+    font-size:13.5px;
+    color:var(--muted);
+    margin:0 0 18px;
+  }
+  .amount-display strong{color:var(--text);font-size:15px;}
+
+  .apps{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .app-btn{
+    display:flex;align-items:center;gap:10px;
+    padding:11px 12px;
+    border-radius:12px;
+    border:1.5px solid var(--border);
+    text-decoration:none;
+    color:var(--text);
+    font-size:13px;
+    font-weight:500;
+    transition:border-color .15s, transform .1s;
+  }
+  .app-btn:active{transform:scale(.97);}
+  .app-btn:hover{border-color:var(--purple);}
+  .app-btn .badge{
+    width:28px;height:28px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:10.5px;font-weight:700;
+    flex-shrink:0;
+  }
+  .badge.pe{background:#5F259F;}
+  .badge.paytm{background:#00BAF2;}
+  .badge.gpay{background:#4285F4;}
+  .badge.any{background:var(--purple);}
+
+  .upi-box{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:10px;
+    border:1.5px dashed var(--purple);
+    background:var(--purple-soft);
+    border-radius:11px;
+    padding:11px 14px;
+  }
+  .upi-box span{font-size:13px;font-weight:600;color:var(--purple-dark);}
+  .upi-box button{
+    border:none;
+    background:var(--purple);
+    color:#fff;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 14px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+
+  .disclaimer{
+    text-align:center;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:18px;
+    line-height:1.5;
+  }
+
+  .whatsapp-btn{
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    margin-top:12px;
+    padding:12px;
+    border-radius:12px;
+    background:#25D366;
+    color:#fff;
+    text-decoration:none;
+    font-size:13.5px;
+    font-weight:600;
+    transition:transform .1s;
+  }
+  .whatsapp-btn:active{transform:scale(.98);}
+  .whatsapp-btn .badge.wa{background:rgba(255,255,255,0.25);}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="logo">AK</div>
+    <div>
+      <h1>AKANS Social Sarvice Provider</h1>
+      <span class="trust-badge">✓ Fully Safe Secure And Trusted</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="step-title"><span class="num">1</span>Amount चुनें</p>
+    <div class="amt-grid" id="amountGrid">
+      <button class="amt" data-amt="20">₹20</button>
+      <button class="amt" data-amt="50">₹50</button>
+      <button class="amt" data-amt="80">₹80</button>
+      <button class="amt" data-amt="180">₹180</button>
+      <button class="amt" data-amt="350">₹350</button>
+      <button class="amt" data-amt="500">₹500</button>
+      <button class="amt" data-amt="750">₹750</button>
+      <button class="amt" data-amt="999">₹999</button>
+    </div>
+    <span class="custom-label">CUSTOM AMOUNT</span>
+    <div class="custom-row">
+      <span>₹</span>
+      <input type="number" id="customAmt" min="1" placeholder="Apna amount likhein">
+    </div>
+    <p class="hint">Amount select karte hi niche payment ka option aa jayega</p>
+  </div>
+
+  <div class="card" id="paySection">
+    <p class="step-title"><span class="num">2</span>Payment करें</p>
+
+    <div class="qr-frame">
+      <div class="qr-inner">
+        <div id="qrcode"></div>
+      </div>
+    </div>
+    <p class="amount-display">Paying <strong id="amtDisplay">₹0</strong></p>
+
+    <div class="apps">
+      <a class="app-btn" id="phonepeBtn"><span class="badge pe">Pe</span>PhonePe</a>
+      <a class="app-btn" id="paytmBtn"><span class="badge paytm">Pay</span>Paytm</a>
+      <a class="app-btn" id="gpayBtn"><span class="badge gpay">G</span>Google Pay</a>
+      <a class="app-btn" id="anyBtn"><span class="badge any">UPI</span>Any UPI App</a>
+    </div>
+
+    <div class="upi-box">
+      <span id="upiIdText">anil.belagali1@ibl</span>
+      <button id="copyBtn" type="button">Copy</button>
+    </div>
+
+    <p class="disclaimer">Payment ke baad Payment screenshot niche diye gaye WhatsApp number par send kar dein.</p>
+    <a class="whatsapp-btn" href="https://wa.me/919325022704" target="_blank" rel="noopener">
+      <span class="badge wa"><svg viewBox="0 0 24 24" width="15" height="15" fill="#fff"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.5 21 3 13.5 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg></span>Screenshot WhatsApp par bhejein
+    </a>
+  </div>
+
+
+</div>
+
+<footer class="site-footer">
+  <a href="https://wa.me/919021958286?text=Hi%20sir%2C%20I%20want%20to%20make%20a%20website" target="_blank" rel="noopener">Create Your Website For affordable Price</a>
+</footer>
+
+<script>
+  const UPI_ID = "anil.belagali1@ibl";
+  const PAYEE_NAME = "AKANS Social Store";
+  const NOTE = "Add Money";
+
+  const amountButtons = document.querySelectorAll('.amt');
+  const customInput = document.getElementById('customAmt');
+  const paySection = document.getElementById('paySection');
+  const amtDisplay = document.getElementById('amtDisplay');
+  const copyBtn = document.getElementById('copyBtn');
+
+  let qrObj = null;
+
+  function buildUri(scheme, amount){
+    const params =
+      'pa=' + encodeURIComponent(UPI_ID) +
+      '&pn=' + encodeURIComponent(PAYEE_NAME) +
+      '&am=' + encodeURIComponent(amount) +
+      '&cu=INR' +
+      '&tn=' + encodeURIComponent(NOTE);
+    return scheme + '://pay?' + params;
+  }
+
+  function renderPayment(amount){
+    paySection.classList.add('show');
+    amtDisplay.textContent = '₹' + amount;
+
+    const genericUri = buildUri('upi', amount);
+
+    document.getElementById('qrcode').innerHTML = '';
+    qrObj = new QRCode(document.getElementById('qrcode'), {
+      text: genericUri,
+      width: 190,
+      height: 190,
+      colorDark: '#1A1533',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+
+    document.getElementById('phonepeBtn').href = buildUri('phonepe', amount);
+    document.getElementById('paytmBtn').href = buildUri('paytmmp', amount);
+    document.getElementById('gpayBtn').href = buildUri('tez', amount);
+    document.getElementById('anyBtn').href = genericUri;
+
+    paySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function selectPreset(amount){
+    amountButtons.forEach(function(b){
+      b.classList.toggle('active', Number(b.dataset.amt) === amount);
+    });
+    customInput.value = '';
+    renderPayment(amount);
+  }
+
+  amountButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      selectPreset(Number(btn.dataset.amt));
+    });
+  });
+
+  customInput.addEventListener('input', function(){
+    const val = parseInt(customInput.value, 10);
+    amountButtons.forEach(function(b){ b.classList.remove('active'); });
+    if (val > 0) {
+      renderPayment(val);
+    } else {
+      paySection.classList.remove('show');
+    }
+  });
+
+  copyBtn.addEventListener('click', function(){
+    navigator.clipboard.writeText(UPI_ID).then(function(){
+      const old = copyBtn.textContent;
+      copyBtn.textContent = 'Copied!';
+      setTimeout(function(){ copyBtn.textContent = old; }, 1500);
+    });
+  });
+</script>
+</body>
+</html>
