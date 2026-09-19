@@ -623,7 +623,9 @@ button{ font-family:inherit; }
       'auth/network-request-failed': 'Internet connection check karein',
       'auth/unauthorized-domain': 'Ye website domain Firebase me authorize nahi hai (Authorized domains me add karein)'
     };
-    return map[err.code] || 'Kuch galat ho gaya, dobara try karein';
+    // 🔍 TEMPORARY DEBUG — mapped na hone wale error ka asli code/message
+    // dikhate hain. Bug fix hone ke baad wapas sirf generic line kar dena.
+    return map[err.code] || ('DEBUG ERROR: ' + (err.code || '') + ' ' + (err.message || String(err)));
   }
 
   window.handleAuthSubmit = async function(){
