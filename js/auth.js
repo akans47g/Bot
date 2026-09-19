@@ -1,14 +1,9 @@
 /* =================================================================
    AUTH.JS — Login, Sign Up, Google Sign-In, Logout, Password Reset
    =================================================================
-   ⚠️ BUG-FIX NOTE: Email/Password se signup karne ke turant baad,
-   naye account ka auth token Firestore ke liye kabhi-kabhi turant
-   "ready" nahi hota (ek chhota sa timing gap) — isse profile
-   Firestore me create hone se PEHLE hi silently fail ho sakta tha.
-   (Google Sign-In me ye dikkat nahi aati, uska token turant ready
-   rehta hai.) Do fixes:
-   1. Signup ke turant baad token FORCE-REFRESH karte hain.
-   2. Profile create fail ho to ek baar 1.2 second baad RETRY.
+   Ye file firebase-init.js se auth/db leke, saara login logic
+   ready-made functions me deti hai. login.html (aur baad me
+   account.html, index.html) inhi functions ko use karenge.
 ================================================================= */
 
 import { auth, db } from "./firebase-init.js";
@@ -74,10 +69,19 @@ export async function assignUniquePartnerCode(uid){
 /* Naye user ke liye Firestore me profile document banata hai
    (wallet balance 0 se start hoti hai). Agar document pehle se
    hai (purana user), to kuch overwrite nahi karta.
-   ⚠️ Ye function ab EXPORT hai — kisi bhi page pe agar user ka
-   profile missing mile (jaise purane broken signup ki wajah se),
-   to wahan se bhi call karke self-heal kiya jaa sakta hai. */
-export async function ensureUserProfile(user, extra = {}){
+   extra.partnerCode — Partner Program link (?pc=CODE) se aaya to,
+                        us CODE ka asli owner "referredBy" bnta hai
+   extra.referCode   — Refer System link (?rc=CODE) se aaya to,
+                        us CODE ka asli owner "referredByUid" bnta hai
+
+   ⚠️ IMPORTANT: referCode generate karna aur partner/refer code
+   lookup karna — dono ko try/catch me wrap kiya hai. Agar in me se
+   kuch bhi fail ho jaaye (jaise Firestore rules abhi tak publish
+   nahi hui), to bhi user ka MAIN profile (wallet, email, name)
+   zaroor ban jaayega — sirf referCode khaali reh jaayega, jo
+   refer.html khulte hi khud-ba-khud generate ho jaata hai. Isse
+   koi bhi naya signup silently fail nahi hoga. */
+async function ensureUserProfile(user, extra = {}){
   const ref = doc(db, "users", user.uid);
   const snap = await getDoc(ref);
   if (!snap.exists()){
@@ -85,7 +89,7 @@ export async function ensureUserProfile(user, extra = {}){
     try{
       myReferCode = await assignUniqueReferCode(user.uid);
     } catch(e){
-      console.warn('Refer code generate nahi ho paya, baad me khud ban jaayega', e);
+      console.warn('Refer code generate nahi ho paya, baad me refer.html khulte hi ban jaayega', e);
     }
 
     let referredBy = null;
@@ -112,7 +116,9 @@ export async function ensureUserProfile(user, extra = {}){
       }
     }
 
-    const profileData = {
+    // Ye MAIN profile write hai — ye kabhi skip nahi hona chahiye,
+    // isliye upar ki koi bhi cheez fail ho, yahan tak zaroor pahunchega.
+    await setDoc(ref, {
       email: user.email || "",
       name: extra.name || user.displayName || "",
       whatsapp: extra.whatsapp || "",
@@ -126,22 +132,12 @@ export async function ensureUserProfile(user, extra = {}){
       partnerBalance: 0,
       referBalance: 0,
       createdAt: new Date().toISOString()
-    };
-
-    // MAIN profile write — agar auth token timing ki wajah se pehli
-    // baar fail ho jaaye, to thoda ruk ke ek baar retry karte hain,
-    // taaki koi bhi naya signup silently broken na reh jaaye.
-    try{
-      await setDoc(ref, profileData);
-    } catch(e){
-      console.warn('Profile create pehli baar fail hua, 1.2s baad retry kar rahe hain...', e);
-      await new Promise(function(resolve){ setTimeout(resolve, 1200); });
-      await setDoc(ref, profileData);
-    }
+    });
   }
 }
 
-/* Har successful login pe "kab last login hua" record karta hai. */
+/* Har successful login pe "kab last login hua" record karta hai
+   (Admin Panel ke Analytics me "Login Activity" isi se banti hai). */
 function trackLogin(user){
   const ref = doc(db, "users", user.uid);
   setDoc(ref, { lastLogin: new Date().toISOString() }, { merge: true }).catch(function(){});
@@ -149,36 +145,28 @@ function trackLogin(user){
 
 export async function signupWithEmail(email, password, name, whatsapp, partnerCode, referCode){
   const cred = await createUserWithEmailAndPassword(auth, email, password);
-
-  // ⚠️ FIX: naya account banne ke turant baad token FORCE-REFRESH
-  // karte hain, taaki Firestore rules ko fresh/ready auth turant
-  // dikhe — isse email/password signup ka race-condition bug fix
-  // hota hai.
-  try{
-    await cred.user.getIdToken(true);
-  } catch(e){
-    console.warn('Token refresh fail hua, aage badh rahe hain', e);
-  }
-
+  // ⚠️ FIX: naya account banne ke turant baad token ko force-refresh
+  // karo. Google popup flow me user-interaction ki wajah se thoda
+  // time nikal jaata hai aur token settle ho jaata hai, lekin
+  // email/password signup instant hota hai — isliye kabhi-kabhi
+  // agla Firestore write (neeche ensureUserProfile) turant chalne
+  // par "permission-denied" de sakta hai. Ye line us race ko rokti hai.
+  await cred.user.getIdToken(true);
   if (name){
     await updateProfile(cred.user, { displayName: name });
   }
   await ensureUserProfile(cred.user, { name: name || "", whatsapp: whatsapp || "", partnerCode: partnerCode || null, referCode: referCode || null });
-  trackLogin(cred.user);
   return cred.user;
 }
 
 export async function loginWithEmail(email, password){
   const cred = await signInWithEmailAndPassword(auth, email, password);
-  // ⚠️ Self-heal: agar ye account purana hai aur kisi wajah se
-  // (jaise wahi token-timing bug) iska Firestore profile kabhi bana
-  // hi nahi tha, to ye yahan turant bana dega. Agar profile pehle
-  // se hai to ensureUserProfile kuch nahi karta (harmless).
-  try{
-    await ensureUserProfile(cred.user);
-  } catch(e){
-    console.warn('Profile self-heal check fail hua', e);
-  }
+  // ⚠️ FIX: loginWithGoogle ki tarah, yahan bhi ensureUserProfile call
+  // karo. Agar signup ke time profile document kisi wajah se ban nahi
+  // paya tha (isse pehle users/{uid} bilkul exist nahi karta tha), to
+  // ye check (!snap.exists()) use turant, khud-ba-khud bana dega —
+  // taaki refer code, wallet, admin panel listing sab thik ho jaaye.
+  await ensureUserProfile(cred.user);
   trackLogin(cred.user);
   return cred.user;
 }
@@ -199,7 +187,8 @@ export function logout(){
   return signOut(auth);
 }
 
-/* callback(user) — user null hoga agar logged out hai. */
+/* callback(user) — user null hoga agar logged out hai.
+   Kisi bhi page pe login-status check karne ke liye ye use hoga. */
 export function watchAuthState(callback){
   return onAuthStateChanged(auth, callback);
 }
