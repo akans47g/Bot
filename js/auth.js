@@ -161,12 +161,15 @@ export async function signupWithEmail(email, password, name, whatsapp, partnerCo
 
 export async function loginWithEmail(email, password){
   const cred = await signInWithEmailAndPassword(auth, email, password);
-  // ⚠️ FIX: loginWithGoogle ki tarah, yahan bhi ensureUserProfile call
-  // karo. Agar signup ke time profile document kisi wajah se ban nahi
-  // paya tha (isse pehle users/{uid} bilkul exist nahi karta tha), to
-  // ye check (!snap.exists()) use turant, khud-ba-khud bana dega —
-  // taaki refer code, wallet, admin panel listing sab thik ho jaaye.
-  await ensureUserProfile(cred.user);
+  // 🔍 TEMPORARY DEBUG — agar profile create/repair fail ho to turant
+  // dikhega, chup-chaap nahi rahega. Fix confirm hone ke baad try/catch
+  // hata dena aur sirf "await ensureUserProfile(cred.user);" rakhna.
+  try{
+    await ensureUserProfile(cred.user);
+    alert('DEBUG: profile check OK for uid ' + cred.user.uid);
+  } catch(e){
+    alert('DEBUG LOGIN ERROR: ' + (e && (e.code || e.message) ? (e.code||'') + ' ' + (e.message||'') : String(e)));
+  }
   trackLogin(cred.user);
   return cred.user;
 }
