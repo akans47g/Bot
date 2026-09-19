@@ -121,7 +121,9 @@ document.getElementById('topupsList').addEventListener('click', async function(e
       await logAdminAction('topup_approved', '✅ Approved ₹' + amount + ' top-up for ' + (t ? t.userEmail : uid));
       await loadTopups();
     } catch(err){
-      alert('Kuch galat ho gaya, dobara try karein');
+      // 🔍 TEMPORARY DEBUG — asli error dikhane ke liye. Bug fix hone
+      // ke baad is alert() ko wapas 'Kuch galat ho gaya...' kar dena.
+      alert('DEBUG ERROR:\n' + (err && (err.code || err.message) ? (err.code || '') + ' ' + (err.message || '') : String(err)));
       approveBtn.disabled = false;
       approveBtn.textContent = '✅ Approve';
     }
