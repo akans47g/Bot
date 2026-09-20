@@ -155,7 +155,18 @@ export async function signupWithEmail(email, password, name, whatsapp, partnerCo
   if (name){
     await updateProfile(cred.user, { displayName: name });
   }
-  await ensureUserProfile(cred.user, { name: name || "", whatsapp: whatsapp || "", partnerCode: partnerCode || null, referCode: referCode || null });
+  // 🔍 TEMPORARY DEBUG — agar profile document banane me koi bhi
+  // error aaye (chahe getDoc ho ya final setDoc), yahan turant
+  // dikh jaayega, chup-chaap nahi rahega. Fix confirm hone ke baad
+  // try/catch hata dena aur sirf neeche wali single line rakhni:
+  // await ensureUserProfile(cred.user, {...});
+  try{
+    await ensureUserProfile(cred.user, { name: name || "", whatsapp: whatsapp || "", partnerCode: partnerCode || null, referCode: referCode || null });
+    alert('DEBUG SIGNUP: profile bana OK, uid = ' + cred.user.uid);
+  } catch(e){
+    alert('DEBUG SIGNUP ERROR: ' + (e && (e.code || e.message) ? (e.code||'') + ' ' + (e.message||'') : String(e)));
+    throw e;
+  }
   return cred.user;
 }
 
