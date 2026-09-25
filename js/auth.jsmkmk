@@ -7,6 +7,7 @@
 ================================================================= */
 
 import { auth, db } from "./firebase-init.js";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -17,192 +18,527 @@ import {
   updateProfile,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
 import {
-  doc, getDoc, setDoc
+  doc,
+  getDoc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
-/* ---------- REFER CODE — 4 char: 2 letters (A-Z) + 2 digits (0-9), jaise "MK07" ---------- */
+
+/* ================================================================
+   REFER CODE
+   Format: 2 letters + 2 numbers
+   Example: MK07
+================================================================ */
+
 function generateReferCode(){
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
   const l1 = letters[Math.floor(Math.random() * 26)];
   const l2 = letters[Math.floor(Math.random() * 26)];
+
   const n1 = Math.floor(Math.random() * 10);
   const n2 = Math.floor(Math.random() * 10);
+
   return l1 + l2 + n1 + n2;
 }
 
+
 export async function assignUniqueReferCode(uid){
+
   for (let attempt = 0; attempt < 10; attempt++){
+
     const code = generateReferCode();
+
     const codeRef = doc(db, 'referCodes', code);
+
     const existing = await getDoc(codeRef);
+
     if (!existing.exists()){
-      await setDoc(codeRef, { uid: uid });
+
+      await setDoc(codeRef, {
+        uid: uid
+      });
+
       return code;
     }
   }
-  return 'XX' + Math.floor(Math.random() * 90 + 10); // extremely unlikely fallback
+
+  return 'XX' + Math.floor(Math.random() * 90 + 10);
 }
 
-/* ---------- PARTNER CODE — 3 char: 1 letter (A-Z) + 2 digits (0-9), jaise "M04" ---------- */
+
+/* ================================================================
+   PARTNER CODE
+   Format: 1 letter + 2 numbers
+   Example: M04
+================================================================ */
+
 function generatePartnerCode(){
+
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
   const l1 = letters[Math.floor(Math.random() * 26)];
+
   const n1 = Math.floor(Math.random() * 10);
   const n2 = Math.floor(Math.random() * 10);
+
   return l1 + n1 + n2;
 }
 
+
 export async function assignUniquePartnerCode(uid){
+
   for (let attempt = 0; attempt < 10; attempt++){
+
     const code = generatePartnerCode();
+
     const codeRef = doc(db, 'partnerCodes', code);
+
     const existing = await getDoc(codeRef);
+
     if (!existing.exists()){
-      await setDoc(codeRef, { uid: uid });
+
+      await setDoc(codeRef, {
+        uid: uid
+      });
+
       return code;
     }
   }
-  return 'X' + Math.floor(Math.random() * 90 + 10); // extremely unlikely fallback
+
+  return 'X' + Math.floor(Math.random() * 90 + 10);
 }
 
-/* Naye user ke liye Firestore me profile document banata hai
-   (wallet balance 0 se start hoti hai). Agar document pehle se
-   hai (purana user), to kuch overwrite nahi karta.
-   extra.partnerCode — Partner Program link (?pc=CODE) se aaya to,
-                        us CODE ka asli owner "referredBy" bnta hai
-   extra.referCode   — Refer System link (?rc=CODE) se aaya to,
-                        us CODE ka asli owner "referredByUid" bnta hai
 
-   ⚠️ IMPORTANT: referCode generate karna aur partner/refer code
-   lookup karna — dono ko try/catch me wrap kiya hai. Agar in me se
-   kuch bhi fail ho jaaye (jaise Firestore rules abhi tak publish
-   nahi hui), to bhi user ka MAIN profile (wallet, email, name)
-   zaroor ban jaayega — sirf referCode khaali reh jaayega, jo
-   refer.html khulte hi khud-ba-khud generate ho jaata hai. Isse
-   koi bhi naya signup silently fail nahi hoga. */
+/* ================================================================
+   ENSURE USER PROFILE
+================================================================
+
+   Har authenticated user ke liye:
+
+   users/{Firebase UID}
+
+   document hona zaroori hai.
+
+   Agar document already exist karta hai:
+   → existing data ko overwrite nahi karega.
+
+   Agar document missing hai:
+   → complete profile create karega.
+
+================================================================ */
+
 async function ensureUserProfile(user, extra = {}){
+
   const ref = doc(db, "users", user.uid);
+
   const snap = await getDoc(ref);
-  if (!snap.exists()){
-    let myReferCode = null;
+
+
+  /* --------------------------------------------------------------
+     Existing user
+     -------------------------------------------------------------- */
+
+  if (snap.exists()){
+    return;
+  }
+
+
+  /* --------------------------------------------------------------
+     New / missing profile
+     -------------------------------------------------------------- */
+
+  let myReferCode = null;
+
+
+  /* Generate unique referral code */
+
+  try{
+
+    myReferCode = await assignUniqueReferCode(user.uid);
+
+  } catch(e){
+
+    console.warn(
+      'Refer code generate nahi ho paya.',
+      e
+    );
+  }
+
+
+  /* --------------------------------------------------------------
+     Partner referral
+  -------------------------------------------------------------- */
+
+  let referredBy = null;
+
+  if (extra.partnerCode){
+
     try{
-      myReferCode = await assignUniqueReferCode(user.uid);
+
+      const codeSnap = await getDoc(
+        doc(
+          db,
+          'partnerCodes',
+          extra.partnerCode.toUpperCase()
+        )
+      );
+
+      if (codeSnap.exists()){
+
+        referredBy = codeSnap.data().uid;
+      }
+
     } catch(e){
-      console.warn('Refer code generate nahi ho paya, baad me refer.html khulte hi ban jaayega', e);
-    }
 
-    let referredBy = null;
-    if (extra.partnerCode){
-      try{
-        const codeSnap = await getDoc(doc(db, 'partnerCodes', extra.partnerCode.toUpperCase()));
-        if (codeSnap.exists()){
-          referredBy = codeSnap.data().uid;
-        }
-      } catch(e){
-        console.warn('Partner code lookup fail hua', e);
-      }
+      console.warn(
+        'Partner code lookup fail hua.',
+        e
+      );
     }
-
-    let referredByUid = null;
-    if (extra.referCode){
-      try{
-        const codeSnap = await getDoc(doc(db, 'referCodes', extra.referCode.toUpperCase()));
-        if (codeSnap.exists()){
-          referredByUid = codeSnap.data().uid;
-        }
-      } catch(e){
-        console.warn('Refer code lookup fail hua', e);
-      }
-    }
-
-    // Ye MAIN profile write hai — ye kabhi skip nahi hona chahiye,
-    // isliye upar ki koi bhi cheez fail ho, yahan tak zaroor pahunchega.
-    await setDoc(ref, {
-      email: user.email || "",
-      name: extra.name || user.displayName || "",
-      whatsapp: extra.whatsapp || "",
-      referredBy: referredBy,
-      referCode: myReferCode,
-      referredByUid: referredByUid,
-      firstDepositDone: false,
-      walletBalance: 0,
-      isPartner: false,
-      partnerCode: null,
-      partnerBalance: 0,
-      referBalance: 0,
-      createdAt: new Date().toISOString()
-    });
   }
+
+
+  /* --------------------------------------------------------------
+     Normal referral
+  -------------------------------------------------------------- */
+
+  let referredByUid = null;
+
+  if (extra.referCode){
+
+    try{
+
+      const codeSnap = await getDoc(
+        doc(
+          db,
+          'referCodes',
+          extra.referCode.toUpperCase()
+        )
+      );
+
+      if (codeSnap.exists()){
+
+        referredByUid = codeSnap.data().uid;
+      }
+
+    } catch(e){
+
+      console.warn(
+        'Refer code lookup fail hua.',
+        e
+      );
+    }
+  }
+
+
+  /* --------------------------------------------------------------
+     MAIN USER PROFILE
+  --------------------------------------------------------------
+
+     Ye write mandatory hai.
+
+     Agar ye fail hota hai to error caller tak jayega.
+     Login/signup silently successful nahi maana jayega.
+  */
+
+  await setDoc(ref, {
+
+    email: user.email || "",
+
+    name:
+      extra.name ||
+      user.displayName ||
+      "",
+
+    whatsapp:
+      extra.whatsapp ||
+      "",
+
+    referredBy:
+      referredBy,
+
+    referCode:
+      myReferCode,
+
+    referredByUid:
+      referredByUid,
+
+    firstDepositDone:
+      false,
+
+    walletBalance:
+      0,
+
+    isPartner:
+      false,
+
+    partnerCode:
+      null,
+
+    partnerBalance:
+      0,
+
+    referBalance:
+      0,
+
+    createdAt:
+      new Date().toISOString()
+
+  });
 }
 
-/* Har successful login pe "kab last login hua" record karta hai
-   (Admin Panel ke Analytics me "Login Activity" isi se banti hai). */
+
+/* ================================================================
+   TRACK LAST LOGIN
+================================================================ */
+
 function trackLogin(user){
-  const ref = doc(db, "users", user.uid);
-  setDoc(ref, { lastLogin: new Date().toISOString() }, { merge: true }).catch(function(){});
+
+  const ref = doc(
+    db,
+    "users",
+    user.uid
+  );
+
+  setDoc(
+    ref,
+    {
+      lastLogin:
+        new Date().toISOString()
+    },
+    {
+      merge: true
+    }
+  ).catch(function(error){
+
+    console.warn(
+      "Last login update failed:",
+      error
+    );
+
+  });
 }
 
-export async function signupWithEmail(email, password, name, whatsapp, partnerCode, referCode){
-  const cred = await createUserWithEmailAndPassword(auth, email, password);
-  // ⚠️ FIX: naya account banne ke turant baad token ko force-refresh
-  // karo. Google popup flow me user-interaction ki wajah se thoda
-  // time nikal jaata hai aur token settle ho jaata hai, lekin
-  // email/password signup instant hota hai — isliye kabhi-kabhi
-  // agla Firestore write (neeche ensureUserProfile) turant chalne
-  // par "permission-denied" de sakta hai. Ye line us race ko rokti hai.
+
+/* ================================================================
+   EMAIL SIGNUP
+================================================================ */
+
+export async function signupWithEmail(
+  email,
+  password,
+  name,
+  whatsapp,
+  partnerCode,
+  referCode
+){
+
+  /* Create Firebase Authentication account */
+
+  const cred =
+    await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+
+  /* Force-refresh authentication token */
+
   await cred.user.getIdToken(true);
+
+
+  /* Save display name in Firebase Auth */
+
   if (name){
-    await updateProfile(cred.user, { displayName: name });
+
+    await updateProfile(
+      cred.user,
+      {
+        displayName: name
+      }
+    );
   }
-  // 🔍 TEMPORARY DEBUG — agar profile document banane me koi bhi
-  // error aaye (chahe getDoc ho ya final setDoc), yahan turant
-  // dikh jaayega, chup-chaap nahi rahega. Fix confirm hone ke baad
-  // try/catch hata dena aur sirf neeche wali single line rakhni:
-  // await ensureUserProfile(cred.user, {...});
-  try{
-    await ensureUserProfile(cred.user, { name: name || "", whatsapp: whatsapp || "", partnerCode: partnerCode || null, referCode: referCode || null });
-    alert('DEBUG SIGNUP: profile bana OK, uid = ' + cred.user.uid);
-  } catch(e){
-    alert('DEBUG SIGNUP ERROR: ' + (e && (e.code || e.message) ? (e.code||'') + ' ' + (e.message||'') : String(e)));
-    throw e;
-  }
+
+
+  /* --------------------------------------------------------------
+     VERY IMPORTANT
+
+     Firestore profile MUST be created before redirect.
+  -------------------------------------------------------------- */
+
+  await ensureUserProfile(
+    cred.user,
+    {
+      name:
+        name || "",
+
+      whatsapp:
+        whatsapp || "",
+
+      partnerCode:
+        partnerCode || null,
+
+      referCode:
+        referCode || null
+    }
+  );
+
+
   return cred.user;
 }
 
-export async function loginWithEmail(email, password){
-  const cred = await signInWithEmailAndPassword(auth, email, password);
-  // 🔍 TEMPORARY DEBUG — agar profile create/repair fail ho to turant
-  // dikhega, chup-chaap nahi rahega. Fix confirm hone ke baad try/catch
-  // hata dena aur sirf "await ensureUserProfile(cred.user);" rakhna.
-  try{
-    await ensureUserProfile(cred.user);
-    alert('DEBUG: profile check OK for uid ' + cred.user.uid);
-  } catch(e){
-    alert('DEBUG LOGIN ERROR: ' + (e && (e.code || e.message) ? (e.code||'') + ' ' + (e.message||'') : String(e)));
-  }
-  trackLogin(cred.user);
+
+/* ================================================================
+   EMAIL LOGIN
+================================================================
+
+   IMPORTANT FIX:
+
+   Pehle ensureUserProfile() error catch ho raha tha aur
+   login successful return ho raha tha.
+
+   Ab:
+
+   Firebase Auth Login
+          ↓
+   ensureUserProfile()
+          ↓
+   trackLogin()
+          ↓
+   return user
+          ↓
+   login.html redirect
+
+   Agar Firestore profile creation fail hota hai,
+   error caller tak jayega.
+================================================================ */
+
+export async function loginWithEmail(
+  email,
+  password
+){
+
+  const cred =
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+
+  /* --------------------------------------------------------------
+     Profile MUST exist before login flow finishes.
+  -------------------------------------------------------------- */
+
+  await ensureUserProfile(
+    cred.user
+  );
+
+
+  /* Record last login */
+
+  trackLogin(
+    cred.user
+  );
+
+
   return cred.user;
 }
 
-export async function loginWithGoogle(partnerCode, referCode){
-  const provider = new GoogleAuthProvider();
-  const cred = await signInWithPopup(auth, provider);
-  await ensureUserProfile(cred.user, { partnerCode: partnerCode || null, referCode: referCode || null });
-  trackLogin(cred.user);
+
+/* ================================================================
+   GOOGLE LOGIN
+================================================================ */
+
+export async function loginWithGoogle(
+  partnerCode,
+  referCode
+){
+
+  const provider =
+    new GoogleAuthProvider();
+
+
+  const cred =
+    await signInWithPopup(
+      auth,
+      provider
+    );
+
+
+  /* Ensure Firestore profile */
+
+  await ensureUserProfile(
+    cred.user,
+    {
+      partnerCode:
+        partnerCode || null,
+
+      referCode:
+        referCode || null
+    }
+  );
+
+
+  /* Record last login */
+
+  trackLogin(
+    cred.user
+  );
+
+
   return cred.user;
 }
+
+
+/* ================================================================
+   PASSWORD RESET
+================================================================ */
 
 export function resetPassword(email){
-  return sendPasswordResetEmail(auth, email);
+
+  return sendPasswordResetEmail(
+    auth,
+    email
+  );
 }
+
+
+/* ================================================================
+   LOGOUT
+================================================================ */
 
 export function logout(){
-  return signOut(auth);
+
+  return signOut(
+    auth
+  );
 }
 
-/* callback(user) — user null hoga agar logged out hai.
-   Kisi bhi page pe login-status check karne ke liye ye use hoga. */
+
+/* ================================================================
+   AUTH STATE LISTENER
+================================================================
+
+   NOTE:
+
+   Ye function delete nahi kiya gaya hai.
+
+   Account/index/other pages agar isko use kar rahe hain
+   to unki functionality break nahi hogi.
+
+   login.html me automatic redirect ke liye ab ise use nahi
+   kiya jayega.
+================================================================ */
+
 export function watchAuthState(callback){
-  return onAuthStateChanged(auth, callback);
+
+  return onAuthStateChanged(
+    auth,
+    callback
+  );
 }
