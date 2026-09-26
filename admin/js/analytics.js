@@ -55,6 +55,7 @@ async function loadAllData(){
     allOrders.push({
       id: d.id,
       productName: data.planName,
+      qty: data.totalContent,
       price: data.price,
       status: data.status,
       createdAt: data.createdAt
@@ -194,16 +195,21 @@ function drawLineChart(canvasId, labels, values, label, color){
 
 function renderProductRanking(){
   const b = getBuckets(currentRange);
-  const counts = {};
+  const stats = {};
   allOrders.forEach(function(o){
     if (o.status === 'rejected') return;
     if (!o.createdAt) return;
     const d = new Date(o.createdAt);
     if (!b.match(d)) return;
-    counts[o.productName] = (counts[o.productName] || 0) + 1;
+    const qty = typeof o.qty === 'number' ? o.qty : (parseInt(o.qty, 10) || 1);
+    if (!stats[o.productName]) stats[o.productName] = { orders: 0, qty: 0 };
+    stats[o.productName].orders += 1;
+    stats[o.productName].qty += qty;
   });
 
-  const sorted = Object.entries(counts).sort(function(a, b){ return b[1] - a[1]; });
+  // Sabse zyada quantity/content wala product upar, kyunki wahi
+  // asli "performance" batata hai — sirf orders ki ginti se nahi.
+  const sorted = Object.entries(stats).sort(function(a, b){ return b[1].qty - a[1].qty; });
   const el = document.getElementById('productRanking');
 
   if (!sorted.length){
@@ -211,11 +217,11 @@ function renderProductRanking(){
     return;
   }
 
-  const max = sorted[0][1];
+  const max = sorted[0][1].qty;
   el.innerHTML = '';
   sorted.forEach(function(entry, i){
-    const name = entry[0], count = entry[1];
-    const pct = Math.round((count / max) * 100);
+    const name = entry[0], stat = entry[1];
+    const pct = max > 0 ? Math.round((stat.qty / max) * 100) : 0;
     const div = document.createElement('div');
     div.className = 'rank-item';
     div.innerHTML =
@@ -223,8 +229,9 @@ function renderProductRanking(){
       '<div class="rank-bar-wrap">' +
         '<div class="rank-name">' + escapeHtml(name) + '</div>' +
         '<div class="rank-bar-track"><div class="rank-bar-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="rank-sub">' + stat.orders + ' baar purchase hua</div>' +
       '</div>' +
-      '<div class="rank-count">' + count + '</div>';
+      '<div class="rank-count">' + stat.qty + '</div>';
     el.appendChild(div);
   });
 }
