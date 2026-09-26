@@ -35,14 +35,32 @@ document.getElementById('rangeToggle').addEventListener('click', function(e){
 });
 
 async function loadAllData(){
-  const [topupsSnap, ordersSnap, usersSnap, logsSnap] = await Promise.all([
+  const [topupsSnap, ordersSnap, ffOrdersSnap, usersSnap, logsSnap] = await Promise.all([
     getDocs(collection(db, 'topups')),
     getDocs(collection(db, 'orders')),
+    getDocs(collection(db, 'ffOrders')),
     getDocs(collection(db, 'users')),
     getDocs(query(collection(db, 'adminLogs'), orderBy('timestamp', 'desc'), limit(30)))
   ]);
   allTopups = []; topupsSnap.forEach(function(d){ allTopups.push(d.data()); });
-  allOrders = []; ordersSnap.forEach(function(d){ allOrders.push(Object.assign({ id: d.id }, d.data())); });
+
+  allOrders = [];
+  ordersSnap.forEach(function(d){ allOrders.push(Object.assign({ id: d.id }, d.data())); });
+  // Free Fire plan orders 'ffOrders' collection me alag se hain —
+  // unhe 'orders' jaisa hi shape (productName, price, status,
+  // createdAt) deke isi list me jod dete hain, taaki Orders chart aur
+  // Product Performance ranking dono inhe automatically count karein.
+  ffOrdersSnap.forEach(function(d){
+    const data = d.data();
+    allOrders.push({
+      id: d.id,
+      productName: data.planName,
+      price: data.price,
+      status: data.status,
+      createdAt: data.createdAt
+    });
+  });
+
   allUsers = []; usersSnap.forEach(function(d){ allUsers.push(Object.assign({ id: d.id }, d.data())); });
 
   renderAll();
