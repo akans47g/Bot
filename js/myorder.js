@@ -17,18 +17,24 @@ watchAuthState(function(user){
 });
 
 function listenToOrders(uid){
-  const q = query(collection(db, 'orders'), where('uid', '==', uid));
-  onSnapshot(q, function(snap){
-    const list = document.getElementById('moList');
-    document.getElementById('moCount').textContent = snap.size;
+  const list = document.getElementById('moList');
+  const countEl = document.getElementById('moCount');
 
-    if (snap.empty){
+  // Bundle/product orders 'orders' collection me hain aur Free Fire
+  // plan orders 'ffOrders' collection me — dono ko alag-alag sunte
+  // hain, fir merge karke ek hi list me (naye-se-purane) dikhate hain.
+  let regularOrders = [];
+  let ffOrders = [];
+
+  function render(){
+    const docs = regularOrders.concat(ffOrders);
+    countEl.textContent = docs.length;
+
+    if (docs.length === 0){
       list.innerHTML = '<p class="mo-empty">Abhi tak koi order nahi hai</p>';
       return;
     }
 
-    const docs = [];
-    snap.forEach(function(d){ docs.push(d.data()); });
     docs.sort(function(a, b){ return new Date(b.createdAt) - new Date(a.createdAt); });
 
     list.innerHTML = '';
@@ -42,11 +48,43 @@ function listenToOrders(uid){
           '<span class="mo-status ' + d.status + '">' + statusLabel(d.status) + '</span>' +
         '</div>' +
         '<div class="mo-item-bottom">' +
-          '<span>' + d.qty + ' qty • ' + date + '</span>' +
+          '<span>' + d.qtyLabel + ' • ' + date + '</span>' +
           '<strong>₹' + d.price + '</strong>' +
         '</div>';
       list.appendChild(item);
     });
+  }
+
+  const ordersQ = query(collection(db, 'orders'), where('uid', '==', uid));
+  onSnapshot(ordersQ, function(snap){
+    regularOrders = [];
+    snap.forEach(function(d){
+      const data = d.data();
+      regularOrders.push({
+        productName: data.productName,
+        qtyLabel: data.qty + ' qty',
+        price: data.price,
+        status: data.status,
+        createdAt: data.createdAt
+      });
+    });
+    render();
+  });
+
+  const ffQ = query(collection(db, 'ffOrders'), where('uid', '==', uid));
+  onSnapshot(ffQ, function(snap){
+    ffOrders = [];
+    snap.forEach(function(d){
+      const data = d.data();
+      ffOrders.push({
+        productName: data.planName,
+        qtyLabel: (data.totalContent || '') + ' total',
+        price: data.price,
+        status: data.status,
+        createdAt: data.createdAt
+      });
+    });
+    render();
   });
 }
 
