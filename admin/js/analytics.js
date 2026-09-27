@@ -54,6 +54,8 @@ async function loadAllData(){
     const data = d.data();
     allOrders.push({
       id: d.id,
+      uid: data.uid,
+      userEmail: data.userEmail,
       productName: data.planName,
       qty: data.totalContent,
       price: data.price,
@@ -67,6 +69,7 @@ async function loadAllData(){
   renderAll();
   renderLoginActivity();
   renderActivityLog(logsSnap);
+  renderTopPartners();
 }
 
 function renderActivityLog(snap){
@@ -155,13 +158,23 @@ function renderAll(){
   const validOrders = allOrders.filter(function(o){ return o.status !== 'rejected'; });
   const ord = bucketSum(validOrders, 'createdAt', null, currentRange);
   drawLineChart('ordersChart', ord.labels, ord.values, 'Orders', '#FF6B3D');
-  document.getElementById('ordersTotal').innerHTML = 'Total: <strong>' + ord.values.reduce(function(a, b){ return a + b; }, 0) + ' orders</strong>';
+  const totalOrderCount = ord.values.reduce(function(a, b){ return a + b; }, 0);
+  document.getElementById('ordersTotal').innerHTML = 'Total: <strong>' + totalOrderCount + ' orders</strong>';
+
+  // Average Order Value — usi range ke andar aane wale orders ki
+  // average price (sirf non-rejected).
+  const rangeBuckets = getBuckets(currentRange);
+  const ordersInRange = validOrders.filter(function(o){ return o.createdAt && rangeBuckets.match(new Date(o.createdAt)); });
+  const totalOrderValue = ordersInRange.reduce(function(sum, o){ return sum + (o.price || 0); }, 0);
+  const aov = ordersInRange.length ? (totalOrderValue / ordersInRange.length) : 0;
+  document.getElementById('aovTotal').innerHTML = 'Average Order Value: <strong>₹' + aov.toFixed(2) + '</strong>';
 
   const grw = bucketSum(allUsers, 'createdAt', null, currentRange);
   drawLineChart('growthChart', grw.labels, grw.values, 'New Users', '#16C784');
   document.getElementById('growthTotal').innerHTML = 'New signups: <strong>' + grw.values.reduce(function(a, b){ return a + b; }, 0) + '</strong>';
 
   renderProductRanking();
+  renderTopSpenders();
 }
 
 function drawLineChart(canvasId, labels, values, label, color){
@@ -232,6 +245,88 @@ function renderProductRanking(){
         '<div class="rank-sub">' + stat.orders + ' baar purchase hua</div>' +
       '</div>' +
       '<div class="rank-count">' + stat.qty + '</div>';
+    el.appendChild(div);
+  });
+}
+
+/* ================================================================
+   TOP SPENDERS — is range ke andar sabse zyada order value wale
+   users, top 5. uid se group karke allUsers se naam/email nikalte
+   hain.
+================================================================ */
+function renderTopSpenders(){
+  const b = getBuckets(currentRange);
+  const spend = {};
+
+  allOrders.forEach(function(o){
+    if (o.status === 'rejected') return;
+    if (!o.createdAt || !o.uid) return;
+    const d = new Date(o.createdAt);
+    if (!b.match(d)) return;
+    if (!spend[o.uid]) spend[o.uid] = { total: 0, orders: 0, email: o.userEmail || '' };
+    spend[o.uid].total += (o.price || 0);
+    spend[o.uid].orders += 1;
+  });
+
+  const el = document.getElementById('topSpenders');
+  const sorted = Object.entries(spend).sort(function(a, b){ return b[1].total - a[1].total; }).slice(0, 5);
+
+  if (!sorted.length){
+    el.innerHTML = '<p class="admin-empty">Is period me koi order nahi hai</p>';
+    return;
+  }
+
+  const max = sorted[0][1].total;
+  el.innerHTML = '';
+  sorted.forEach(function(entry, i){
+    const uid = entry[0], stat = entry[1];
+    const userDoc = allUsers.find(function(u){ return u.id === uid; });
+    const label = (userDoc && userDoc.name) || stat.email || 'Unknown';
+    const pct = max > 0 ? Math.round((stat.total / max) * 100) : 0;
+    const div = document.createElement('div');
+    div.className = 'rank-item';
+    div.innerHTML =
+      '<div class="rank-num">' + (i + 1) + '</div>' +
+      '<div class="rank-bar-wrap">' +
+        '<div class="rank-name">' + escapeHtml(label) + '</div>' +
+        '<div class="rank-bar-track"><div class="rank-bar-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="rank-sub">' + stat.orders + ' order' + (stat.orders === 1 ? '' : 's') + '</div>' +
+      '</div>' +
+      '<div class="rank-count">₹' + stat.total.toFixed(0) + '</div>';
+    el.appendChild(div);
+  });
+}
+
+/* ================================================================
+   TOP PARTNERS — sabse zyada partnerBalance kamaane wale partners,
+   top 5. Ye all-time snapshot hai (range se independent), kyunki
+   partnerBalance current cumulative earning hai, kisi date se bandha
+   nahi.
+================================================================ */
+function renderTopPartners(){
+  const el = document.getElementById('topPartners');
+  const partners = allUsers.filter(function(u){ return u.isPartner && (u.partnerBalance || 0) > 0; });
+  const sorted = partners.sort(function(a, b){ return (b.partnerBalance || 0) - (a.partnerBalance || 0); }).slice(0, 5);
+
+  if (!sorted.length){
+    el.innerHTML = '<p class="admin-empty">Abhi koi partner earning nahi hai</p>';
+    return;
+  }
+
+  const max = sorted[0].partnerBalance || 1;
+  el.innerHTML = '';
+  sorted.forEach(function(u, i){
+    const pct = Math.round(((u.partnerBalance || 0) / max) * 100);
+    const div = document.createElement('div');
+    div.className = 'rank-item';
+    div.innerHTML =
+      '<div class="rank-num">' + (i + 1) + '</div>' +
+      '<div class="rank-bar-wrap">' +
+        '<div class="rank-name">' + escapeHtml(u.name || u.email || 'Unknown') + '</div>' +
+        '<div class="rank-bar-track"><div class="rank-bar-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="rank-sub">Code: ' + escapeHtml(u.partnerCode || '—') + '</div>' +
+      '</div>' +
+      '<div class="rank-count">₹' + (u.partnerBalance || 0).toFixed(0) + '</div>';
     el.appendChild(div);
   });
 }
