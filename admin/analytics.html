@@ -506,7 +506,7 @@ button{ font-family:inherit; }
 }
 .range-btn.active{ background:var(--brand); border-color:var(--brand); color:#fff; }
 
-.chart-box{ position:relative; height:220px; margin-bottom:4px; }
+.chart-box{ position:relative; height:220px; margin-bottom:4px; cursor:pointer; }
 .chart-total{
   text-align:center; font-size:13px; color:var(--sub); margin:2px 0 14px;
 }
@@ -532,6 +532,43 @@ button{ font-family:inherit; }
 }
 .rank-sub{ font-size:10.5px; color:var(--sub); margin-top:3px; }
 .rank-count{ font-size:12px; font-weight:800; color:var(--brand); flex-shrink:0; min-width:34px; text-align:right; }
+
+.change-badge{ font-size:11.5px; font-weight:700; margin-left:6px; }
+.change-badge.up{ color:#16C784; }
+.change-badge.down{ color:#e5484d; }
+.change-badge.flat{ color:var(--sub); }
+
+.share-btn-row{ display:flex; gap:10px; }
+.share-btn{
+  flex:1; border:none; border-radius:12px; padding:12px 10px;
+  font-size:13px; font-weight:700; cursor:pointer; color:#fff;
+}
+.share-btn-pdf{ background:linear-gradient(135deg,var(--brand),var(--brand-2)); }
+.share-btn-wa{ background:#25D366; }
+.share-btn:active{ opacity:0.85; }
+
+.dd-overlay{
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(0,0,0,.45); align-items:flex-end;
+}
+.dd-overlay.show{ display:flex; }
+.dd-sheet{
+  background:#fff; width:100%; max-height:75vh; overflow-y:auto;
+  border-radius:18px 18px 0 0; padding:16px 16px 24px;
+}
+.dd-sheet-header{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:10px;
+}
+.dd-sheet-header h4{ margin:0; font-size:15px; color:var(--ink); }
+.dd-close{
+  border:none; background:var(--bg); color:var(--sub);
+  width:28px; height:28px; border-radius:50%; font-size:15px; cursor:pointer;
+}
+.dd-item{ padding:10px 0; border-bottom:1px solid var(--line); }
+.dd-item:last-child{ border-bottom:none; }
+.dd-item-top{ display:flex; justify-content:space-between; font-size:13.5px; color:var(--ink); }
+.dd-item-sub{ font-size:11.5px; color:var(--sub); margin-top:2px; }
 
 .user-row{
   display:flex; justify-content:space-between; align-items:center;
@@ -601,6 +638,16 @@ button{ font-family:inherit; }
 </style>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4F2FCE">
+<div class="dd-overlay" id="drilldownModal" onclick="if(event.target===this) closeDrilldown()">
+  <div class="dd-sheet">
+    <div class="dd-sheet-header">
+      <h4 id="drilldownTitle">Details</h4>
+      <button type="button" class="dd-close" onclick="closeDrilldown()">✕</button>
+    </div>
+    <div id="drilldownBody"></div>
+  </div>
+</div>
+
 <script src="js/pwa-install.js"></script>
 </head>
 <body>
@@ -617,6 +664,15 @@ button{ font-family:inherit; }
     <button type="button" class="range-btn active" data-range="week">Week</button>
     <button type="button" class="range-btn" data-range="month">Month</button>
     <button type="button" class="range-btn" data-range="year">Year</button>
+  </div>
+
+  <div class="admin-card">
+    <div class="admin-card-header"><h3>📤 Share Report</h3></div>
+    <p class="card-count" style="margin-bottom:12px;">Is period ka summary PDF ya WhatsApp pe bhejein</p>
+    <div class="share-btn-row">
+      <button type="button" class="share-btn share-btn-pdf" onclick="downloadPDF()">📄 Download PDF</button>
+      <button type="button" class="share-btn share-btn-wa" onclick="shareOnWhatsApp()">💬 WhatsApp</button>
+    </div>
   </div>
 
   <div class="admin-card">
@@ -709,6 +765,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module" src="js/analytics.js"></script>
 </body>
 </html>
