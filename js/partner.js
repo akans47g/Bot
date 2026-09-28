@@ -22,6 +22,15 @@ import {
   doc, getDoc, onSnapshot, updateDoc, collection, addDoc, getDocs, query, where
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
+/* Paise ki gadbad (jaise 7.07e-16) se bachne ke liye har balance ko
+   2 decimal tak round karke hi dikhate/save karte hain. */
+function round2(n){ return Math.round(n * 100) / 100; }
+function fmtMoney(n){
+  n = Number(n) || 0;
+  if (Math.abs(n) < 0.005) return '₹0';
+  return '₹' + round2(n);
+}
+
 let currentUser = null;
 let currentRange = 'week';
 let allCommissions = [];
@@ -114,7 +123,7 @@ function listenBalance(uid){
   onSnapshot(doc(db, 'users', uid), async function(snap){
     const data = snap.data() || {};
     const bal = typeof data.partnerBalance === 'number' ? data.partnerBalance : 0;
-    document.getElementById('ppBalance').textContent = '₹' + bal;
+    document.getElementById('ppBalance').textContent = fmtMoney(bal);
 
     let lifetime = data.totalPartnerEarned;
     if (typeof lifetime !== 'number'){
@@ -126,12 +135,12 @@ function listenBalance(uid){
         const wdSnap = await getDocs(query(collection(db, 'partnerWithdrawals'), where('uid', '==', uid)));
         let withdrawnTotal = 0;
         wdSnap.forEach(function(d){ withdrawnTotal += (d.data().amount || 0); });
-        lifetime = bal + withdrawnTotal;
+        lifetime = round2(bal + withdrawnTotal);
       } catch(e){
         lifetime = bal;
       }
     }
-    document.getElementById('ppTotalEarned').textContent = '₹' + lifetime.toFixed(2);
+    document.getElementById('ppTotalEarned').textContent = fmtMoney(lifetime);
   });
 }
 
@@ -176,7 +185,7 @@ function renderChart(){
   for (let i = 0; i < b.count; i++) labels.push(b.label(i));
 
   const total = values.reduce(function(a, x){ return a + x; }, 0);
-  document.getElementById('ppEarningsTotal').textContent = '₹' + total.toFixed(2);
+  document.getElementById('ppEarningsTotal').textContent = fmtMoney(total);
 
   const prevBounds = getPreviousPeriodBounds(currentRange);
   let prevTotal = 0;
@@ -347,8 +356,6 @@ async function loadReferrals(uid){
    1/49 ke unit me nikalti hai (₹100 top-up -> ₹49 -> ₹4 charges -> ₹45).
    Wallet me convert karne par KOI charge nahi lagta.
 ================================================================ */
-function round2(n){ return Math.round(n * 100) / 100; }
-
 function calcWithdrawFees(amount){
   // Har charge ko upar ki taraf paise tak round karte hain, taaki
   // partner ko kabhi bhi formula se zyada na mile.
@@ -398,7 +405,7 @@ document.getElementById('ppConvertBtn').addEventListener('click', async function
   const ref = doc(db, 'users', currentUser.uid);
   const snap = await getDoc(ref);
   const data = snap.data() || {};
-  const partnerBal = typeof data.partnerBalance === 'number' ? data.partnerBalance : 0;
+  const partnerBal = typeof data.partnerBalance === 'number' ? round2(data.partnerBalance) : 0;
   const walletBal = typeof data.walletBalance === 'number' ? data.walletBalance : 0;
 
   if (amount > partnerBal){
@@ -412,8 +419,8 @@ document.getElementById('ppConvertBtn').addEventListener('click', async function
 
   try{
     await updateDoc(ref, {
-      partnerBalance: partnerBal - amount,
-      walletBalance: walletBal + amount
+      partnerBalance: Math.max(0, round2(partnerBal - amount)),
+      walletBalance: round2(walletBal + amount)
     });
     amtEl.value = '';
     errEl.style.color = 'var(--success)';
@@ -446,7 +453,7 @@ document.getElementById('ppWithdrawBtn').addEventListener('click', async functio
 
   const ref = doc(db, 'users', currentUser.uid);
   const snap = await getDoc(ref);
-  const partnerBal = typeof (snap.data() || {}).partnerBalance === 'number' ? snap.data().partnerBalance : 0;
+  const partnerBal = typeof (snap.data() || {}).partnerBalance === 'number' ? round2(snap.data().partnerBalance) : 0;
 
   if (amount > partnerBal){
     errEl.textContent = 'Itna Partner Balance nahi hai';
@@ -461,7 +468,7 @@ document.getElementById('ppWithdrawBtn').addEventListener('click', async functio
     // amount = partnerBalance se kat-ne wala poora amount. Charges kat-ne ke
     // baad jo bachta hai (netAmount) wahi UPI me bheja jayega.
     const fees = calcWithdrawFees(amount);
-    await updateDoc(ref, { partnerBalance: partnerBal - amount });
+    await updateDoc(ref, { partnerBalance: Math.max(0, round2(partnerBal - amount)) });
     await addDoc(collection(db, 'partnerWithdrawals'), {
       uid: currentUser.uid,
       userEmail: currentUser.email || '',
@@ -519,4 +526,3 @@ function escapeHtml(str){
   div.textContent = str || '';
   return div.innerHTML;
 }
-
