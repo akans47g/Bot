@@ -364,7 +364,7 @@ button{ font-family:inherit; }
 </style>
 <style>
 /* =================================================================
-   PARTNER.CSS — Partner Program page (p.html)
+   PARTNER.CSS — Partner Program page (p.html) — Premium redesign
    (style.css ke variables/fonts use karta hai)
 ================================================================= */
 
@@ -383,13 +383,54 @@ button{ font-family:inherit; }
 .pp-card h3{ font-size:15px; font-weight:700; margin-bottom:8px; }
 .pp-card p{ font-size:12.5px; color:var(--sub); line-height:1.5; margin:0 0 12px; }
 
-.pp-balance-card{
+/* ---------------- PREMIUM HERO ---------------- */
+.pp-hero{
+  position:relative;
+  overflow:hidden;
   text-align:center;
+  background:linear-gradient(135deg,#2C1B6B,#4F2FCE 45%,#7B4FF0 85%);
+  border-radius:22px;
+  padding:26px 20px 22px;
+  margin:6px 0 16px;
+  box-shadow:0 10px 28px rgba(79,47,206,.35);
+}
+.pp-hero::before{
+  content:"";
+  position:absolute; inset:-40% -20% auto -20%;
+  height:180%;
+  background:radial-gradient(circle at 30% 20%, rgba(255,215,120,.25), transparent 55%);
+  pointer-events:none;
+}
+.pp-hero-badge{
+  display:inline-flex; align-items:center; gap:6px;
+  background:linear-gradient(135deg,#FFD76A,#FFA751);
+  color:#5A3900;
+  font-size:11px; font-weight:800;
+  padding:6px 14px; border-radius:20px;
+  margin-bottom:12px;
+  box-shadow:0 3px 10px rgba(255,167,81,.4);
+}
+.pp-hero h2{ color:#fff; font-size:20px; font-weight:800; margin-bottom:4px; position:relative; }
+.pp-hero p{ color:rgba(255,255,255,.8); font-size:12.5px; margin:0; position:relative; }
+
+/* ---------------- BALANCE GRID ---------------- */
+.pp-balance-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  margin-bottom:16px;
+}
+.pp-balance-box{
+  border-radius:18px; padding:16px 12px; text-align:center;
+}
+.pp-balance-box.current{
   background:linear-gradient(135deg,var(--brand),var(--brand-2));
 }
-.pp-label{ font-size:12.5px; color:rgba(255,255,255,.85); font-weight:600; margin-bottom:4px; }
-.pp-balance{ font-size:32px; font-weight:800; color:#fff; }
+.pp-balance-box.lifetime{
+  background:linear-gradient(135deg,#1B8A5A,#16C784);
+}
+.pp-balance-box .pp-label{ font-size:11px; color:rgba(255,255,255,.85); font-weight:600; margin-bottom:4px; }
+.pp-balance-box .pp-balance{ font-size:23px; font-weight:800; color:#fff; }
 
+/* ---------------- CODE & LINK ---------------- */
 .rf-code-box{
   text-align:center; background:var(--bg); border:2px dashed var(--brand-2);
   border-radius:16px; padding:18px; margin-bottom:12px;
@@ -416,19 +457,64 @@ button{ font-family:inherit; }
   background:linear-gradient(135deg,var(--brand),var(--brand-2));
   color:#fff; font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;
 }
-.pp-hint{ font-size:11.5px; color:var(--sub); margin:0; }
+.pp-hint{ font-size:11.5px; color:var(--sub); margin:0 0 10px; }
+.pp-share-btn{
+  width:100%; border:none; border-radius:12px; padding:11px;
+  background:#25D366; color:#fff; font-size:13px; font-weight:700;
+  cursor:pointer; font-family:inherit;
+}
+.pp-share-btn:active{ transform:scale(.98); }
+
+/* ---------------- EARNINGS CHART ---------------- */
+.pp-range-toggle{
+  display:flex; gap:6px; background:var(--bg);
+  border-radius:12px; padding:4px; margin-bottom:14px;
+}
+.pp-range-btn{
+  flex:1; border:none; background:transparent; color:var(--sub);
+  font-size:11.5px; font-weight:700; padding:8px 4px;
+  border-radius:9px; cursor:pointer; font-family:inherit;
+}
+.pp-range-btn.active{ background:var(--surface); color:var(--brand); box-shadow:0 1px 4px rgba(0,0,0,.08); }
+
+.pp-chart-box{ position:relative; height:180px; margin-bottom:8px; }
+.pp-chart-summary{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+.pp-chart-total{ font-size:22px; font-weight:800; color:var(--ink); }
+.pp-change-badge{ font-size:11.5px; font-weight:700; }
+.pp-change-badge.up{ color:#16C784; }
+.pp-change-badge.down{ color:#e5484d; }
+.pp-change-badge.flat{ color:var(--sub); }
+
+/* ---------------- TEAM STAT ---------------- */
+.pp-team-row{
+  display:flex; gap:10px; margin-bottom:14px;
+}
+.pp-team-stat{
+  flex:1; background:var(--bg); border-radius:14px; padding:12px; text-align:center;
+}
+.pp-team-num{ font-size:20px; font-weight:800; color:var(--brand); }
+.pp-team-label{ font-size:10.5px; color:var(--sub); font-weight:600; margin-top:2px; }
+
+.pp-ref-item{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 0; border-bottom:1px solid var(--line);
+}
+.pp-ref-item:last-child{ border-bottom:none; }
+.pp-ref-avatar{
+  width:34px; height:34px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff; font-size:14px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+.pp-ref-mid{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.pp-ref-name{ font-size:13px; font-weight:700; color:var(--ink);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pp-ref-date{ font-size:11px; color:var(--sub); margin-top:1px; }
+.pp-ref-funded{ font-size:13px; font-weight:800; color:#16C784; flex-shrink:0; }
 
 .pp-stat-row{ text-align:center; margin-bottom:12px; }
 .pp-stat-num{ font-size:26px; font-weight:800; color:var(--brand); }
 .pp-stat-label{ font-size:11.5px; color:var(--sub); font-weight:600; }
-
-.pp-ref-item{
-  display:flex; justify-content:space-between;
-  padding:9px 0; border-bottom:1px solid var(--line);
-  font-size:13px; color:var(--ink);
-}
-.pp-ref-item:last-child{ border-bottom:none; }
-.pp-ref-date{ color:var(--sub); font-size:11.5px; }
 
 .pp-input{
   width:100%; box-sizing:border-box;
@@ -462,9 +548,36 @@ button{ font-family:inherit; }
 }
 
 .pp-copy-btn:focus-visible,
+.pp-share-btn:focus-visible,
+.pp-range-btn:focus-visible,
 .pp-btn:focus-visible,
 .pp-input:focus-visible{
   outline:2px solid var(--brand); outline-offset:2px;
+}
+
+/* ---------------- WITHDRAW CHARGES ---------------- */
+.pp-fee-note{
+  background:#FFF8E6; border:1px solid #F5DFA0; border-radius:12px;
+  padding:11px 13px; margin-bottom:12px;
+  font-size:12px; color:#7A5A00; line-height:1.55;
+}
+.pp-fee-note strong{ color:#5A3900; }
+.pp-free-note{
+  background:#E8F9F1; border:1px solid #BDEBD3; border-radius:12px;
+  padding:10px 13px; margin-bottom:12px;
+  font-size:12px; color:#0B6B44; line-height:1.5; font-weight:600;
+}
+.pp-fee-preview{
+  background:var(--bg); border-radius:12px; padding:10px 13px; margin-bottom:10px;
+}
+.pp-fee-row{
+  display:flex; justify-content:space-between;
+  font-size:12.5px; color:var(--ink); padding:4px 0;
+}
+.pp-fee-row.minus{ color:var(--sub); }
+.pp-fee-row.total{
+  border-top:1px dashed var(--line); margin-top:5px; padding-top:8px;
+  font-weight:800; font-size:14px; color:#16A870;
 }
 
 .admin-empty{ text-align:center; padding:20px; color:var(--sub); font-size:13px; }
@@ -493,14 +606,21 @@ button{ font-family:inherit; }
     <img src="logo.png" alt="AKANS Logo">
   </div>
 
-  <div class="pp-title">
+  <div class="pp-hero">
+    <div class="pp-hero-badge">⭐ VERIFIED PARTNER</div>
     <h2>🤝 Partner Program</h2>
-    <p>Apna referral link share karo, har referral ke top-up par 49% commission kamao</p>
+    <p>Apna referral link share karo, har referral ke top-up par 49% commission kamao — hamesha</p>
   </div>
 
-  <div class="pp-card pp-balance-card">
-    <p class="pp-label">Partner Balance</p>
-    <div class="pp-balance" id="ppBalance">₹0</div>
+  <div class="pp-balance-grid">
+    <div class="pp-balance-box current">
+      <div class="pp-label">Available Balance</div>
+      <div class="pp-balance" id="ppBalance">₹0</div>
+    </div>
+    <div class="pp-balance-box lifetime">
+      <div class="pp-label">Total Kamaya (Lifetime)</div>
+      <div class="pp-balance" id="ppTotalEarned">₹0</div>
+    </div>
   </div>
 
   <div class="pp-card">
@@ -515,12 +635,35 @@ button{ font-family:inherit; }
       <button type="button" class="pp-copy-btn" id="ppCopyBtn">Copy</button>
     </div>
     <p class="pp-hint">Jo bhi is link se account banayega, uske har top-up par aapko 49% milega — hamesha, sirf pehli baar nahi.</p>
+    <button type="button" class="pp-share-btn" id="ppShareBtn">💬 Link Share Karein</button>
   </div>
 
   <div class="pp-card">
-    <div class="pp-stat-row">
-      <div class="pp-stat-num" id="ppReferralCount">0</div>
-      <div class="pp-stat-label">Total Referrals</div>
+    <h3>📈 Earnings</h3>
+    <div class="pp-range-toggle">
+      <button type="button" class="pp-range-btn" data-range="today">Today</button>
+      <button type="button" class="pp-range-btn active" data-range="week">Week</button>
+      <button type="button" class="pp-range-btn" data-range="month">Month</button>
+      <button type="button" class="pp-range-btn" data-range="year">Year</button>
+    </div>
+    <div class="pp-chart-summary">
+      <div class="pp-chart-total" id="ppEarningsTotal">₹0</div>
+      <div id="ppGrowthBadge"></div>
+    </div>
+    <div class="pp-chart-box"><canvas id="ppEarningsChart"></canvas></div>
+  </div>
+
+  <div class="pp-card">
+    <h3>👥 Aapki Team</h3>
+    <div class="pp-team-row">
+      <div class="pp-team-stat">
+        <div class="pp-team-num" id="ppReferralCount">0</div>
+        <div class="pp-team-label">Total Referrals</div>
+      </div>
+      <div class="pp-team-stat">
+        <div class="pp-team-num" id="ppTeamFunded">₹0</div>
+        <div class="pp-team-label">Team ne Fund Kiya</div>
+      </div>
     </div>
     <div id="ppReferralList"><p class="admin-empty">Load ho raha hai...</p></div>
   </div>
@@ -528,6 +671,7 @@ button{ font-family:inherit; }
   <div class="pp-card">
     <h3>💱 Convert to Wallet</h3>
     <p>Partner Balance ko seedha apni shopping wallet me daal lein — turant, koi approval ki zaroorat nahi.</p>
+    <div class="pp-free-note">✅ Wallet me convert karne par koi charge nahi — poora amount milta hai.</div>
     <input type="number" id="ppConvertAmount" class="pp-input" placeholder="Amount">
     <p class="pp-error" id="ppConvertError"></p>
     <button type="button" class="pp-btn convert" id="ppConvertBtn">Convert Now</button>
@@ -536,8 +680,13 @@ button{ font-family:inherit; }
   <div class="pp-card">
     <h3>💸 Withdraw via UPI</h3>
     <p>Apne bank/UPI me paisa nikalna hai to (minimum ₹25) request bhejein — admin verify karke bhej dega.</p>
+    <div class="pp-fee-note">
+      ⚠️ <strong>UPI withdraw par 4 charges kat-te hain:</strong> Website Fee 1% + Payment Charges 1% + Web Service Charge 1% + Other Charges 1% = <strong>4%</strong>.<br>
+      Matlab ₹100 ke top-up par aapko ₹49 mila, UPI me nikalne par ₹4 charges kat ke <strong>₹45</strong> milega.
+    </div>
     <input type="text" id="ppUpiId" class="pp-input" placeholder="Apna UPI ID (jaise name@bank)">
     <input type="number" id="ppWithdrawAmount" class="pp-input" placeholder="Amount (min ₹25)" min="25">
+    <div class="pp-fee-preview" id="ppFeePreview" style="display:none"></div>
     <p class="pp-error" id="ppError"></p>
     <button type="button" class="pp-btn withdraw" id="ppWithdrawBtn">Submit Withdrawal Request</button>
   </div>
@@ -581,6 +730,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="module" src="js/partner.js"></script>
 </body>
 </html>
