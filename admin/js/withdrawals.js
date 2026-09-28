@@ -81,7 +81,9 @@ function render(){
       '<div class="admin-item-top">' +
         '<div><div class="admin-item-title">' + escapeHtml(w.userEmail || 'Unknown') + '</div>' +
         '<div class="admin-item-sub">UPI: ' + escapeHtml(w.upiId) + ' • ' + date + '</div></div>' +
-        '<div class="admin-item-amount">₹' + w.amount + '</div>' +
+        (typeof w.netAmount === 'number'
+          ? '<div class="admin-item-amount">₹' + w.netAmount.toFixed(2) + '<div style="font-size:10.5px;font-weight:600;color:#8a8a9a;margin-top:2px;">Balance se kata: ₹' + w.amount + ' (charges ₹' + (w.fee || 0).toFixed(2) + ')</div></div>'
+          : '<div class="admin-item-amount">₹' + w.amount + '</div>') +
       '</div>' +
       '<span class="admin-status ' + w.status + '">' + w.status + '</span>' +
       (w.status === 'pending' ?
@@ -104,7 +106,7 @@ document.getElementById('withdrawalsList').addEventListener('click', async funct
     try{
       await updateDoc(doc(db, config.collection, id), { status: 'completed', completedAt: new Date().toISOString() });
       const w = allWithdrawals.find(function(x){ return x.id === id; });
-      await logAdminAction(config.label.toLowerCase() + '_withdrawal_completed', '✅ [' + config.label + '] Paid ₹' + (w ? w.amount : '') + ' to ' + (w ? w.userEmail : id) + ' (UPI: ' + (w ? w.upiId : '') + ')');
+      await logAdminAction(config.label.toLowerCase() + '_withdrawal_completed', '✅ [' + config.label + '] Paid ₹' + (w ? (typeof w.netAmount === 'number' ? w.netAmount : w.amount) : '') + (w && typeof w.netAmount === 'number' ? ' (after ₹' + (w.fee || 0) + ' charges, balance cut ₹' + w.amount + ')' : '') + ' to ' + (w ? w.userEmail : id) + ' (UPI: ' + (w ? w.upiId : '') + ')');
       await loadWithdrawals();
     } catch(err){
       alert('Kuch galat ho gaya, dobara try karein');
@@ -138,9 +140,9 @@ document.getElementById('withdrawalsList').addEventListener('click', async funct
 document.getElementById('exportBtn').addEventListener('click', function(){
   const filtered = currentFilter === 'all' ? allWithdrawals : allWithdrawals.filter(function(w){ return w.status === currentFilter; });
   const rows = filtered.map(function(w){
-    return [w.userEmail || '', w.upiId || '', w.amount, w.status, w.createdAt || ''];
+    return [w.userEmail || '', w.upiId || '', w.amount, (typeof w.fee === 'number' ? w.fee : 0), (typeof w.netAmount === 'number' ? w.netAmount : w.amount), w.status, w.createdAt || ''];
   });
-  downloadCSV(currentType + '-withdrawals-' + currentFilter + '.csv', ['Email', 'UPI ID', 'Amount', 'Status', 'Date'], rows);
+  downloadCSV(currentType + '-withdrawals-' + currentFilter + '.csv', ['Email', 'UPI ID', 'Amount (Balance)', 'Charges', 'Pay Amount', 'Status', 'Date'], rows);
 });
 
 function escapeHtml(str){
