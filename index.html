@@ -538,6 +538,25 @@ body.bm-open{ overflow:hidden; }
 .buy-modal-title{
   font-size:19px; font-weight:800; color:var(--bm-ink); margin:0 0 16px;
 }
+
+.bm-install-banner{
+  display:flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg,#EEF3FF,#F6EEFF);
+  border:1px solid #D9C9FF;
+  border-radius:12px;
+  padding:10px 12px;
+  margin:0 0 16px;
+}
+.bm-install-banner span{
+  flex:1; font-size:12px; font-weight:600; color:var(--bm-ink); line-height:1.4;
+}
+.bm-install-banner button{
+  flex-shrink:0; border:none; border-radius:9px; padding:8px 16px;
+  background:linear-gradient(135deg,var(--bm-accent),#7B4FF0);
+  color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit;
+}
+.bm-install-banner button:active{ transform:scale(.96); }
+
 .buy-modal-label{
   font-size:13px; font-weight:600; color:var(--bm-sub); margin:0 0 8px;
 }
@@ -1315,6 +1334,11 @@ function toggleTierGroup(id) {
     <p class="buy-modal-eyebrow">Buy Now</p>
     <h3 class="buy-modal-title" id="bmProductName">—</h3>
 
+    <div class="bm-install-banner" id="bmInstallBanner" style="display:none">
+      <span>📲 App install karo — turant khulega, fast checkout!</span>
+      <button type="button" onclick="installApp()">Install</button>
+    </div>
+
     <p class="buy-modal-label">Content Select Karein</p>
     <div class="qty-grid" id="bmQtyGrid"></div>
 
@@ -1527,15 +1551,24 @@ async function openBuyModal(productId){
   const product = window.PRODUCTS && window.PRODUCTS[productId];
   if (!product){ alert('Product data nahi mili — js/products.js check karein.'); return; }
 
-  bmState = { productId, product, qty: 0, price: 0 };
+  const minQty = typeof product.minQty === 'number' && product.minQty > 0 ? product.minQty : 50;
+  bmState = { productId, product, minQty, qty: 0, price: 0 };
 
   document.getElementById('bmProductName').textContent = product.name;
   document.getElementById('bmUtr').value = '';
   document.getElementById('bmCustomQty').value = '';
+  document.getElementById('bmCustomQty').min = minQty;
+  document.getElementById('bmCustomQty').placeholder = 'Khud quantity likhein (min. ' + minQty + ')';
   document.getElementById('bmCustomError').textContent = '';
   document.getElementById('bmError').textContent = '';
   document.getElementById('bmInsufficient').classList.remove('show');
   document.getElementById('bmStep2').classList.remove('open');
+
+  // App pehle se installed hai ya nahi — installed hone par banner
+  // nahi dikhega (standalone mode + iOS ka apna flag dono check karte
+  // hain), warna "Install" button dikhta hai.
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  document.getElementById('bmInstallBanner').style.display = isInstalled ? 'none' : 'flex';
 
   // Real wallet balance (agar login hai)
   const user = auth.currentUser;
@@ -1552,9 +1585,11 @@ async function openBuyModal(productId){
     document.getElementById('bmWalletBal').textContent = 'Login karein';
   }
 
+  // Product ka minQty se kam wale tier chips bilkul dikhaye hi nahi
+  // jaate — customer unhe select hi nahi kar sakta.
   const grid = document.getElementById('bmQtyGrid');
   grid.innerHTML = '';
-  QTY_TIERS.forEach(qty => {
+  QTY_TIERS.filter(function(qty){ return qty >= minQty; }).forEach(qty => {
     const price = calcPrice(product, qty);
     const chip = document.createElement('button');
     chip.type = 'button';
@@ -1566,6 +1601,18 @@ async function openBuyModal(productId){
 
   document.body.classList.add('bm-open');
   document.getElementById('buyModalOverlay').classList.add('active');
+}
+
+function installApp(){
+  if (window.deferredInstallPrompt){
+    window.deferredInstallPrompt.prompt();
+    window.deferredInstallPrompt.userChoice.then(function(){
+      window.deferredInstallPrompt = null;
+      document.getElementById('bmInstallBanner').style.display = 'none';
+    });
+  } else {
+    alert('📲 Apne browser ke menu (⋮ ya ...) me jaakar "Install App" ya "Add to Home Screen" option dhoondein.');
+  }
 }
 
 function selectQty(qty, price, chipEl){
@@ -1594,9 +1641,10 @@ function handleCustomQty(){
   }
 
   const val = parseInt(raw, 10);
+  const minQty = bmState.minQty || MIN_QTY;
 
-  if (isNaN(val) || val < MIN_QTY){
-    errEl.textContent = 'Minimum ' + MIN_QTY + ' quantity select karna zaroori hai';
+  if (isNaN(val) || val < minQty){
+    errEl.textContent = 'Minimum ' + minQty + ' quantity select karna zaroori hai';
     document.getElementById('bmStep2').classList.remove('open');
     bmState.qty = 0;
     bmState.price = 0;
