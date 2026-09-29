@@ -76,12 +76,13 @@ function render(){
   ids.forEach(function(id){
     const b = bundles[id];
     const overrideCount = b.tierPrices ? Object.keys(b.tierPrices).filter(function(k){ return b.tierPrices[k] != null; }).length : 0;
+    const minQty = typeof b.minQty === 'number' ? b.minQty : 50;
     const row = document.createElement('div');
     row.className = 'bundle-item';
     row.innerHTML =
       '<div>' +
         '<div class="bundle-item-name">' + escapeHtml(b.name) + '</div>' +
-        '<div class="bundle-item-rate">₹' + b.rate + ' / 1000 • id: ' + escapeHtml(id) + (overrideCount ? ' • 🎯 ' + overrideCount + ' custom price' + (overrideCount > 1 ? 's' : '') : '') + '</div>' +
+        '<div class="bundle-item-rate">₹' + b.rate + ' / 1000 • id: ' + escapeHtml(id) + (minQty !== 50 ? ' • min: ' + minQty : '') + (overrideCount ? ' • 🎯 ' + overrideCount + ' custom price' + (overrideCount > 1 ? 's' : '') : '') + '</div>' +
       '</div>' +
       '<div class="bundle-item-actions">' +
         '<button type="button" class="bundle-icon-btn" data-edit="' + id + '" aria-label="Edit">✏️</button>' +
@@ -117,6 +118,7 @@ function openBundleEditModal(id){
   document.getElementById('bemError').textContent = '';
   document.getElementById('bemName').value = b.name;
   document.getElementById('bemRate').value = b.rate;
+  document.getElementById('bemMinQty').value = typeof b.minQty === 'number' ? b.minQty : '';
 
   const grid = document.getElementById('bemTierGrid');
   grid.innerHTML = '';
@@ -148,6 +150,7 @@ document.getElementById('bemSaveBtn').addEventListener('click', async function()
   const errEl = document.getElementById('bemError');
   const name = document.getElementById('bemName').value.trim();
   const rate = parseFloat(document.getElementById('bemRate').value);
+  const minQtyRaw = document.getElementById('bemMinQty').value.trim();
 
   if (!name){
     errEl.textContent = 'Bundle ka naam likhein';
@@ -156,6 +159,16 @@ document.getElementById('bemSaveBtn').addEventListener('click', async function()
   if (isNaN(rate) || rate <= 0){
     errEl.textContent = 'Sahi rate daalein';
     return;
+  }
+
+  let minQty = 50;
+  if (minQtyRaw !== ''){
+    const parsed = parseInt(minQtyRaw, 10);
+    if (isNaN(parsed) || parsed < 1){
+      errEl.textContent = 'Sahi minimum quantity daalein';
+      return;
+    }
+    minQty = parsed;
   }
 
   const tierPrices = {};
@@ -176,9 +189,9 @@ document.getElementById('bemSaveBtn').addEventListener('click', async function()
   btn.textContent = 'Saving...';
 
   try{
-    await setDoc(doc(db, 'products', editingId), { name: name, rate: rate, tierPrices: tierPrices });
+    await setDoc(doc(db, 'products', editingId), { name: name, rate: rate, minQty: minQty, tierPrices: tierPrices });
     const overrideCount = Object.keys(tierPrices).length;
-    await logAdminAction('bundle_edited', '✏️ Edited "' + name + '" (id: ' + editingId + ') → ₹' + rate + '/1000' + (overrideCount ? ' + ' + overrideCount + ' custom price(s)' : ''));
+    await logAdminAction('bundle_edited', '✏️ Edited "' + name + '" (id: ' + editingId + ') → ₹' + rate + '/1000, min qty ' + minQty + (overrideCount ? ' + ' + overrideCount + ' custom price(s)' : ''));
     window.closeBundleEditModal();
     await loadBundles();
   } catch(err){
@@ -239,7 +252,7 @@ document.getElementById('addBundleBtn').addEventListener('click', async function
   }
 
   errEl.style.display = 'none';
-  await setDoc(doc(db, 'products', id), { name: name, rate: rate, tierPrices: {} });
+  await setDoc(doc(db, 'products', id), { name: name, rate: rate, minQty: 50, tierPrices: {} });
   await logAdminAction('bundle_added', '➕ Added new bundle: ' + name + ' (₹' + rate + '/1000)');
 
   nameEl.value = '';
