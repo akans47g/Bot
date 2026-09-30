@@ -505,78 +505,99 @@ body.bm-open{ overflow:hidden; }
   width:100%;
   max-width:480px;
   background:var(--bm-surface);
-  border-radius:22px 22px 0 0;
-  padding:14px 20px 26px;
+  border-radius:26px 26px 0 0;
+  padding:16px 20px 28px;
   position:relative;
   max-height:88vh;
   overflow-y:auto;
-  animation:bmSlideUp .28s ease-out;
-  box-shadow:0 -8px 30px rgba(0,0,0,.2);
+  animation:bmSlideUp .3s cubic-bezier(.2,.8,.2,1);
+  box-shadow:0 -12px 40px rgba(15,15,40,.25);
   font-family:inherit;
 }
+.buy-modal::before{
+  content:"";
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:64px; height:4px; border-radius:0 0 4px 4px;
+  background:linear-gradient(90deg,var(--bm-accent),var(--bm-accent-2));
+}
 @keyframes bmSlideUp{
-  from{ transform:translateY(24px); opacity:0; }
+  from{ transform:translateY(28px); opacity:0; }
   to{ transform:translateY(0); opacity:1; }
 }
 
 .buy-modal-handle{
   width:42px; height:4px; border-radius:4px;
-  background:#E5E5EA; margin:2px auto 14px;
+  background:#E5E5EA; margin:6px auto 16px;
 }
 
 .buy-modal-close{
-  position:absolute; top:12px; right:16px;
+  position:absolute; top:14px; right:16px;
   border:none; background:var(--bm-chip);
-  width:30px; height:30px; border-radius:50%;
-  font-size:15px; color:var(--bm-sub); cursor:pointer;
+  width:32px; height:32px; border-radius:50%;
+  font-size:14px; color:var(--bm-sub); cursor:pointer;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
 }
+.buy-modal-close:active{ transform:scale(.92); }
 
+.bm-header{
+  padding-bottom:14px; margin-bottom:14px;
+  border-bottom:1px solid #F0F0F4;
+}
 .buy-modal-eyebrow{
-  font-size:12px; font-weight:700; letter-spacing:.06em;
-  text-transform:uppercase; color:var(--bm-accent); margin:0 0 2px;
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:11px; font-weight:800; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--bm-accent);
+  background:linear-gradient(135deg,#FFF1EA,#FFF8EC);
+  padding:4px 10px; border-radius:20px; margin:0 0 8px;
 }
 .buy-modal-title{
-  font-size:19px; font-weight:800; color:var(--bm-ink); margin:0 0 16px;
+  font-size:20px; font-weight:800; color:var(--bm-ink); margin:0;
+  letter-spacing:-.01em;
 }
 
 .bm-install-banner{
   display:flex; align-items:center; gap:10px;
   background:linear-gradient(135deg,#EEF3FF,#F6EEFF);
   border:1px solid #D9C9FF;
-  border-radius:12px;
-  padding:10px 12px;
+  border-radius:14px;
+  padding:11px 13px;
   margin:0 0 16px;
+  box-shadow:0 2px 8px rgba(123,79,240,.08);
 }
 .bm-install-banner span{
   flex:1; font-size:12px; font-weight:600; color:var(--bm-ink); line-height:1.4;
 }
 .bm-install-banner button{
-  flex-shrink:0; border:none; border-radius:9px; padding:8px 16px;
+  flex-shrink:0; border:none; border-radius:10px; padding:8px 16px;
   background:linear-gradient(135deg,var(--bm-accent),#7B4FF0);
   color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit;
+  box-shadow:0 3px 10px rgba(123,79,240,.3);
 }
 .bm-install-banner button:active{ transform:scale(.96); }
 
 .buy-modal-label{
-  font-size:13px; font-weight:600; color:var(--bm-sub); margin:0 0 8px;
+  font-size:12.5px; font-weight:700; color:var(--bm-sub); margin:0 0 9px;
+  text-transform:uppercase; letter-spacing:.03em;
 }
 
 .qty-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:9px;
-  margin-bottom:6px;
+  margin-bottom:8px;
 }
 .qty-chip{
+  position:relative;
   border:1.5px solid #ECECF2;
   background:var(--bm-chip);
-  border-radius:14px;
-  padding:10px 4px;
+  border-radius:15px;
+  padding:11px 4px;
   text-align:center;
   cursor:pointer;
   font:inherit;
   transition:.15s ease;
 }
+.qty-chip:active{ transform:scale(.95); }
 .qty-chip .q-num{
   display:block; font-size:14px; font-weight:800; color:var(--bm-ink);
 }
@@ -586,17 +607,28 @@ body.bm-open{ overflow:hidden; }
 .qty-chip.selected{
   border-color:var(--bm-accent);
   background:linear-gradient(135deg,#FFF3EC,#FFEDE0);
+  box-shadow:0 4px 14px rgba(255,107,61,.22);
 }
 .qty-chip.selected .q-num{ color:var(--bm-accent); }
+.qty-chip.selected::after{
+  content:"✓";
+  position:absolute; top:-6px; right:-6px;
+  width:18px; height:18px; border-radius:50%;
+  background:var(--bm-accent); color:#fff;
+  font-size:10px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 6px rgba(255,107,61,.4);
+}
 
 .qty-or{
   display:flex;
   align-items:center;
   gap:10px;
-  margin:14px 0 10px;
+  margin:16px 0 12px;
   color:var(--bm-sub);
-  font-size:11px;
-  font-weight:700;
+  font-size:10.5px;
+  font-weight:800;
+  letter-spacing:.08em;
   text-transform:uppercase;
 }
 .qty-or::before, .qty-or::after{
@@ -611,37 +643,51 @@ body.bm-open{ overflow:hidden; }
   transition:max-height .3s ease, opacity .25s ease;
 }
 .buy-modal-step2.open{
-  max-height:600px; opacity:1; margin-top:16px;
+  max-height:600px; opacity:1; margin-top:18px;
 }
 
 .price-display{
-  display:flex; justify-content:space-between; align-items:center;
+  display:flex; align-items:center; gap:12px;
   background:linear-gradient(135deg,var(--bm-accent),var(--bm-accent-2));
-  border-radius:14px; padding:14px 16px; margin-bottom:16px;
+  border-radius:16px; padding:15px 17px; margin-bottom:16px;
+  box-shadow:0 6px 18px rgba(255,107,61,.28);
 }
-.price-display span{ color:#FFF2EA; font-size:13px; font-weight:600; }
-.price-display strong{ color:#fff; font-size:22px; font-weight:800; }
+.price-display-icon{
+  width:38px; height:38px; border-radius:11px; flex-shrink:0;
+  background:rgba(255,255,255,.22);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px;
+}
+.price-display-mid{ display:flex; flex-direction:column; }
+.price-display-mid span{ color:#FFF2EA; font-size:12px; font-weight:600; }
+.price-display-mid strong{ color:#fff; font-size:23px; font-weight:800; line-height:1.25; }
 
 .buy-modal-input{
   width:100%; box-sizing:border-box;
-  border:1.5px solid #ECECF2; border-radius:12px;
-  padding:12px 14px; font-size:14px; margin-bottom:4px;
-  font-family:inherit;
+  border:1.5px solid #ECECF2; border-radius:13px;
+  padding:13px 15px; font-size:14px; margin-bottom:4px;
+  font-family:inherit; background:#FBFBFD;
+  transition:border-color .15s ease, background .15s ease;
 }
-.buy-modal-input:focus{ outline:none; border-color:var(--bm-accent); }
+.buy-modal-input:focus{ outline:none; border-color:var(--bm-accent); background:#fff; }
 
 .bm-error{
   color:var(--bm-danger); font-size:12.5px; font-weight:600;
   min-height:16px; margin:2px 0 10px;
 }
 
-.wallet-line{ font-size:13px; color:var(--bm-sub); margin:4px 0 14px; }
-.wallet-line strong{ color:var(--bm-ink); }
+.wallet-chip{
+  display:flex; justify-content:space-between; align-items:center;
+  background:var(--bm-chip); border-radius:12px;
+  padding:11px 14px; margin:4px 0 14px;
+}
+.wallet-chip span{ font-size:12.5px; color:var(--bm-sub); font-weight:600; }
+.wallet-chip strong{ font-size:15px; color:var(--bm-ink); font-weight:800; }
 
 .insufficient-box{
   display:none;
   background:#FDEEEE; border:1px solid #F6C9CB;
-  border-radius:14px; padding:14px; margin-bottom:14px;
+  border-radius:16px; padding:15px; margin-bottom:14px;
   text-align:center;
 }
 .insufficient-box.show{ display:block; }
@@ -650,15 +696,21 @@ body.bm-open{ overflow:hidden; }
   border:none; background:var(--bm-success); color:#fff;
   font-weight:700; font-size:14px; padding:10px 22px;
   border-radius:24px; cursor:pointer; font:inherit;
+  box-shadow:0 4px 12px rgba(22,199,132,.35);
 }
+.add-money-btn:active{ transform:scale(.96); }
 
 .confirm-buy-btn{
   width:100%; border:none; cursor:pointer;
   background:linear-gradient(135deg,var(--bm-accent),var(--bm-accent-2));
-  color:#fff; font-size:15px; font-weight:800;
-  padding:14px; border-radius:16px; font-family:inherit;
-  box-shadow:0 8px 20px rgba(255,107,61,.35);
+  color:#fff; font-size:15.5px; font-weight:800;
+  padding:15px; border-radius:17px; font-family:inherit;
+  letter-spacing:.01em;
+  box-shadow:0 10px 24px rgba(255,107,61,.38);
+  transition:transform .12s ease;
 }
+.confirm-buy-btn:active{ transform:scale(.98); }
+.confirm-buy-btn:disabled{ opacity:.7; }
 
 .bm-toast{
   position:fixed; left:50%; bottom:90px;
@@ -669,6 +721,7 @@ body.bm-open{ overflow:hidden; }
   opacity:0; pointer-events:none;
   transition:.25s ease;
   z-index:1100; max-width:88%; text-align:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
 }
 .bm-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
@@ -1331,8 +1384,10 @@ function toggleTierGroup(id) {
     <div class="buy-modal-handle"></div>
     <button type="button" class="buy-modal-close" onclick="closeBuyModal()" aria-label="Close">✕</button>
 
-    <p class="buy-modal-eyebrow">Buy Now</p>
-    <h3 class="buy-modal-title" id="bmProductName">—</h3>
+    <div class="bm-header">
+      <p class="buy-modal-eyebrow">✨ Buy Now</p>
+      <h3 class="buy-modal-title" id="bmProductName">—</h3>
+    </div>
 
     <div class="bm-install-banner" id="bmInstallBanner" style="display:none">
       <span>📲 App install karo — turant khulega, fast checkout!</span>
@@ -1349,15 +1404,21 @@ function toggleTierGroup(id) {
 
     <div class="buy-modal-step2" id="bmStep2">
       <div class="price-display">
-        <span>Total Price</span>
-        <strong id="bmPrice">₹0</strong>
+        <div class="price-display-icon">💰</div>
+        <div class="price-display-mid">
+          <span>Total Price</span>
+          <strong id="bmPrice">₹0</strong>
+        </div>
       </div>
 
       <label class="buy-modal-label" for="bmUtr">Instagram Link 🔗</label>
       <input type="text" id="bmUtr" class="buy-modal-input" placeholder="Yaha apni Link Paste Kare">
       <p class="bm-error" id="bmError"></p>
 
-      <p class="wallet-line">Wallet Balance: <strong id="bmWalletBal">₹0</strong></p>
+      <div class="wallet-chip">
+        <span>Wallet Balance</span>
+        <strong id="bmWalletBal">₹0</strong>
+      </div>
 
       <div class="insufficient-box" id="bmInsufficient">
         <p>⚠️ Balance kam hai — ₹<span id="bmShort">0</span> aur chahiye.</p>
