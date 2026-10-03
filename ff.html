@@ -890,7 +890,7 @@ button{ font-family:inherit; }
     <div class="install-gate-icon">📲</div>
     <h3>App Install Nahi Kiya?</h3>
     <p>Fast order tracking aur best experience ke liye pehle hamara app install kar lijiye.</p>
-    <button type="button" class="install-gate-btn primary" onclick="location.href='account.html'">📲 Install App</button>
+    <button type="button" class="install-gate-btn primary" onclick="installAppFromGate()">📲 Install App</button>
     <button type="button" class="install-gate-btn secondary" onclick="continueWithoutInstall()">Continue Without Installing</button>
   </div>
 </div>
@@ -949,6 +949,19 @@ function continueWithoutInstall(){
   if (modal) modal.classList.remove('show');
   if (pendingBuyPlan) openFFModal(pendingBuyPlan);
   pendingBuyPlan = null;
+}
+
+// ---- Seedha install prompt dikhao (account.html pe redirect nahi karna) ----
+function installAppFromGate(){
+  if (window.deferredInstallPrompt){
+    window.deferredInstallPrompt.prompt();
+    window.deferredInstallPrompt.userChoice.then(function(){
+      window.deferredInstallPrompt = null;
+      continueWithoutInstall();
+    });
+  } else {
+    alert('📲 Apne browser ke menu (⋮ ya ...) me jaakar "Install App" ya "Add to Home Screen" option dhoondein.');
+  }
 }
 </script>
 
