@@ -1,6 +1,6 @@
 {
   "name": "AKANS Admin Panel",
-  "short_name": "A.S.S. A.P.",
+  "short_name": "AKANS Admin",
   "description": "Admin panel for AKANS Social Store — manage orders, top-ups, bundles, and payouts.",
   "start_url": "/admin/dashboard.html",
   "scope": "/admin/",
