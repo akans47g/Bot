@@ -597,10 +597,191 @@ button{ font-family:inherit; }
 .log-item:last-child{ border-bottom:none; }
 .log-summary{ font-size:12.5px; color:var(--ink); line-height:1.4; }
 .log-time{ font-size:10.5px; color:var(--sub); margin-top:3px; }
+
+/* =================================================================
+   ADVANCED DASHBOARD ADDITIONS
+================================================================= */
+
+/* ---------------- QUICK SEARCH ---------------- */
+.admin-search-btn{
+  display:flex; align-items:center; gap:8px;
+  width:100%; border:1.5px solid var(--line); background:var(--surface);
+  color:var(--sub); font-size:13px; font-weight:600;
+  padding:11px 14px; border-radius:14px; cursor:pointer; font-family:inherit;
+  margin-bottom:16px;
+}
+.admin-search-btn .kbd-hint{
+  margin-left:auto; background:var(--bg); color:var(--sub);
+  font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:6px;
+  border:1px solid var(--line);
+}
+.admin-search-overlay{
+  position:fixed; inset:0; background:rgba(15,15,23,.5);
+  display:none; align-items:flex-start; justify-content:center;
+  padding:60px 16px; z-index:700;
+}
+.admin-search-overlay.show{ display:flex; }
+.admin-search-box{
+  background:var(--surface); border-radius:var(--radius);
+  width:100%; max-width:420px; max-height:70vh; overflow:hidden;
+  box-shadow:0 20px 50px rgba(15,15,23,.3);
+  display:flex; flex-direction:column;
+}
+.admin-search-input{
+  width:100%; border:none; border-bottom:1px solid var(--line);
+  padding:16px; font-size:15px; font-family:inherit; outline:none; box-sizing:border-box;
+}
+.admin-search-results{ overflow-y:auto; padding:8px; }
+.admin-search-result{
+  display:flex; align-items:center; gap:10px;
+  padding:11px 10px; border-radius:10px; cursor:pointer;
+}
+.admin-search-result:hover, .admin-search-result.highlighted{ background:var(--bg); }
+.admin-search-result-icon{ font-size:17px; }
+.admin-search-result-label{ font-size:13.5px; font-weight:700; color:var(--ink); }
+.admin-search-empty{ text-align:center; padding:20px; color:var(--sub); font-size:12.5px; }
+
+/* ---------------- TODAY STRIP ---------------- */
+.today-strip{
+  display:flex; align-items:center; gap:12px;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  border-radius:var(--radius); padding:15px 18px; margin-bottom:16px; color:#fff;
+}
+.today-icon{ font-size:22px; }
+.today-text{ font-size:13px; font-weight:600; opacity:.85; flex:1; }
+.today-count{ font-size:20px; font-weight:800; }
+
+/* ---------------- PENDING ALERTS ROW ---------------- */
+.pending-alert-row{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  background:linear-gradient(135deg,#FFF7E0,#FFF3EC);
+  border:1.5px solid #FFE7A3; border-radius:var(--radius);
+  margin-bottom:16px; overflow:hidden;
+}
+.pa-item{
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:14px 6px; cursor:pointer; position:relative;
+  border-right:1px solid #FFE7A3;
+}
+.pa-item:last-child{ border-right:none; }
+.pa-item:active{ background:rgba(255,231,163,.4); }
+.pa-icon{ font-size:19px; }
+.pa-count{ font-size:20px; font-weight:800; color:#B8860B; }
+.pa-label{ font-size:9.5px; font-weight:700; color:#A16207; text-transform:uppercase; letter-spacing:.03em; }
+.pa-dot{
+  position:absolute; top:8px; right:12px;
+  width:8px; height:8px; border-radius:50%; background:#E63946;
+  animation:paDotPulse 2s infinite;
+}
+.pa-zero .pa-dot{ display:none; }
+.pa-zero .pa-count{ color:#C99A2E; }
+@keyframes paDotPulse{
+  0%,100%{ box-shadow:0 0 0 0 rgba(230,57,70,.5); }
+  50%{ box-shadow:0 0 0 5px rgba(230,57,70,0); }
+}
+
+/* ---------------- ENHANCED STAT CARDS ---------------- */
+.stat-card{ border-top:3px solid transparent; position:relative; overflow:hidden; transition:transform .15s ease, box-shadow .15s ease; }
+.stat-card.sc-purple{ border-top-color:var(--brand); }
+.stat-card.sc-orange{ border-top-color:var(--accent); }
+.stat-card.sc-green{ border-top-color:var(--success); }
+.stat-card.sc-blue{ border-top-color:#0284C7; }
+.stat-trend{ font-size:11px; font-weight:700; margin-top:4px; }
+.stat-trend.up{ color:var(--success); }
+.stat-trend.down{ color:#E63946; }
+.stat-trend.neutral{ color:var(--sub); }
+.stat-card.loading .stat-value{
+  background:linear-gradient(90deg,var(--line) 25%,#F6F4FC 50%,var(--line) 75%);
+  background-size:200% 100%; animation:statShimmer 1.5s infinite;
+  color:transparent; border-radius:4px; min-width:50%; height:22px; display:inline-block;
+}
+@keyframes statShimmer{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+/* ---------------- COLLAPSIBLE / DRAGGABLE SECTIONS ---------------- */
+.sec-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin:18px 0 10px; cursor:pointer; user-select:none;
+}
+.sec-head h3{ font-size:14.5px; font-weight:800; color:var(--ink); margin:0; display:flex; align-items:center; gap:7px; }
+.sec-drag-handle{ cursor:grab; color:var(--sub); font-size:15px; padding:0 2px; flex-shrink:0; }
+.sec-drag-handle:active{ cursor:grabbing; }
+.sec-collapse-icon{ color:var(--sub); font-size:13px; transition:transform .25s ease; }
+.sec-head.collapsed .sec-collapse-icon{ transform:rotate(-90deg); }
+.sec-body{ overflow:hidden; transition:max-height .4s ease, opacity .3s ease; max-height:3000px; opacity:1; }
+.sec-body.collapsed{ max-height:0 !important; opacity:0; margin:0 !important; }
+.sort-ghost{ opacity:.4; background:var(--bg); }
+
+/* ---------------- SMART ALERTS ---------------- */
+.smart-alert{
+  display:flex; align-items:center; gap:10px;
+  padding:12px 14px; border-radius:14px; margin-bottom:8px;
+  border-left:4px solid; font-size:12.5px; font-weight:600; line-height:1.4;
+}
+.smart-alert.danger{ background:#FDEEEE; border-left-color:#E63946; color:#C0293A; }
+.smart-alert.warn{ background:#FFF7E0; border-left-color:#B8860B; color:#92670A; }
+.smart-alert.info{ background:#EDEBFF; border-left-color:var(--brand); color:var(--brand); }
+.smart-alert.success{ background:#E8F9F1; border-left-color:var(--success); color:#0F9D6B; }
+.sa-icon{ font-size:16px; flex-shrink:0; }
+
+/* ---------------- REVENUE CHART ---------------- */
+.rev-tabs{ display:flex; gap:6px; margin-bottom:12px; }
+.rev-tab{
+  padding:6px 13px; border-radius:10px; font-size:12px; font-weight:700;
+  border:1.5px solid var(--line); background:var(--surface); color:var(--sub);
+  cursor:pointer; font-family:inherit;
+}
+.rev-tab.active{ background:var(--brand); border-color:var(--brand); color:#fff; }
+.chart-wrap{ height:200px; position:relative; }
+.chart-empty-note{ text-align:center; color:var(--sub); font-size:11.5px; margin-top:8px; }
+
+/* ---------------- INSIGHT TILES ---------------- */
+.insight-strip{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.insight-tile{
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  padding:12px 14px; position:relative; overflow:hidden;
+}
+.insight-tile::before{ content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.it-revenue::before{ background:linear-gradient(90deg,var(--brand),var(--brand-2)); }
+.it-aov::before{ background:linear-gradient(90deg,var(--success),#0FA968); }
+.it-rate::before{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+.it-repeat::before{ background:linear-gradient(90deg,#0284C7,#38BDF8); }
+.it-value{ font-size:17px; font-weight:800; color:var(--ink); }
+.it-label{ font-size:10px; font-weight:700; color:var(--sub); text-transform:uppercase; letter-spacing:.03em; margin-top:3px; }
+
+/* ---------------- FORECAST CARD ---------------- */
+.forecast-card{
+  background:linear-gradient(135deg,#181428,#2B2B45);
+  border-radius:var(--radius); padding:17px 18px; color:#fff;
+  position:relative; overflow:hidden;
+}
+.forecast-card::after{ content:'🔮'; position:absolute; right:14px; bottom:6px; font-size:46px; opacity:.08; }
+.forecast-label{ font-size:11px; font-weight:700; opacity:.6; text-transform:uppercase; letter-spacing:.04em; }
+.forecast-amount{ font-size:24px; font-weight:800; margin:4px 0 10px; }
+.forecast-note{ font-size:11px; opacity:.6; }
+
+/* ---------------- KEYBOARD HINT ---------------- */
+.kbd-hint-popup{
+  position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--ink); color:#fff; padding:14px 18px; border-radius:14px;
+  font-size:11.5px; z-index:800; opacity:0; pointer-events:none;
+  transition:opacity .2s ease, transform .2s ease; max-width:300px; line-height:1.8;
+}
+.kbd-hint-popup.show{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+.kbd-hint-popup kbd{
+  background:rgba(255,255,255,.15); padding:2px 6px; border-radius:5px; font-weight:700; margin:0 2px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .pa-dot{ animation:none; }
+  .stat-card.loading .stat-value{ animation:none; }
+  .sec-body{ transition:none; }
+}
 </style>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4F2FCE">
 <script src="js/pwa-install.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 </head>
 <body>
 
@@ -613,36 +794,163 @@ button{ font-family:inherit; }
 
   <button type="button" class="import-btn" id="adminInstallBtn" style="display:none;width:100%;margin-bottom:16px;">📲 Install Admin App</button>
 
+  <button type="button" class="admin-search-btn" onclick="openAdminSearch()">
+    🔍 <span>Page search karo...</span> <span class="kbd-hint">/</span>
+  </button>
+
+  <div class="today-strip">
+    <div class="today-icon">🎯</div>
+    <div class="today-text">Aaj ka revenue</div>
+    <div class="today-count" id="todayStripValue">—</div>
+  </div>
+
+  <div class="pending-alert-row" id="pendingAlertRow">
+    <div class="pa-item pa-zero" id="paTopups" onclick="location.href='topups.html'">
+      <div class="pa-dot"></div>
+      <div class="pa-icon">⏳</div>
+      <div class="pa-count" id="paTopupsCount">—</div>
+      <div class="pa-label">Top-ups</div>
+    </div>
+    <div class="pa-item pa-zero" id="paOrders" onclick="location.href='orders.html'">
+      <div class="pa-dot"></div>
+      <div class="pa-icon">📦</div>
+      <div class="pa-count" id="paOrdersCount">—</div>
+      <div class="pa-label">Orders</div>
+    </div>
+    <div class="pa-item pa-zero" id="paWithdrawals" onclick="location.href='withdrawals.html'">
+      <div class="pa-dot"></div>
+      <div class="pa-icon">💸</div>
+      <div class="pa-count" id="paWithdrawalsCount">—</div>
+      <div class="pa-label">Payouts</div>
+    </div>
+  </div>
+
   <div class="stat-grid">
-    <div class="stat-card" onclick="location.href='topups.html'">
+    <div class="stat-card sc-orange" onclick="location.href='topups.html'">
       <div class="stat-icon">⏳</div>
       <div class="stat-value" id="statPendingTopups">—</div>
       <div class="stat-label">Pending Top-ups</div>
     </div>
-    <div class="stat-card" onclick="location.href='orders.html'">
+    <div class="stat-card sc-purple" onclick="location.href='orders.html'">
       <div class="stat-icon">📦</div>
       <div class="stat-value" id="statPendingOrders">—</div>
       <div class="stat-label">Pending Orders</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card sc-blue">
       <div class="stat-icon">👥</div>
       <div class="stat-value" id="statTotalUsers">—</div>
       <div class="stat-label">Total Users</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card sc-green">
       <div class="stat-icon">💰</div>
       <div class="stat-value" id="statTodayRevenue">—</div>
       <div class="stat-label">Today's Revenue</div>
     </div>
   </div>
 
-  <div class="admin-card">
-    <div class="admin-card-header"><h3>🕒 Recent Activity</h3></div>
-    <div id="recentActivity">
-      <p class="admin-empty">Load ho raha hai...</p>
+  <div id="sortableArea">
+
+    <div id="secAlertsWrap">
+      <div class="sec-head" onclick="toggleSection('secAlerts', this)">
+        <h3><span class="sec-drag-handle">⠿</span> 🔔 Smart Alerts</h3>
+        <span class="sec-collapse-icon">▾</span>
+      </div>
+      <div class="sec-body" id="secAlerts">
+        <div id="smartAlertsList">
+          <div class="smart-alert info"><span class="sa-icon">ℹ️</span><span>Stats load hone ka wait kar rahe hain...</span></div>
+        </div>
+      </div>
     </div>
+
+    <div id="secRevenueWrap">
+      <div class="sec-head" onclick="toggleSection('secRevenue', this)">
+        <h3><span class="sec-drag-handle">⠿</span> 📊 Revenue</h3>
+        <span class="sec-collapse-icon">▾</span>
+      </div>
+      <div class="sec-body" id="secRevenue">
+        <div class="admin-card">
+          <div class="rev-tabs">
+            <button type="button" class="rev-tab active" data-range="7" onclick="setRevenueRange(7,this)">7 Din</button>
+            <button type="button" class="rev-tab" data-range="30" onclick="setRevenueRange(30,this)">30 Din</button>
+            <button type="button" class="rev-tab" data-range="90" onclick="setRevenueRange(90,this)">3 Mahine</button>
+          </div>
+          <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+          <p class="chart-empty-note" id="revenueChartNote"></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="secInsightsWrap">
+      <div class="sec-head" onclick="toggleSection('secInsights', this)">
+        <h3><span class="sec-drag-handle">⠿</span> 💡 Insights</h3>
+        <span class="sec-collapse-icon">▾</span>
+      </div>
+      <div class="sec-body" id="secInsights">
+        <div class="insight-strip">
+          <div class="insight-tile it-revenue">
+            <div class="it-value" id="insightTotalRevenue">—</div>
+            <div class="it-label">Total Revenue</div>
+          </div>
+          <div class="insight-tile it-aov">
+            <div class="it-value" id="insightAOV">—</div>
+            <div class="it-label">Avg Order Value</div>
+          </div>
+          <div class="insight-tile it-rate">
+            <div class="it-value" id="insightApprovalRate">—</div>
+            <div class="it-label">Approval Rate</div>
+          </div>
+          <div class="insight-tile it-repeat">
+            <div class="it-value" id="insightRepeatUsers">—</div>
+            <div class="it-label">Repeat Buyers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="secForecastWrap">
+      <div class="sec-head" onclick="toggleSection('secForecast', this)">
+        <h3><span class="sec-drag-handle">⠿</span> 🔮 Forecast</h3>
+        <span class="sec-collapse-icon">▾</span>
+      </div>
+      <div class="sec-body" id="secForecast">
+        <div class="forecast-card">
+          <div class="forecast-label">Estimated This Month</div>
+          <div class="forecast-amount" id="forecastAmount">—</div>
+          <div class="forecast-note" id="forecastNote">Data load hone ka wait kar rahe hain...</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="secActivityWrap">
+      <div class="sec-head" onclick="toggleSection('secActivity', this)">
+        <h3><span class="sec-drag-handle">⠿</span> 🕒 Recent Activity</h3>
+        <span class="sec-collapse-icon">▾</span>
+      </div>
+      <div class="sec-body" id="secActivity">
+        <div class="admin-card">
+          <div id="recentActivity">
+            <p class="admin-empty">Load ho raha hai...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
+</div>
+
+<div class="admin-search-overlay" id="adminSearchOverlay" onclick="if(event.target===this)closeAdminSearch()">
+  <div class="admin-search-box">
+    <input type="text" class="admin-search-input" id="adminSearchInput" placeholder="Dashboard, Orders, Users..." oninput="renderSearchResults(this.value)">
+    <div class="admin-search-results" id="adminSearchResults"></div>
+  </div>
+</div>
+
+<div class="kbd-hint-popup" id="kbdHintPopup">
+  <b>Shortcuts:</b><br>
+  <kbd>/</kbd> Search &nbsp; <kbd>d</kbd> Dashboard &nbsp; <kbd>t</kbd> Top-ups &nbsp; <kbd>o</kbd> Orders<br>
+  <kbd>b</kbd> Bundles &nbsp; <kbd>s</kbd> Stats &nbsp; <kbd>u</kbd> Users &nbsp; <kbd>p</kbd> Payouts &nbsp; <kbd>f</kbd> FF<br>
+  <kbd>?</kbd> Ye hint &nbsp; <kbd>Esc</kbd> Band karo
 </div>
 
 <nav class="bottom-nav">
@@ -687,6 +995,285 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btn.dataset.page === currentPage) btn.classList.add("active");
   });
 });
+</script>
+
+<script>
+/* =================================================================
+   ADVANCED DASHBOARD — search, shortcuts, collapsible/drag sections,
+   smart alerts, chart + insight hooks.
+
+   IMPORTANT — what's "live" vs what needs dashboard.js:
+   - Smart Alerts, Today Strip, Pending Alert Row: these READ the
+     existing statPendingTopups / statPendingOrders / statTotalUsers /
+     statTodayRevenue values that dashboard.js already fills in —
+     fully working already, no changes needed in dashboard.js.
+   - Pending Withdrawals count: there's no existing stat for this.
+     Add an element with id="statPendingWithdrawals" (can be hidden)
+     and set its text the same way dashboard.js sets the others —
+     this script will pick it up automatically.
+   - Revenue Chart / Insights / Forecast: these need real historical
+     data that only dashboard.js can query from Firestore. Until then
+     they show an honest "data chahiye" empty state. To wire them up,
+     have dashboard.js set:
+       window.AKANS_REVENUE_HISTORY = [{date:'2026-10-01', amount:450}, ...]
+       window.AKANS_INSIGHTS = { totalRevenue, aov, approvalRate, repeatBuyers }
+       window.AKANS_FORECAST = { amount, note }
+     then call window.renderAkansAnalytics() once that data is ready.
+================================================================= */
+(function(){
+
+  /* ---------------- SEARCH (page quick-switcher) ---------------- */
+  const ADMIN_PAGES = [
+    { icon:"📊", label:"Dashboard", url:"dashboard.html" },
+    { icon:"💰", label:"Top-ups", url:"topups.html" },
+    { icon:"📦", label:"Orders", url:"orders.html" },
+    { icon:"🎁", label:"Bundles", url:"bundles.html" },
+    { icon:"📈", label:"Stats / Analytics", url:"analytics.html" },
+    { icon:"👥", label:"Users", url:"users.html" },
+    { icon:"💸", label:"Payouts / Withdrawals", url:"withdrawals.html" },
+    { icon:"🎮", label:"FF Orders", url:"ff-orders.html" },
+  ];
+  let searchHighlight = 0;
+  let searchMatches = ADMIN_PAGES;
+
+  window.openAdminSearch = function(){
+    const overlay = document.getElementById('adminSearchOverlay');
+    const input = document.getElementById('adminSearchInput');
+    if (!overlay) return;
+    overlay.classList.add('show');
+    renderSearchResults('');
+    setTimeout(() => input && input.focus(), 50);
+  };
+  window.closeAdminSearch = function(){
+    const overlay = document.getElementById('adminSearchOverlay');
+    if (overlay) overlay.classList.remove('show');
+  };
+  window.renderSearchResults = function(query){
+    const q = (query || '').trim().toLowerCase();
+    searchMatches = ADMIN_PAGES.filter(p => p.label.toLowerCase().includes(q));
+    searchHighlight = 0;
+    const el = document.getElementById('adminSearchResults');
+    if (!el) return;
+    if (!searchMatches.length) {
+      el.innerHTML = '<div class="admin-search-empty">Koi page nahi mila</div>';
+      return;
+    }
+    el.innerHTML = searchMatches.map((p, i) =>
+      `<div class="admin-search-result${i===0?' highlighted':''}" onclick="location.href='${p.url}'">
+        <span class="admin-search-result-icon">${p.icon}</span>
+        <span class="admin-search-result-label">${p.label}</span>
+      </div>`
+    ).join('');
+  };
+
+  /* ---------------- KEYBOARD SHORTCUTS ---------------- */
+  const SHORTCUT_MAP = { d:'dashboard.html', t:'topups.html', o:'orders.html', b:'bundles.html', s:'analytics.html', u:'users.html', p:'withdrawals.html', f:'ff-orders.html' };
+  document.addEventListener('keydown', function(e){
+    const tag = (e.target.tagName || '').toLowerCase();
+    const editing = tag === 'input' || tag === 'textarea' || tag === 'select';
+
+    if (e.key === 'Escape') {
+      closeAdminSearch();
+      const kh = document.getElementById('kbdHintPopup');
+      if (kh) kh.classList.remove('show');
+      return;
+    }
+    if (editing) return;
+
+    if (e.key === '/') { e.preventDefault(); openAdminSearch(); return; }
+    if (e.key === '?') { const kh = document.getElementById('kbdHintPopup'); if (kh) kh.classList.toggle('show'); return; }
+    if (SHORTCUT_MAP[e.key]) { location.href = SHORTCUT_MAP[e.key]; }
+  });
+
+  /* ---------------- COLLAPSIBLE SECTIONS ---------------- */
+  window.toggleSection = function(bodyId, headEl){
+    const body = document.getElementById(bodyId);
+    if (!body) return;
+    const isC = body.classList.contains('collapsed');
+    body.classList.toggle('collapsed', !isC);
+    headEl.classList.toggle('collapsed', !isC);
+    try {
+      const saved = JSON.parse(localStorage.getItem('akans_dash_collapsed') || '{}');
+      saved[bodyId] = !isC;
+      localStorage.setItem('akans_dash_collapsed', JSON.stringify(saved));
+    } catch(e){}
+  };
+  function restoreCollapsed(){
+    try {
+      const saved = JSON.parse(localStorage.getItem('akans_dash_collapsed') || '{}');
+      Object.entries(saved).forEach(([id, isC]) => {
+        if (!isC) return;
+        const body = document.getElementById(id);
+        if (!body) return;
+        body.classList.add('collapsed');
+        const head = body.previousElementSibling;
+        if (head && head.classList.contains('sec-head')) head.classList.add('collapsed');
+      });
+    } catch(e){}
+  }
+
+  /* ---------------- DRAG-TO-REORDER ---------------- */
+  function initDrag(){
+    const area = document.getElementById('sortableArea');
+    if (!area || !window.Sortable) return;
+    Sortable.create(area, {
+      handle: '.sec-drag-handle',
+      animation: 150,
+      ghostClass: 'sort-ghost',
+      onEnd: () => {
+        try {
+          const order = [...area.children].map(el => el.id);
+          localStorage.setItem('akans_dash_section_order', JSON.stringify(order));
+        } catch(e){}
+      }
+    });
+    try {
+      const order = JSON.parse(localStorage.getItem('akans_dash_section_order') || '[]');
+      order.forEach(id => { const el = document.getElementById(id); if (el) area.appendChild(el); });
+    } catch(e){}
+  }
+
+  /* ---------------- SMART ALERTS + TODAY STRIP + PENDING ROW ---------------- */
+  /* These read the SAME values dashboard.js already fills into the stat cards. */
+  function parseNum(text){
+    const n = parseFloat(String(text || '').replace(/[^0-9.]/g, ''));
+    return isNaN(n) ? null : n;
+  }
+
+  function refreshFromStats(){
+    const topups = parseNum(document.getElementById('statPendingTopups')?.textContent);
+    const orders = parseNum(document.getElementById('statPendingOrders')?.textContent);
+    const revenue = document.getElementById('statTodayRevenue')?.textContent;
+    const withdrawals = parseNum(document.getElementById('statPendingWithdrawals')?.textContent);
+
+    // Today strip
+    const todayEl = document.getElementById('todayStripValue');
+    if (todayEl && revenue && revenue !== '—') todayEl.textContent = revenue;
+
+    // Pending alert row (mirrors stat cards)
+    setPaItem('paTopups', 'paTopupsCount', topups);
+    setPaItem('paOrders', 'paOrdersCount', orders);
+    setPaItem('paWithdrawals', 'paWithdrawalsCount', withdrawals);
+
+    // Smart alerts
+    const alerts = [];
+    if (topups !== null && topups >= 5) alerts.push({ type:'danger', icon:'⚠️', text:`${topups} top-up requests pending hain — jaldi verify karo.` });
+    else if (topups !== null && topups > 0) alerts.push({ type:'warn', icon:'⏳', text:`${topups} top-up request${topups>1?'s':''} pending hai.` });
+
+    if (orders !== null && orders >= 5) alerts.push({ type:'danger', icon:'📦', text:`${orders} orders pending hain — customers wait kar rahe hain.` });
+    else if (orders !== null && orders > 0) alerts.push({ type:'warn', icon:'📦', text:`${orders} order${orders>1?'s':''} pending hai.` });
+
+    if (withdrawals !== null && withdrawals > 0) alerts.push({ type:'info', icon:'💸', text:`${withdrawals} payout request pending hai.` });
+
+    if (!alerts.length && topups !== null && orders !== null) {
+      alerts.push({ type:'success', icon:'✅', text:'Sab kuch up to date hai — koi pending item nahi.' });
+    }
+
+    const alertsEl = document.getElementById('smartAlertsList');
+    if (alertsEl && alerts.length) {
+      alertsEl.innerHTML = alerts.map(a =>
+        `<div class="smart-alert ${a.type}"><span class="sa-icon">${a.icon}</span><span>${a.text}</span></div>`
+      ).join('');
+    }
+  }
+
+  function setPaItem(itemId, countId, value){
+    const item = document.getElementById(itemId);
+    const countEl = document.getElementById(countId);
+    if (!item || !countEl) return;
+    if (value === null) { countEl.textContent = '—'; return; }
+    countEl.textContent = value;
+    item.classList.toggle('pa-zero', value === 0);
+  }
+
+  function watchStat(id){
+    const el = document.getElementById(id);
+    if (!el || !window.MutationObserver) return;
+    const obs = new MutationObserver(refreshFromStats);
+    obs.observe(el, { childList:true, characterData:true, subtree:true });
+  }
+
+  /* ---------------- REVENUE CHART / INSIGHTS / FORECAST HOOKS ---------------- */
+  let revenueChartInstance = null;
+  let currentRevenueRange = 7;
+
+  window.setRevenueRange = function(days, btnEl){
+    currentRevenueRange = days;
+    document.querySelectorAll('.rev-tab').forEach(t => t.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+    renderRevenueChart();
+  };
+
+  function renderRevenueChart(){
+    const note = document.getElementById('revenueChartNote');
+    const data = window.AKANS_REVENUE_HISTORY;
+    if (!data || !data.length) {
+      if (note) note.textContent = 'Revenue history data abhi connect nahi hai — dashboard.js mein window.AKANS_REVENUE_HISTORY set karo.';
+      return;
+    }
+    if (note) note.textContent = '';
+    const sliced = data.slice(-currentRevenueRange);
+    const ctx = document.getElementById('revenueChart');
+    if (!ctx || !window.Chart) return;
+    if (revenueChartInstance) revenueChartInstance.destroy();
+    revenueChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: sliced.map(d => d.date),
+        datasets: [{
+          label: 'Revenue',
+          data: sliced.map(d => d.amount),
+          borderColor: '#4F2FCE',
+          backgroundColor: 'rgba(79,47,206,.1)',
+          fill: true,
+          tension: .35,
+          pointRadius: 2
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  function renderInsights(){
+    const d = window.AKANS_INSIGHTS;
+    if (!d) return;
+    const map = { insightTotalRevenue: d.totalRevenue, insightAOV: d.aov, insightApprovalRate: d.approvalRate, insightRepeatUsers: d.repeatBuyers };
+    Object.entries(map).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.textContent = val;
+    });
+  }
+
+  function renderForecast(){
+    const d = window.AKANS_FORECAST;
+    if (!d) return;
+    const amtEl = document.getElementById('forecastAmount');
+    const noteEl = document.getElementById('forecastNote');
+    if (amtEl && d.amount !== undefined) amtEl.textContent = d.amount;
+    if (noteEl && d.note) noteEl.textContent = d.note;
+  }
+
+  // Call this from dashboard.js once AKANS_REVENUE_HISTORY / AKANS_INSIGHTS / AKANS_FORECAST are set
+  window.renderAkansAnalytics = function(){
+    renderRevenueChart();
+    renderInsights();
+    renderForecast();
+  };
+
+  /* ---------------- INIT ---------------- */
+  document.addEventListener('DOMContentLoaded', () => {
+    restoreCollapsed();
+    initDrag();
+    renderRevenueChart(); // shows empty-state note if no data yet
+    ['statPendingTopups','statPendingOrders','statTotalUsers','statTodayRevenue','statPendingWithdrawals'].forEach(watchStat);
+    // Also do an initial pass in case stats were already set before this script ran
+    setTimeout(refreshFromStats, 400);
+  });
+})();
 </script>
 <script type="module" src="js/dashboard.js"></script>
 </body>
