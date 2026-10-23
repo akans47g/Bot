@@ -759,6 +759,31 @@ button{ font-family:inherit; }
 .forecast-amount{ font-size:24px; font-weight:800; margin:4px 0 10px; }
 .forecast-note{ font-size:11px; opacity:.6; }
 
+/* ---------------- QUICK ACCESS NOTIFICATION TILES ---------------- */
+.quick-nav-grid{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+  margin:10px 0 16px;
+}
+.quick-nav-tile{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  padding:14px 8px; cursor:pointer; font-family:inherit;
+  box-shadow:0 2px 10px rgba(79,47,206,.06);
+  transition:background .15s ease;
+}
+.quick-nav-tile:active{ transform:scale(.96); background:var(--bg); }
+.quick-nav-icon{ font-size:22px; }
+.quick-nav-label{ font-size:11px; font-weight:700; color:var(--ink); }
+.quick-nav-dot{
+  position:absolute; top:8px; right:10px;
+  width:9px; height:9px; border-radius:50%; background:#E63946;
+  box-shadow:0 0 0 2px var(--surface);
+  animation:paDotPulse 2s infinite;
+  display:none;
+}
+.quick-nav-tile.has-new .quick-nav-dot{ display:block; }
+
 /* ---------------- KEYBOARD HINT ---------------- */
 .kbd-hint-popup{
   position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px);
@@ -935,6 +960,47 @@ button{ font-family:inherit; }
       </div>
     </div>
 
+  </div>
+
+  <div class="sec-head" style="margin-top:4px;">
+    <h3>🧭 Quick Access</h3>
+  </div>
+  <div class="quick-nav-grid" id="quickNavGrid">
+    <button type="button" class="quick-nav-tile" id="qnTopups" onclick="goToAdminPage('topups.html','topups')">
+      <span class="quick-nav-dot"></span>
+      <span class="quick-nav-icon">💰</span>
+      <span class="quick-nav-label">Top-ups</span>
+    </button>
+    <button type="button" class="quick-nav-tile" id="qnOrders" onclick="goToAdminPage('orders.html','orders')">
+      <span class="quick-nav-dot"></span>
+      <span class="quick-nav-icon">📦</span>
+      <span class="quick-nav-label">Orders</span>
+    </button>
+    <button type="button" class="quick-nav-tile" id="qnBundles" onclick="goToAdminPage('bundles.html','bundles')">
+      <span class="quick-nav-dot"></span>
+      <span class="quick-nav-icon">🎁</span>
+      <span class="quick-nav-label">Bundles</span>
+    </button>
+    <button type="button" class="quick-nav-tile" id="qnStats" onclick="goToAdminPage('analytics.html','stats')">
+      <span class="quick-nav-dot"></span>
+      <span class="quick-nav-icon">📈</span>
+      <span class="quick-nav-label">Stats</span>
+    </button>
+    <button type="button" class="quick-nav-tile" id="qnUsers" onclick="goToAdminPage('users.html','users')">
+      <span class="quick-nav-dot"></span>
+      <span class="quick-nav-icon">👥</span>
+      <span class="quick-nav-label">Users</span>
+    </button>
+    <button type="button" class="quick-nav-tile" id="qnPayouts" onclick="goToAdminPage('withdrawals.html','payouts')">
+      <span class="quick-nav-dot"></span>
+      <span class="quick-nav-icon">💸</span>
+      <span class="quick-nav-label">Payout</span>
+    </button>
+    <button type="button" class="quick-nav-tile" id="qnFF" onclick="goToAdminPage('ff-orders.html','ff')">
+      <span class="quick-nav-dot"></span>
+      <span class="quick-nav-icon">🎮</span>
+      <span class="quick-nav-label">FF</span>
+    </button>
   </div>
 
 </div>
@@ -1175,6 +1241,12 @@ document.addEventListener("DOMContentLoaded", () => {
         `<div class="smart-alert ${a.type}"><span class="sa-icon">${a.icon}</span><span>${a.text}</span></div>`
       ).join('');
     }
+
+    // Quick Access notification dots — auto-derived for the 3 pages we have real counts for
+    window.AKANS_NEW_FLAGS.topups = topups !== null && topups > 0;
+    window.AKANS_NEW_FLAGS.orders = orders !== null && orders > 0;
+    window.AKANS_NEW_FLAGS.payouts = withdrawals !== null && withdrawals > 0;
+    refreshQuickNavDots();
   }
 
   function setPaItem(itemId, countId, value){
@@ -1185,6 +1257,32 @@ document.addEventListener("DOMContentLoaded", () => {
     countEl.textContent = value;
     item.classList.toggle('pa-zero', value === 0);
   }
+
+  /* ---------------- QUICK ACCESS NOTIFICATION DOTS ---------------- */
+  // Bundles, Stats, Users, FF have no existing "pending" stat, so they default to false
+  // (no dot) until dashboard.js sets window.AKANS_NEW_FLAGS.<key> = true and calls
+  // window.refreshQuickNavDots() — e.g. after detecting a new user signup.
+  window.AKANS_NEW_FLAGS = window.AKANS_NEW_FLAGS || {
+    topups:false, orders:false, bundles:false, stats:false, users:false, payouts:false, ff:false
+  };
+  const QUICK_NAV_TILE_IDS = {
+    topups:'qnTopups', orders:'qnOrders', bundles:'qnBundles', stats:'qnStats',
+    users:'qnUsers', payouts:'qnPayouts', ff:'qnFF'
+  };
+
+  window.refreshQuickNavDots = function(){
+    Object.entries(QUICK_NAV_TILE_IDS).forEach(([key, tileId]) => {
+      const tile = document.getElementById(tileId);
+      if (tile) tile.classList.toggle('has-new', !!window.AKANS_NEW_FLAGS[key]);
+    });
+  };
+
+  window.goToAdminPage = function(url, key){
+    // Instant visual dismiss the moment they tap, before navigating away
+    const tile = document.getElementById(QUICK_NAV_TILE_IDS[key]);
+    if (tile) tile.classList.remove('has-new');
+    location.href = url;
+  };
 
   function watchStat(id){
     const el = document.getElementById(id);
