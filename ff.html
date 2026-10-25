@@ -1199,7 +1199,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const FF_API_URL    = 'https://free-ff-api-src-5plp.onrender.com/api/v1/account'; // ?region=IND&uid=XXXX
   const FF_API_KEY    = '';       // agar API key chahiye to yahan daalo (warna khali)
   const FF_API_KEY_PARAM = 'key'; // key ka query-param naam
-  const FF_REGION     = 'IND';    // default server region
+  const FF_REGION     = 'IND';    // Worker/proxy use karo to '' kar do — wo region khud dhundh leta hai
 
   const input = document.getElementById('ffUtr');
   const btn   = document.getElementById('ffCheckUidBtn');
@@ -1238,7 +1238,8 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const ctrl = new AbortController();
       const t = setTimeout(function(){ ctrl.abort(); }, 25000); // free servers slow ho sakte hain
-      let url = FF_API_URL + '?region=' + encodeURIComponent(FF_REGION) + '&uid=' + encodeURIComponent(uid);
+      let url = FF_API_URL + '?uid=' + encodeURIComponent(uid);
+      if (FF_REGION) url += '&region=' + encodeURIComponent(FF_REGION); // proxy ke saath khali chhod sakte ho (auto-detect)
       if (FF_API_KEY) url += '&' + FF_API_KEY_PARAM + '=' + encodeURIComponent(FF_API_KEY);
       const res = await fetch(url, { signal: ctrl.signal });
       clearTimeout(t);
@@ -1260,7 +1261,13 @@ document.addEventListener("DOMContentLoaded", () => {
         ['Guild', guild || 'No Guild']
       ]);
     } catch (e) {
-      showError(e.name === 'AbortError' ? 'Server slow hai, thodi der baad dobara try karein.' : 'UID check nahi ho paya. Dobara try karein.');
+      console.error('Check UID error:', e);
+      let msg = 'UID check nahi ho paya. Dobara try karein.';
+      if (e.name === 'AbortError') msg = 'Server slow hai, thodi der baad dobara try karein.';
+      else if (e instanceof TypeError) msg = 'Server se connect nahi hua (network/CORS). Reason: ' + e.message;
+      else if (e.message === 'HTTP 404') msg = 'Player nahi mila. UID aur region check karein.';
+      else if (/^HTTP/.test(e.message)) msg = 'API ne error diya (' + e.message + ').';
+      showError(msg);
     } finally {
       btn.disabled = false; btn.textContent = '🔍 Check UID';
     }
