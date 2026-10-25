@@ -68,9 +68,9 @@ async function confirmFFPurchase(){
   const plan = FF_PLANS[currentPlanId];
   if (!plan) return;
 
-  const gameUid = document.getElementById('ffUtr').value.trim();
-  if (!/^\d{6,14}$/.test(gameUid)){
-    errorEl.textContent = 'Sahi Free Fire Game UID dalein (sirf numbers)';
+  const utr = document.getElementById('ffUtr').value.trim();
+  if (!utr){
+    errorEl.textContent = 'UTR number ya payment link dalein';
     document.getElementById('ffUtr').focus();
     return;
   }
@@ -93,9 +93,7 @@ async function confirmFFPurchase(){
     const balance = snap.exists() && typeof snap.data().walletBalance === 'number' ? snap.data().walletBalance : 0;
 
     if (balance >= plan.price){
-      // float error se bachne ke liye 2 decimal tak round (26.51 - 25 = 1.5100000000000016 na bane)
-      const newBalance = Math.round((balance - plan.price) * 100) / 100;
-      await updateDoc(userRef, { walletBalance: newBalance });
+      await updateDoc(userRef, { walletBalance: balance - plan.price });
 
       await addDoc(collection(db, 'ffOrders'), {
         uid: user.uid,
@@ -105,8 +103,7 @@ async function confirmFFPurchase(){
         days: plan.days,
         totalContent: plan.totalContent,
         price: plan.price,
-        gameUid: gameUid,
-        utr: gameUid, // purana field — admin panel abhi 'utr' padhta ho to kaam karta rahe
+        utr: utr,
         status: 'pending',
         createdAt: new Date().toISOString()
       });
