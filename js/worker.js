@@ -85,5 +85,7 @@ export default {
     } catch (e) {
       return reply({ ok: false, error: 'Player nahi mila ya API down hai' }, 404);
     }
+     
   }
+   
 };
