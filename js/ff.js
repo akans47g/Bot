@@ -93,7 +93,9 @@ async function confirmFFPurchase(){
     const balance = snap.exists() && typeof snap.data().walletBalance === 'number' ? snap.data().walletBalance : 0;
 
     if (balance >= plan.price){
-      await updateDoc(userRef, { walletBalance: balance - plan.price });
+      // float error se bachne ke liye 2 decimal tak round (26.51 - 25 = 1.5100000000000016 na bane)
+      const newBalance = Math.round((balance - plan.price) * 100) / 100;
+      await updateDoc(userRef, { walletBalance: newBalance });
 
       await addDoc(collection(db, 'ffOrders'), {
         uid: user.uid,
