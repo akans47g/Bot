@@ -383,6 +383,22 @@ button{ font-family:inherit; }
   .urgent{ animation:none; }
   .bottom-nav{ transition:none; }
 }
+
+/* ---------- CHECK UID ---------- */
+.ff-check-btn{
+  width:100%; border:1.5px solid var(--accent); background:#fff; color:var(--accent);
+  font-size:15px; font-weight:800; padding:13px; border-radius:14px; cursor:pointer;
+  font-family:inherit; margin:0 0 12px;
+}
+.ff-check-btn:active{ transform:scale(.98); }
+.ff-check-btn:disabled{ opacity:.6; cursor:wait; }
+.ff-uid-result{ display:none; margin:0 0 14px; border-radius:16px; padding:14px 16px; font-size:13.5px; }
+.ff-uid-result.ok{ display:block; background:#F1FBF6; border:1px solid #BFEBD3; }
+.ff-uid-result.err{ display:block; background:#FFF4F4; border:1px solid #F8D3D5; color:#E63946; font-weight:600; }
+.ff-uid-row{ display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px dashed #D6EFE2; }
+.ff-uid-row:last-child{ border-bottom:0; }
+.ff-uid-row span{ color:var(--sub); font-weight:600; }
+.ff-uid-row strong{ color:var(--ink); font-weight:800; text-align:right; word-break:break-word; }
 </style>
 <style>
 /* =================================================================
@@ -581,10 +597,12 @@ button{ font-family:inherit; }
   z-index:999; backdrop-filter:blur(2px);
 }
 .ff-modal-overlay.active{ display:flex; }
+.ff-modal .ff-confirm-btn{ margin-top:auto; }
 .ff-modal{
-  width:100%; max-width:480px; background:var(--surface);
-  border-radius:26px 26px 0 0; padding:16px 20px 28px;
-  position:relative; max-height:88vh; overflow-y:auto;
+  width:100%; max-width:100%; background:var(--surface);
+  border-radius:0; padding:16px 20px 28px;
+  position:relative; height:100vh; height:100dvh; max-height:100dvh; overflow-y:auto;
+  display:flex; flex-direction:column;
   animation:ffSlideUp .3s cubic-bezier(.2,.8,.2,1);
   box-shadow:0 -12px 40px rgba(15,15,40,.25);
 }
@@ -752,7 +770,6 @@ button{ font-family:inherit; }
     <div class="ff-body">
       <div class="ff-title">1 Day Plan</div>
       <div class="ff-price-row">
-        <del class="ff-price-old" id="ff1OldPrice" style="display:none">₹25</del>
         <span class="ff-price" id="ff1Price">₹25</span>
         <span class="ff-price-sub">/ 1 day</span>
         <span class="ff-badge" id="ff1Badge">🔥 Quick Trial</span>
@@ -924,8 +941,8 @@ button{ font-family:inherit; }
       </div>
     </div>
 
-    <label class="ff-modal-label" for="ffUtr">UTR Number / Payment Link</label>
-    <input type="text" id="ffUtr" class="ff-modal-input" placeholder="Yahan UTR ya link paste karein">
+    <label class="ff-modal-label" for="ffUtr">Pleyar UID / Game UID</label>
+    <input type="text" id="ffUtr" class="ff-modal-input" placeholder="Yahan Game Ki Uid Past karein">
     <p class="ff-error" id="ffError"></p>
 
     <div class="ff-wallet-chip">
@@ -938,6 +955,9 @@ button{ font-family:inherit; }
       <p>Balance kam hai — <strong><span id="ffShort">₹0</span></strong> aur chahiye</p>
       <button type="button" class="ff-add-money-btn" onclick="location.href='addmoney.html'">💰 Add Money</button>
     </div>
+
+    <button type="button" class="ff-check-btn" id="ffCheckUidBtn">🔍 Check UID</button>
+    <div class="ff-uid-result" id="ffUidResult"></div>
 
     <button type="button" class="ff-confirm-btn" id="ffConfirmBtn" onclick="confirmFFPurchase()">✅ Confirm &amp; Buy Now</button>
   </div>
@@ -1173,37 +1193,88 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script>
-// ---- First-time buyer offer: 1 Day Plan is ₹9 on a customer's first purchase, ₹25 after ----
-// NOTE: this only controls what the CARD shows. The actual amount charged in the
-// Buy popup depends on js/ff.js — check that it also reads/accepts ₹10 for 'ff1'
-// the first time, otherwise the popup may still ask for ₹25.
+// ---- Check UID (Free Fire player info) ----
 (function(){
-  const FIRST_TIME_KEY = 'akans_ff1_first_time_used';
+  // 👉 API settings — sirf yahan badalna hai
+  const FF_API_URL    = 'https://free-ff-api-src-5plp.onrender.com/api/v1/account'; // ?region=IND&uid=XXXX
+  const FF_API_KEY    = '';       // agar API key chahiye to yahan daalo (warna khali)
+  const FF_API_KEY_PARAM = 'key'; // key ka query-param naam
+  const FF_REGION     = 'IND';    // default server region
 
-  function applyFirstTimeOffer(){
-    const alreadyUsed = localStorage.getItem(FIRST_TIME_KEY);
-    if (alreadyUsed) return; // normal ₹25 pricing stays as-is
+  const input = document.getElementById('ffUtr');
+  const btn   = document.getElementById('ffCheckUidBtn');
+  const box   = document.getElementById('ffUidResult');
+  if (!input || !btn || !box) return;
 
-    const priceEl = document.getElementById('ff1Price');
-    const oldPriceEl = document.getElementById('ff1OldPrice');
-    const badgeEl = document.getElementById('ff1Badge');
-    const buyPriceEl = document.getElementById('ff1BuyPrice');
-
-    if (priceEl) priceEl.textContent = '₹10';
-    if (oldPriceEl) oldPriceEl.style.display = 'inline';
-    if (badgeEl) badgeEl.textContent = '🆕 First Order Special';
-    if (buyPriceEl) buyPriceEl.textContent = '🪙 ₹10';
+  // nested JSON me key dhundhne wala helper (alag APIs ke alag field names ke liye)
+  function find(obj, keys){
+    if (!obj || typeof obj !== 'object') return undefined;
+    for (const k of keys){ if (obj[k] !== undefined && obj[k] !== null && obj[k] !== '') return obj[k]; }
+    for (const v of Object.values(obj)){
+      if (v && typeof v === 'object'){ const r = find(v, keys); if (r !== undefined) return r; }
+    }
+    return undefined;
   }
 
-  document.addEventListener('DOMContentLoaded', applyFirstTimeOffer);
-
-  const ff1BuyBtn = document.getElementById('ff1BuyBtn');
-  if (ff1BuyBtn) {
-    ff1BuyBtn.addEventListener('click', function(){
-      localStorage.setItem(FIRST_TIME_KEY, 'true');
+  function reset(){ box.className = 'ff-uid-result'; box.textContent = ''; }
+  function showError(msg){ box.className = 'ff-uid-result err'; box.textContent = msg; }
+  function showResult(rows){
+    box.className = 'ff-uid-result ok';
+    box.textContent = '';
+    rows.forEach(function(r){
+      const row = document.createElement('div'); row.className = 'ff-uid-row';
+      const a = document.createElement('span'); a.textContent = r[0];
+      const b = document.createElement('strong'); b.textContent = r[1];
+      row.appendChild(a); row.appendChild(b); box.appendChild(row);
     });
   }
+
+  async function checkUid(){
+    const uid = input.value.trim();
+    if (!/^\d{6,14}$/.test(uid)){ showError('Sahi Free Fire UID daalein (sirf numbers).'); return; }
+
+    btn.disabled = true; btn.textContent = '⏳ Checking...';
+    reset();
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(function(){ ctrl.abort(); }, 25000); // free servers slow ho sakte hain
+      let url = FF_API_URL + '?region=' + encodeURIComponent(FF_REGION) + '&uid=' + encodeURIComponent(uid);
+      if (FF_API_KEY) url += '&' + FF_API_KEY_PARAM + '=' + encodeURIComponent(FF_API_KEY);
+      const res = await fetch(url, { signal: ctrl.signal });
+      clearTimeout(t);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+
+      const name   = find(data, ['nickname','nickName','name','playerName']);
+      if (!name){ showError('Player nahi mila. UID check karke dobara try karein.'); return; }
+      const level  = find(data, ['level','Level','accountLevel']);
+      const region = find(data, ['region','Region','server']) || FF_REGION;
+      const guild  = find(data, ['clanName','guildName','guild_name','clan_name']) ||
+                     (function(){ const g = data.guild || data.clan || data.guildInfo || data.clanBasicInfo; return g && typeof g === 'object' ? find(g, ['name','clanName','guildName']) : (typeof g === 'string' ? g : undefined); })();
+
+      showResult([
+        ['Player Name', name],
+        ['Level', level !== undefined ? level : '—'],
+        ['Region', region],
+        ['UID', uid],
+        ['Guild', guild || 'No Guild']
+      ]);
+    } catch (e) {
+      showError(e.name === 'AbortError' ? 'Server slow hai, thodi der baad dobara try karein.' : 'UID check nahi ho paya. Dobara try karein.');
+    } finally {
+      btn.disabled = false; btn.textContent = '🔍 Check UID';
+    }
+  }
+
+  btn.addEventListener('click', checkUid);
+  input.addEventListener('input', reset); // UID badalte hi purana result hat jaye
+
+  // popup band hote hi result clear
+  const overlay = document.getElementById('ffModalOverlay');
+  if (overlay) new MutationObserver(function(){ if (!overlay.classList.contains('active')) reset(); })
+    .observe(overlay, { attributes:true, attributeFilter:['class'] });
 })();
 </script>
+
 </body>
 </html>
