@@ -66,7 +66,7 @@ async function loadAllData(){
 
   allUsers = []; usersSnap.forEach(function(d){ allUsers.push(Object.assign({ id: d.id }, d.data())); });
 
-  renderAll(); // also triggers Smart Alerts + Forecast (range-aware)
+  renderAll(); // also triggers Smart Alerts + Forecast + Ad Spend calc (range-aware)
   renderLoginActivity();
   renderActivityLog(logsSnap);
   renderTopPartners();
@@ -74,6 +74,8 @@ async function loadAllData(){
   renderHeatmap();
   renderFunnel();
   renderChurnRisk();
+  renderLTV();
+  renderBestProductForAds();
 }
 
 function renderActivityLog(snap){
@@ -235,7 +237,7 @@ function renderAll(){
 
   renderProductRanking();
   renderTopSpenders();
-  if (allTopups.length || allOrders.length) { renderSmartAlerts(); renderForecast(); }
+  if (allTopups.length || allOrders.length) { renderSmartAlerts(); renderForecast(); renderAdSpendCalculator(); renderBestProductForAds(); }
 }
 
 function drawLineChart(canvasId, labels, values, label, color, drilldownKey){
@@ -850,6 +852,122 @@ function renderForecast(){
   const rangeLabels = { today: 'kal', week: 'agle hafte', month: 'agle mahine', year: 'agle saal' };
   amtEl.textContent = '₹' + projected;
   noteEl.textContent = 'Is period ke average trend ke adhar par ' + (rangeLabels[currentRange] || 'agle period') + ' ka estimate';
+}
+
+/* ================================================================
+   CUSTOMER LTV — all-time average revenue per paying customer.
+   Uses userEmail (not uid) since that's confirmed present on topups.
+================================================================ */
+function renderLTV(){
+  const amtEl = document.getElementById('ltvAmount');
+  const noteEl = document.getElementById('ltvNote');
+  if (!amtEl) return;
+
+  const approvedTopups = allTopups.filter(function(t){ return t.status === 'approved'; });
+  const totalRevenue = approvedTopups.reduce(function(s, t){ return s + (t.amount || 0); }, 0);
+  const payingEmails = new Set();
+  approvedTopups.forEach(function(t){ if (t.userEmail) payingEmails.add(t.userEmail); });
+  const count = payingEmails.size;
+  const ltv = count > 0 ? Math.round(totalRevenue / count) : 0;
+
+  amtEl.textContent = '₹' + ltv;
+  noteEl.textContent = count + ' paying customer' + (count === 1 ? '' : 's') + ' · Total revenue ₹' + totalRevenue;
+}
+
+/* ================================================================
+   AD SPEND & ROI CALCULATOR — admin manually enters ad spend for the
+   current range-toggle period; CAC and ROAS computed from real
+   revenue + new-signup numbers (buildReportData). Spend is saved
+   per-range in localStorage so it's remembered across visits.
+================================================================ */
+function adSpendStorageKey(){
+  return 'akans_ad_spend_' + currentRange;
+}
+
+function renderAdSpendCalculator(){
+  const input = document.getElementById('adSpendInput');
+  const labelEl = document.getElementById('adCalcRangeLabel');
+  if (!input) return;
+
+  const rangeLabels = { today: 'Today', week: 'Week', month: 'Month', year: 'Year' };
+  if (labelEl) labelEl.textContent = rangeLabels[currentRange] || currentRange;
+
+  const saved = localStorage.getItem(adSpendStorageKey());
+  input.value = saved || '';
+  computeAdMetrics(saved ? parseFloat(saved) : 0);
+}
+
+window.onAdSpendInput = function(val){
+  const num = parseFloat(val);
+  localStorage.setItem(adSpendStorageKey(), isNaN(num) ? '' : String(num));
+  computeAdMetrics(isNaN(num) ? 0 : num);
+};
+
+function computeAdMetrics(adSpend){
+  const el = document.getElementById('adCalcMetrics');
+  if (!el) return;
+
+  if (!adSpend || adSpend <= 0){
+    el.innerHTML = '<p class="admin-empty" style="grid-column:1/-1;">Ad spend daalo upar ↑</p>';
+    return;
+  }
+
+  const d = buildReportData();
+  const newCustomers = d.newSignups || 0;
+  const revenue = d.revenue || 0;
+
+  const cac = newCustomers > 0 ? Math.round(adSpend / newCustomers) : null;
+  const roas = (revenue / adSpend);
+  const profit = revenue - adSpend;
+  const isProfit = profit >= 0;
+
+  el.innerHTML =
+    '<div class="ad-metric"><div class="ad-metric-val">' + (cac !== null ? '₹' + cac : '—') + '</div><div class="ad-metric-label">Cost / Customer</div></div>' +
+    '<div class="ad-metric"><div class="ad-metric-val">' + roas.toFixed(2) + 'x</div><div class="ad-metric-label">ROAS</div></div>' +
+    '<div class="ad-metric"><div class="ad-metric-val">' + newCustomers + '</div><div class="ad-metric-label">New Customers</div></div>' +
+    '<div class="ad-metric"><div class="ad-metric-val">₹' + revenue + '</div><div class="ad-metric-label">Period Revenue</div></div>' +
+    '<div class="ad-verdict ' + (isProfit ? 'profit' : 'loss') + '">' +
+      (isProfit ? '✅ Profitable — ₹' + profit + ' net is period' : '⚠️ Loss — ₹' + Math.abs(profit) + ' is period, spend kam karo ya conversion improve karo') +
+    '</div>';
+}
+
+/* ================================================================
+   BEST PRODUCT FOR ADS — ranks products by REVENUE generated
+   (not just units sold) in the current range, since that's what
+   actually matters when deciding where to put ad budget.
+================================================================ */
+function renderBestProductForAds(){
+  const el = document.getElementById('bestProductList');
+  if (!el) return;
+
+  const b = getBuckets(currentRange);
+  const stats = {};
+  allOrders.forEach(function(o){
+    if (o.status === 'rejected') return;
+    if (!o.createdAt) return;
+    const d = new Date(o.createdAt);
+    if (!b.match(d)) return;
+    if (!stats[o.productName]) stats[o.productName] = { revenue: 0, units: 0 };
+    stats[o.productName].revenue += (o.price || 0);
+    stats[o.productName].units += (typeof o.qty === 'number' ? o.qty : (parseInt(o.qty, 10) || 1));
+  });
+
+  const sorted = Object.entries(stats).sort(function(a, c){ return c[1].revenue - a[1].revenue; }).slice(0, 5);
+
+  if (!sorted.length){ el.innerHTML = '<p class="admin-empty">Is period me koi order nahi hai</p>'; return; }
+
+  el.innerHTML = '';
+  sorted.forEach(function(entry, i){
+    const name = entry[0], stat = entry[1];
+    const div = document.createElement('div');
+    div.className = 'best-product-item';
+    div.innerHTML =
+      '<div class="bp-rank">' + (i + 1) + '</div>' +
+      '<div class="bp-info"><div class="bp-name">' + escapeHtml(name) + '</div>' +
+      '<div class="bp-sub">' + stat.units + ' units sold' + (i === 0 ? ' · 🚀 Top pick for ads' : '') + '</div></div>' +
+      '<div class="bp-revenue">₹' + stat.revenue + '</div>';
+    el.appendChild(div);
+  });
 }
 
 /* ================================================================
