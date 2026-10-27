@@ -759,6 +759,45 @@ button{ font-family:inherit; }
 .churn-sub{ font-size:11px; color:var(--sub); margin-top:1px; }
 .churn-days{ font-size:12px; font-weight:800; color:#E63946; white-space:nowrap; flex-shrink:0; }
 
+/* ---------------- CUSTOMER LTV ---------------- */
+.ltv-row{ display:flex; gap:10px; margin-bottom:10px; }
+.ltv-stat{ flex:1; text-align:center; background:var(--bg); border-radius:12px; padding:12px 8px; }
+.ltv-value{ font-size:18px; font-weight:800; color:var(--brand); }
+.ltv-label{ font-size:10.5px; color:var(--sub); font-weight:600; margin-top:2px; }
+.ltv-hint{ font-size:11.5px; color:var(--sub); line-height:1.4; margin:0; }
+
+/* ---------------- AD SPEND CALCULATOR ---------------- */
+.ad-spend-row{ display:flex; gap:8px; margin-bottom:10px; }
+.ad-spend-stat{ flex:1; text-align:center; background:var(--bg); border-radius:12px; padding:10px 6px; }
+.ad-spend-value{ font-size:15px; font-weight:800; color:var(--ink); }
+.ad-spend-label{ font-size:9.5px; color:var(--sub); font-weight:600; margin-top:2px; }
+.ad-spend-verdict{ font-size:12.5px; font-weight:700; padding:10px 12px; border-radius:12px; margin-bottom:10px; background:var(--bg); color:var(--sub); }
+.ad-spend-verdict.great{ background:#E8F9F1; color:#0F9D6B; }
+.ad-spend-verdict.good{ background:#EDEBFF; color:var(--brand); }
+.ad-spend-verdict.warn{ background:#FFF7E0; color:#92670A; }
+.ad-spend-verdict.bad{ background:#FDEEEE; color:#C0293A; }
+
+/* ---------------- AD SPEND CALCULATOR ---------------- */
+.ad-calc-input-row{ display:flex; align-items:center; gap:8px; background:var(--bg); border:1.5px solid var(--line); border-radius:12px; padding:10px 14px; margin-bottom:14px; }
+.ad-calc-input-row span{ font-weight:700; color:var(--sub); }
+.ad-calc-input{ border:none; background:transparent; font-size:16px; font-weight:800; color:var(--ink); width:100%; outline:none; font-family:inherit; }
+.ad-calc-metrics{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.ad-metric{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center; }
+.ad-metric-val{ font-size:16px; font-weight:800; color:var(--ink); }
+.ad-metric-label{ font-size:10px; font-weight:700; color:var(--sub); text-transform:uppercase; margin-top:3px; }
+.ad-verdict{ grid-column:1/-1; padding:10px; border-radius:12px; text-align:center; font-size:12.5px; font-weight:700; margin-top:4px; }
+.ad-verdict.profit{ background:#E8F9F1; color:#0F9D6B; }
+.ad-verdict.loss{ background:#FDEEEE; color:#C0293A; }
+
+/* ---------------- BEST PRODUCT FOR ADS ---------------- */
+.best-product-item{ display:flex; align-items:center; gap:10px; padding:12px 0; border-bottom:1px solid var(--line); }
+.best-product-item:last-child{ border-bottom:none; }
+.bp-rank{ width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--brand),var(--brand-2)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12px; flex-shrink:0; }
+.bp-info{ flex:1; min-width:0; }
+.bp-name{ font-size:13.5px; font-weight:700; color:var(--ink); }
+.bp-sub{ font-size:11px; color:var(--sub); margin-top:1px; }
+.bp-revenue{ font-size:14px; font-weight:800; color:var(--brand); white-space:nowrap; flex-shrink:0; }
+
 /* ---------------- EXPORT ROW ---------------- */
 .export-btn-row{ display:flex; gap:8px; }
 .export-btn-row .share-btn{ flex:1; }
@@ -946,6 +985,54 @@ button{ font-family:inherit; }
       </div>
     </div>
 
+    <div id="secLTVWrap">
+      <div class="sec-head" onclick="toggleSection('secLTV', this)">
+        <h3><span class="sec-drag-handle">⠿</span> 💎 Customer LTV</h3>
+        <span class="sec-collapse-icon">▾</span>
+      </div>
+      <div class="sec-body" id="secLTV">
+        <div class="admin-card">
+          <div class="goal-top">
+            <span class="goal-amount" id="ltvAmount">₹0</span>
+            <span class="goal-target">avg per paying customer</span>
+          </div>
+          <p class="goal-note" id="ltvNote">Load ho raha hai...</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="secAdCalcWrap">
+      <div class="sec-head" onclick="toggleSection('secAdCalc', this)">
+        <h3><span class="sec-drag-handle">⠿</span> 🎯 Ad Spend &amp; ROI Calculator</h3>
+        <span class="sec-collapse-icon">▾</span>
+      </div>
+      <div class="sec-body" id="secAdCalc">
+        <div class="admin-card">
+          <p class="card-count" style="margin-bottom:10px;">Is period (<span id="adCalcRangeLabel">week</span>) ka total ad spend daalo</p>
+          <div class="ad-calc-input-row">
+            <span>₹</span>
+            <input type="number" id="adSpendInput" class="ad-calc-input" placeholder="0" inputmode="numeric" oninput="onAdSpendInput(this.value)">
+          </div>
+          <div class="ad-calc-metrics" id="adCalcMetrics">
+            <p class="admin-empty" style="grid-column:1/-1;">Ad spend daalo upar ↑</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="secBestProductWrap">
+      <div class="sec-head" onclick="toggleSection('secBestProduct', this)">
+        <h3><span class="sec-drag-handle">⠿</span> 🚀 Best Product for Ads</h3>
+        <span class="sec-collapse-icon">▾</span>
+      </div>
+      <div class="sec-body" id="secBestProduct">
+        <div class="admin-card">
+          <p class="card-count" style="margin-bottom:10px;">Revenue ke hisaab se — isi product ko ads mein push karo</p>
+          <div id="bestProductList"><p class="admin-empty">Load ho raha hai...</p></div>
+        </div>
+      </div>
+    </div>
+
     <div id="secGrowthWrap">
       <div class="sec-head" onclick="toggleSection('secGrowth', this)">
         <h3><span class="sec-drag-handle">⠿</span> 👥 User Growth</h3>
@@ -1047,7 +1134,5 @@ document.addEventListener("DOMContentLoaded", () => {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module" src="js/analytics.js"></script>
-
-   
 </body>
 </html>
