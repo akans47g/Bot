@@ -36,6 +36,12 @@ let currentRange = 'week';
 let allCommissions = [];
 let earningsChart = null;
 
+// State used by the advanced sections (all filled from data the page already loads)
+let allReferrals = [];
+let allWithdrawals = [];
+let lifetimeEarned = 0;
+let partnerLink = '';
+
 watchAuthState(function(user){
   if (!user){
     window.location.href = 'login.html';
@@ -82,6 +88,8 @@ function setupCodeAndLink(code){
   const loginPath = window.location.pathname.replace(/p\.html$/, 'login.html');
   const link = window.location.origin + loginPath + '?pc=' + code;
   document.getElementById('ppLinkText').textContent = link;
+  partnerLink = link;
+  renderShareTemplates();
 
   document.getElementById('ppCodeCopyBtn').addEventListener('click', function(){
     copyText(code, this, 'Copy Code');
@@ -141,6 +149,8 @@ function listenBalance(uid){
       }
     }
     document.getElementById('ppTotalEarned').textContent = fmtMoney(lifetime);
+    lifetimeEarned = Number(lifetime) || 0;
+    renderPartnerLevel();
   });
 }
 
@@ -169,6 +179,8 @@ async function loadCommissionsAndChart(uid){
     allCommissions = [];
   }
   renderChart();
+  renderPartnerGoal();
+  renderPartnerInsights();
 }
 
 function renderChart(){
@@ -320,6 +332,11 @@ async function loadReferrals(uid){
 
   const totalFunded = docs.reduce(function(sum, u){ return sum + (typeof u.totalDeposited === 'number' ? u.totalDeposited : 0); }, 0);
   document.getElementById('ppTeamFunded').textContent = '₹' + totalFunded.toFixed(0);
+
+  allReferrals = docs;
+  renderTopPerformers();
+  renderFollowUp();
+  renderPartnerInsights();
 
   const list = document.getElementById('ppReferralList');
   if (!docs.length){
@@ -500,14 +517,16 @@ async function loadWithdrawHistory(uid){
   const snap = await getDocs(query(collection(db, 'partnerWithdrawals'), where('uid', '==', uid)));
   const list = document.getElementById('ppWithdrawHistory');
 
+  const docs = [];
+  snap.forEach(function(d){ docs.push(d.data()); });
+  docs.sort(function(a, b){ return new Date(b.createdAt) - new Date(a.createdAt); });
+  allWithdrawals = docs;
+  renderWithdrawSummary();
+
   if (snap.empty){
     list.innerHTML = '<p class="admin-empty">Koi withdrawal nahi hai</p>';
     return;
   }
-
-  const docs = [];
-  snap.forEach(function(d){ docs.push(d.data()); });
-  docs.sort(function(a, b){ return new Date(b.createdAt) - new Date(a.createdAt); });
 
   list.innerHTML = '';
   docs.forEach(function(w){
@@ -526,3 +545,253 @@ function escapeHtml(str){
   div.textContent = str || '';
   return div.innerHTML;
 }
+
+/* ================================================================
+   ADVANCED SECTIONS — sab kuch wahi data use karta hai jo page pehle
+   se load kar raha hai (commissions, referrals, withdrawals,
+   lifetime earned). Koi naya Firestore query / rule nahi chahiye.
+================================================================ */
+
+/* ---------------- PARTNER LEVEL (milestone badges only) ---------------- */
+const PARTNER_LEVELS = [
+  { name: 'Starter',  icon: '🌱', min: 0 },
+  { name: 'Bronze',   icon: '🥉', min: 500 },
+  { name: 'Silver',   icon: '🥈', min: 2000 },
+  { name: 'Gold',     icon: '🥇', min: 5000 },
+  { name: 'Platinum', icon: '💎', min: 10000 }
+];
+
+function renderPartnerLevel(){
+  const iconEl = document.getElementById('ppLevelIcon');
+  if (!iconEl) return;
+
+  let idx = 0;
+  PARTNER_LEVELS.forEach(function(l, i){ if (lifetimeEarned >= l.min) idx = i; });
+  const cur = PARTNER_LEVELS[idx];
+  const next = PARTNER_LEVELS[idx + 1];
+
+  iconEl.textContent = cur.icon;
+  document.getElementById('ppLevelName').textContent = cur.name + ' Partner';
+
+  const fill = document.getElementById('ppLevelFill');
+  const nextEl = document.getElementById('ppLevelNext');
+  if (next){
+    const pct = Math.min(100, Math.round(((lifetimeEarned - cur.min) / (next.min - cur.min)) * 100));
+    fill.style.width = pct + '%';
+    nextEl.textContent = next.icon + ' ' + next.name + ' tak ' + fmtMoney(next.min - lifetimeEarned) + ' aur (' + pct + '% complete)';
+  } else {
+    fill.style.width = '100%';
+    nextEl.textContent = '🎉 Highest level achieve ho gaya!';
+  }
+}
+
+/* ---------------- MONTHLY EARNING GOAL (localStorage) ---------------- */
+function renderPartnerGoal(){
+  const curEl = document.getElementById('ppGoalCurrent');
+  if (!curEl) return;
+
+  const goal = parseFloat(localStorage.getItem('akans_partner_goal') || '1000');
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const earned = allCommissions.reduce(function(s, c){
+    if (!c.createdAt) return s;
+    return new Date(c.createdAt) >= monthStart ? s + (c.amount || 0) : s;
+  }, 0);
+
+  const pct = goal > 0 ? Math.min(100, Math.round((earned / goal) * 100)) : 0;
+  curEl.textContent = fmtMoney(earned);
+  document.getElementById('ppGoalTarget').textContent = 'of ₹' + goal + ' goal';
+  document.getElementById('ppGoalFill').style.width = pct + '%';
+  document.getElementById('ppGoalNote').textContent =
+    (pct >= 100 ? '🎉 Goal achieve ho gaya! ' : pct + '% complete — ') +
+    monthStart.toLocaleDateString('en-IN', { month: 'long' }) + ' ka target';
+}
+
+document.getElementById('ppGoalEditBtn').addEventListener('click', function(){
+  const current = localStorage.getItem('akans_partner_goal') || '1000';
+  const input = prompt('Is mahine ka earning goal set karo (₹):', current);
+  if (input === null) return;
+  const num = parseFloat(input);
+  if (isNaN(num) || num <= 0){ alert('Sahi number daalo'); return; }
+  localStorage.setItem('akans_partner_goal', String(num));
+  renderPartnerGoal();
+});
+
+/* ---------------- SMART INSIGHTS ---------------- */
+function renderPartnerInsights(){
+  const convEl = document.getElementById('ppInsConversion');
+  if (!convEl) return;
+
+  // Referral-based tiles
+  const total = allReferrals.length;
+  const active = allReferrals.filter(function(u){ return typeof u.totalDeposited === 'number' && u.totalDeposited > 0; });
+  const funded = active.reduce(function(s, u){ return s + u.totalDeposited; }, 0);
+  convEl.textContent = total ? (active.length + '/' + total + ' (' + Math.round((active.length / total) * 100) + '%)') : '—';
+  document.getElementById('ppInsAvg').textContent = active.length ? '₹' + Math.round(funded / active.length) : '—';
+
+  // Month-end estimate from this month's pace
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const earnedThisMonth = allCommissions.reduce(function(s, c){
+    if (!c.createdAt) return s;
+    return new Date(c.createdAt) >= monthStart ? s + (c.amount || 0) : s;
+  }, 0);
+  const projEl = document.getElementById('ppInsProjected');
+  projEl.textContent = earnedThisMonth > 0 ? fmtMoney((earnedThisMonth / now.getDate()) * daysInMonth) : '—';
+
+  // Best earning weekday (all-time)
+  const dayTotals = [0, 0, 0, 0, 0, 0, 0];
+  allCommissions.forEach(function(c){
+    if (!c.createdAt) return;
+    dayTotals[new Date(c.createdAt).getDay()] += (c.amount || 0);
+  });
+  const bestVal = Math.max.apply(null, dayTotals);
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  document.getElementById('ppInsBestDay').textContent = bestVal > 0 ? dayNames[dayTotals.indexOf(bestVal)] : '—';
+}
+
+/* ---------------- TOP PERFORMERS ---------------- */
+function renderTopPerformers(){
+  const el = document.getElementById('ppTopList');
+  if (!el) return;
+
+  const top = allReferrals
+    .filter(function(u){ return typeof u.totalDeposited === 'number' && u.totalDeposited > 0; })
+    .sort(function(a, b){ return b.totalDeposited - a.totalDeposited; })
+    .slice(0, 5);
+
+  if (!top.length){
+    el.innerHTML = '<p class="admin-empty">Abhi kisi referral ne fund nahi kiya</p>';
+    return;
+  }
+
+  el.innerHTML = '';
+  top.forEach(function(u, i){
+    const div = document.createElement('div');
+    div.className = 'pp-ref-item';
+    div.innerHTML =
+      '<div class="pp-rank-badge">' + (i + 1) + '</div>' +
+      '<div class="pp-ref-mid">' +
+        '<span class="pp-ref-name">' + escapeHtml(u.name || u.email || 'User') + '</span>' +
+        '<span class="pp-ref-date">Total fund ₹' + u.totalDeposited.toFixed(0) + '</span>' +
+      '</div>' +
+      '<div><span class="pp-ref-funded">≈ ₹' + Math.round(u.totalDeposited * 0.49) + '</span>' +
+      '<span class="pp-ref-share">aapka hissa</span></div>';
+    el.appendChild(div);
+  });
+}
+
+/* ---------------- FOLLOW-UP (joined, never funded) ---------------- */
+function renderFollowUp(){
+  const el = document.getElementById('ppFollowList');
+  const copyBtn = document.getElementById('ppReminderCopyBtn');
+  if (!el) return;
+
+  const now = new Date();
+  const pending = allReferrals
+    .filter(function(u){
+      const funded = typeof u.totalDeposited === 'number' ? u.totalDeposited : 0;
+      if (funded > 0 || !u.createdAt) return false;
+      return (now - new Date(u.createdAt)) >= 2 * 86400000; // 2+ din ho gaye
+    })
+    .sort(function(a, b){ return new Date(a.createdAt) - new Date(b.createdAt); })
+    .slice(0, 8);
+
+  if (!pending.length){
+    el.innerHTML = '<p class="admin-empty">' + (allReferrals.length ? 'Sab referrals active hain 🎉' : 'Abhi koi referral nahi hai') + '</p>';
+    if (copyBtn) copyBtn.style.display = 'none';
+    return;
+  }
+
+  el.innerHTML = '';
+  pending.forEach(function(u){
+    const days = Math.floor((now - new Date(u.createdAt)) / 86400000);
+    const div = document.createElement('div');
+    div.className = 'pp-ref-item';
+    div.innerHTML =
+      '<div class="pp-ref-avatar">' + escapeHtml((u.name || u.email || '?').charAt(0).toUpperCase()) + '</div>' +
+      '<div class="pp-ref-mid">' +
+        '<span class="pp-ref-name">' + escapeHtml(u.name || u.email || 'User') + '</span>' +
+        '<span class="pp-ref-date">Abhi tak fund nahi kiya</span>' +
+      '</div>' +
+      '<span class="pp-followup-days">' + days + 'd</span>';
+    el.appendChild(div);
+  });
+
+  if (copyBtn){
+    copyBtn.style.display = 'inline-block';
+    copyBtn.onclick = function(){
+      copyText('Hi! AKANS Social Store pe account bana liya hai to ek baar try karo — chhote amount se start kar sakte ho. Koi problem ho to mujhe batao 🙂', copyBtn, '📋 Reminder Message Copy Karo');
+    };
+  }
+}
+
+/* ---------------- SHARE TEMPLATES ---------------- */
+function renderShareTemplates(){
+  const el = document.getElementById('ppTemplates');
+  if (!el || !partnerLink) return;
+
+  const templates = [
+    '📈 Instagram Views, Likes, Followers sabse kam price me chahiye? AKANS Social Store try karo — fast delivery, 100% safe service.\n' + partnerLink,
+    '🎮 Free Fire Profile Likes chahiye? AKANS Store pe easy plans milte hain — mere link se join karo:\n' + partnerLink,
+    '🤝 Online earning karna chahte ho? AKANS Partner Program join karo aur har top-up par commission kamao:\n' + partnerLink
+  ];
+
+  el.innerHTML = '';
+  templates.forEach(function(text){
+    const box = document.createElement('div');
+    box.className = 'pp-template';
+    box.innerHTML =
+      '<p class="pp-template-text">' + escapeHtml(text) + '</p>' +
+      '<div class="pp-template-btns"><button type="button" class="copy">📋 Copy</button><button type="button" class="wa">💬 WhatsApp</button></div>';
+    const copyBtn = box.querySelector('.copy');
+    copyBtn.addEventListener('click', function(){ copyText(text, copyBtn, '📋 Copy'); });
+    box.querySelector('.wa').addEventListener('click', function(){
+      window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+    });
+    el.appendChild(box);
+  });
+}
+
+/* ---------------- WITHDRAW SUMMARY ---------------- */
+function renderWithdrawSummary(){
+  const el = document.getElementById('ppWithdrawSummary');
+  if (!el) return;
+  if (!allWithdrawals.length){ el.style.display = 'none'; return; }
+
+  let received = 0, pending = 0, fees = 0;
+  allWithdrawals.forEach(function(w){
+    if (w.status === 'completed'){
+      received += (typeof w.netAmount === 'number' ? w.netAmount : (w.amount || 0));
+      fees += (w.fee || 0);
+    } else if (w.status === 'pending'){
+      pending += (w.amount || 0);
+    }
+  });
+
+  el.style.display = 'grid';
+  el.innerHTML =
+    '<div class="pp-wd-stat"><div class="pp-wd-val">' + fmtMoney(received) + '</div><div class="pp-wd-label">Mil Chuka</div></div>' +
+    '<div class="pp-wd-stat"><div class="pp-wd-val">' + fmtMoney(pending) + '</div><div class="pp-wd-label">Pending</div></div>' +
+    '<div class="pp-wd-stat"><div class="pp-wd-val">' + fmtMoney(fees) + '</div><div class="pp-wd-label">Charges Gaye</div></div>';
+}
+
+/* ---------------- COLLAPSIBLE CARDS (tap on card title) ---------------- */
+(function setupCollapsibleCards(){
+  const KEY = 'akans_partner_collapsed';
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){}
+
+  document.querySelectorAll('.pp-card').forEach(function(card){
+    const h3 = card.querySelector('h3');
+    if (!h3) return;
+    const id = h3.textContent.trim();
+    if (saved[id]) card.classList.add('collapsed');
+    h3.addEventListener('click', function(){
+      const nowCollapsed = card.classList.toggle('collapsed');
+      saved[id] = nowCollapsed;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(e){}
+    });
+  });
+})();
