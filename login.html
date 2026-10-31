@@ -584,8 +584,6 @@ button{ font-family:inherit; }
 
     <p class="login-error" id="loginError"></p>
 
-    <input type="text" id="authName" class="login-input" placeholder="Poora naam" autocomplete="name" style="display:none">
-
     <input type="email" id="authEmail" class="login-input" placeholder="Email address" autocomplete="email">
 
     <div class="login-pw-wrap">
@@ -640,7 +638,6 @@ button{ font-family:inherit; }
     document.getElementById('tabLogin').classList.toggle('active', !isSignup);
     document.getElementById('tabSignup').classList.toggle('active', isSignup);
 
-    document.getElementById('authName').style.display = isSignup ? 'block' : 'none';
     document.getElementById('authConfirmPasswordWrap').style.display = isSignup ? 'block' : 'none';
     document.getElementById('authWhatsapp').style.display = isSignup ? 'block' : 'none';
     document.getElementById('forgotBtn').style.display = isSignup ? 'none' : 'block';
@@ -687,15 +684,12 @@ button{ font-family:inherit; }
       if (mode === 'login'){
         await loginWithEmail(email, password);
       } else {
-        const name = document.getElementById('authName').value.trim();
+        // Naam ka input hata diya gaya hai — auth.js ko ab bhi ek naam chahiye
+        // (profile/display ke liye), isliye email ke @ se pehle wala hissa use karte hain.
+        const name = email.split('@')[0];
         const confirmPassword = document.getElementById('authConfirmPassword').value;
         const whatsapp = document.getElementById('authWhatsapp').value.trim();
 
-        if (!name){
-          errEl.textContent = 'Apna naam likhein';
-          authFlowInProgress = false;
-          return;
-        }
         if (password.length < 6){
           errEl.textContent = 'Password kam se kam 6 characters ka hona chahiye';
           authFlowInProgress = false;
