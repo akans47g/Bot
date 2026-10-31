@@ -590,6 +590,91 @@ button{ font-family:inherit; }
 .admin-status.pending{ background:#FFF7E0; color:#B8860B; }
 .admin-status.completed{ background:#E8F9F1; color:var(--success); }
 .admin-status.rejected{ background:#FDEEEE; color:#E63946; }
+
+/* =================================================================
+   PARTNER PAGE — ADVANCED ADDITIONS
+================================================================= */
+
+/* ---------------- COLLAPSIBLE CARDS ---------------- */
+.pp-card h3{ display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none; }
+.pp-card h3::after{ content:'▾'; color:var(--sub); font-size:13px; transition:transform .25s ease; }
+.pp-card.collapsed h3::after{ transform:rotate(-90deg); }
+.pp-card.collapsed > *:not(h3){ display:none; }
+.pp-card.collapsed h3{ margin-bottom:0; }
+
+/* ---------------- LEVEL ---------------- */
+.pp-level-top{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.pp-level-icon{
+  width:50px; height:50px; border-radius:16px; flex-shrink:0;
+  background:linear-gradient(135deg,#FFD97A,#FFB349);
+  display:flex; align-items:center; justify-content:center; font-size:26px;
+  box-shadow:0 6px 16px rgba(255,179,73,.35);
+}
+.pp-level-name{ font-size:17px; font-weight:800; color:var(--ink); }
+.pp-level-next{ font-size:11.5px; color:var(--sub); margin-top:2px; }
+.pp-progress-track{ background:var(--bg); border-radius:10px; height:12px; overflow:hidden; }
+.pp-progress-fill{
+  height:100%; width:0%; border-radius:10px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));
+  transition:width .6s ease;
+}
+
+/* ---------------- GOAL ---------------- */
+.pp-goal-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+.pp-goal-current{ font-size:22px; font-weight:800; color:var(--brand); }
+.pp-goal-target{ font-size:12px; color:var(--sub); }
+.pp-mini-btn{
+  border:1.5px solid var(--line); background:var(--bg); color:var(--ink);
+  font-size:11.5px; font-weight:700; padding:7px 13px; border-radius:10px;
+  cursor:pointer; font-family:inherit;
+}
+.pp-mini-btn:active{ transform:scale(.96); }
+
+/* ---------------- INSIGHT TILES ---------------- */
+.pp-insight-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.pp-insight-tile{
+  background:var(--bg); border-radius:14px; padding:12px; position:relative; overflow:hidden;
+}
+.pp-insight-tile::before{ content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--brand),var(--brand-2)); }
+.pp-insight-tile.t2::before{ background:linear-gradient(90deg,var(--success),#0FA968); }
+.pp-insight-tile.t3::before{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+.pp-insight-tile.t4::before{ background:linear-gradient(90deg,#0284C7,#38BDF8); }
+.pp-insight-val{ font-size:17px; font-weight:800; color:var(--ink); }
+.pp-insight-label{ font-size:10px; font-weight:700; color:var(--sub); text-transform:uppercase; letter-spacing:.03em; margin-top:3px; }
+
+/* ---------------- TOP PERFORMERS / FOLLOW-UP ---------------- */
+.pp-rank-badge{
+  width:24px; height:24px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  color:#fff; font-size:11.5px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+.pp-ref-share{ display:block; font-size:10.5px; color:var(--sub); font-weight:600; text-align:right; }
+.pp-followup-days{ font-size:11.5px; font-weight:800; color:#E63946; flex-shrink:0; }
+
+/* ---------------- SHARE TEMPLATES ---------------- */
+.pp-template{
+  background:var(--bg); border-radius:12px; padding:12px; margin-bottom:10px;
+}
+.pp-template-text{ font-size:12.5px; color:var(--ink); line-height:1.5; margin:0 0 10px; white-space:pre-line; }
+.pp-template-btns{ display:flex; gap:8px; }
+.pp-template-btns button{
+  flex:1; border:none; border-radius:10px; padding:9px;
+  font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; color:#fff;
+}
+.pp-template-btns .copy{ background:linear-gradient(135deg,var(--brand),var(--brand-2)); }
+.pp-template-btns .wa{ background:#25D366; }
+
+/* ---------------- WITHDRAW SUMMARY ---------------- */
+.pp-wd-summary{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+.pp-wd-stat{ background:var(--bg); border-radius:12px; padding:10px 6px; text-align:center; }
+.pp-wd-val{ font-size:14px; font-weight:800; color:var(--ink); }
+.pp-wd-label{ font-size:9.5px; font-weight:700; color:var(--sub); text-transform:uppercase; margin-top:2px; }
+
+@media (prefers-reduced-motion: reduce){
+  .pp-progress-fill{ transition:none; }
+  .pp-card h3::after{ transition:none; }
+}
 </style>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4F2FCE">
@@ -625,6 +710,19 @@ button{ font-family:inherit; }
   </div>
 
   <div class="pp-card">
+    <h3>🏅 Partner Level</h3>
+    <div class="pp-level-top">
+      <div class="pp-level-icon" id="ppLevelIcon">🌱</div>
+      <div>
+        <div class="pp-level-name" id="ppLevelName">Starter</div>
+        <div class="pp-level-next" id="ppLevelNext">Load ho raha hai...</div>
+      </div>
+    </div>
+    <div class="pp-progress-track"><div class="pp-progress-fill" id="ppLevelFill"></div></div>
+    <p class="pp-hint" style="margin:8px 0 0;">Levels sirf milestone badges hain — commission hamesha same (49%) rehta hai.</p>
+  </div>
+
+  <div class="pp-card">
     <h3>🔗 Aapka Partner Code &amp; Link</h3>
     <div class="rf-code-box">
       <div class="rf-code-label">Ye code share karo</div>
@@ -637,6 +735,12 @@ button{ font-family:inherit; }
     </div>
     <p class="pp-hint">Jo bhi is link se account banayega, uske har top-up par aapko 49% milega — hamesha, sirf pehli baar nahi.</p>
     <button type="button" class="pp-share-btn" id="ppShareBtn">💬 Link Share Karein</button>
+  </div>
+
+  <div class="pp-card">
+    <h3>📣 Ready-made Share Messages</h3>
+    <p>Koi bhi message copy karo ya seedha WhatsApp pe bhejo — aapka link pehle se laga hua hai.</p>
+    <div id="ppTemplates"></div>
   </div>
 
   <div class="pp-card">
@@ -655,6 +759,40 @@ button{ font-family:inherit; }
   </div>
 
   <div class="pp-card">
+    <h3>🎯 Monthly Earning Goal</h3>
+    <div class="pp-goal-top">
+      <span class="pp-goal-current" id="ppGoalCurrent">₹0</span>
+      <span class="pp-goal-target" id="ppGoalTarget">of ₹1000</span>
+    </div>
+    <div class="pp-progress-track"><div class="pp-progress-fill" id="ppGoalFill"></div></div>
+    <p id="ppGoalNote" style="margin:8px 0 10px;">Is mahine ki kamai</p>
+    <button type="button" class="pp-mini-btn" id="ppGoalEditBtn">✏️ Goal Set Karo</button>
+  </div>
+
+  <div class="pp-card">
+    <h3>💡 Smart Insights</h3>
+    <div class="pp-insight-grid">
+      <div class="pp-insight-tile">
+        <div class="pp-insight-val" id="ppInsConversion">—</div>
+        <div class="pp-insight-label">Referrals Active</div>
+      </div>
+      <div class="pp-insight-tile t2">
+        <div class="pp-insight-val" id="ppInsAvg">—</div>
+        <div class="pp-insight-label">Avg Fund / Active</div>
+      </div>
+      <div class="pp-insight-tile t3">
+        <div class="pp-insight-val" id="ppInsProjected">—</div>
+        <div class="pp-insight-label">Month-end Estimate</div>
+      </div>
+      <div class="pp-insight-tile t4">
+        <div class="pp-insight-val" id="ppInsBestDay">—</div>
+        <div class="pp-insight-label">Best Earning Day</div>
+      </div>
+    </div>
+    <p id="ppInsNote" style="margin:10px 0 0;">Estimate abhi tak ki kamai ke pace par based hai.</p>
+  </div>
+
+  <div class="pp-card">
     <h3>👥 Aapki Team</h3>
     <div class="pp-team-row">
       <div class="pp-team-stat">
@@ -667,6 +805,19 @@ button{ font-family:inherit; }
       </div>
     </div>
     <div id="ppReferralList"><p class="admin-empty">Load ho raha hai...</p></div>
+  </div>
+
+  <div class="pp-card">
+    <h3>🏆 Top Performers</h3>
+    <p>Aapki team ke sabse zyada fund karne wale members.</p>
+    <div id="ppTopList"><p class="admin-empty">Load ho raha hai...</p></div>
+  </div>
+
+  <div class="pp-card">
+    <h3>⏰ Follow-up Zaroori</h3>
+    <p>Jinhone join kiya lekin abhi tak fund nahi kiya — unhe ek reminder bhejo.</p>
+    <div id="ppFollowList"><p class="admin-empty">Load ho raha hai...</p></div>
+    <button type="button" class="pp-mini-btn" id="ppReminderCopyBtn" style="margin-top:10px;display:none;">📋 Reminder Message Copy Karo</button>
   </div>
 
   <div class="pp-card">
@@ -699,6 +850,7 @@ button{ font-family:inherit; }
 
   <div class="pp-card">
     <h3>📋 Withdrawal History</h3>
+    <div class="pp-wd-summary" id="ppWithdrawSummary" style="display:none;"></div>
     <div id="ppWithdrawHistory"><p class="admin-empty">Load ho raha hai...</p></div>
   </div>
 
