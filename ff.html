@@ -28,6 +28,7 @@
 ================================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@700;800&family=Poppins:wght@500;600;700&display=swap');
 
 :root{
   --ink:#181428;      /* main text */
@@ -467,8 +468,79 @@ button{ font-family:inherit; }
   box-shadow:0 8px 26px rgba(79,47,206,.32);
 }
 .ff-card.is-expanded .ff-body{ background:#F8F6FF; }
+
+/* =================================================================
+   FF LIKES BANNER — image ki jagah code se bana banner
+   (1672x941 ka stage, JS se card ki width ke hisaab se scale hota hai)
+================================================================= */
+.ffb{ position:relative; width:100%; aspect-ratio:1672/941; overflow:hidden; background:#f7f6fb; cursor:pointer; }
+.fb-stage{ position:absolute; left:0; top:0; width:1672px; height:941px; transform-origin:0 0; overflow:hidden;
+  background:#f7f6fb; font-family:'Poppins',sans-serif; --fp:#6a1fd0; --fo:#ff7a12; --fink:#15131c; }
+.fb-stage *{ box-sizing:border-box; margin:0; padding:0; }
+.fb-stage>*{ position:absolute; }
+.fb-stage::after{ content:""; position:absolute; inset:14px; border:3px solid rgba(106,31,208,.25); border-radius:30px; pointer-events:none; }
+.fb-sc{ font-family:'Barlow Semi Condensed','Arial Narrow',Impact,sans-serif; }
+.fb-gt{ display:inline-block; padding-right:.08em; -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; }
+.fb-bg{ left:0; top:0; width:1672px; height:941px; }
+
+.fb-t1{ left:78px; top:76px; font-weight:800; font-size:120px; line-height:1; color:var(--fink); letter-spacing:.03em; white-space:nowrap; }
+.fb-t2{ left:76px; top:192px; font-weight:800; font-size:240px; line-height:1; white-space:nowrap; }
+.fb-pur{ background-image:linear-gradient(100deg,#7d2de6,#4a12a8); }
+.fb-ora{ background-image:linear-gradient(100deg,#ff9f22,#ff6a00); }
+.fb-uline{ left:80px; top:448px; width:760px; height:4px; border-radius:4px; background:linear-gradient(90deg,#ff7a12 0 260px,#6a1fd0 260px); transform-origin:0 50%; }
+
+.fb-chip{ left:80px; top:492px; width:1358px; height:142px; border-radius:52px; background:#fff; border:1px solid #e0daf0; }
+.fb-chip .fb-ic{ position:absolute; left:52px; top:15px; width:110px; height:110px; border-radius:50%; background:linear-gradient(145deg,#8a3de8,#4a12a8); }
+.fb-chip .fb-tx{ position:absolute; left:190px; top:15px; font-weight:500; font-size:52.8px; line-height:56px; color:#23202c; white-space:nowrap; }
+.fb-tx .fb-hp{ color:var(--fp); font-weight:700; } .fb-tx .fb-ho{ color:var(--fo); font-weight:700; }
+
+.fb-price{ left:80px; top:674px; width:1358px; height:200px; border-radius:40px; background:#fff; border:2px solid #ff9a3c; }
+.fb-price>*{ position:absolute; }
+.fb-buy{ left:-2px; top:-2px; width:500px; height:200px; border-radius:40px 0 0 40px; background:linear-gradient(135deg,#7d2de6,#4a12a8); clip-path:polygon(0 0,100% 0,89.5% 100%,0 100%); }
+.fb-num,.fb-like,.fb-only,.fb-amt,.fb-rup{ text-align:center; white-space:nowrap; }
+.fb-num,.fb-like{ left:0; width:470px; }
+.fb-only,.fb-amt,.fb-rup{ left:560px; width:470px; }
+.fb-num{ top:-8px; font-weight:800; font-size:140px; line-height:1; color:#fff; }
+.fb-like{ top:125px; font-weight:700; font-size:54px; line-height:1; color:#fff; letter-spacing:4px; }
+.fb-only{ top:5px; font-weight:700; font-size:44px; line-height:1; color:var(--fp); letter-spacing:5px; }
+.fb-amt{ top:37px; font-weight:800; font-size:115px; line-height:1; }
+.fb-rs{ font-family:'Poppins',sans-serif; font-weight:700; color:var(--fp); margin-right:.06em; }
+.fb-amtnum{ background-image:linear-gradient(180deg,#ff9a1f,#ff6a00); }
+.fb-rup{ top:148px; font-weight:700; font-size:38px; line-height:1; color:var(--fp); letter-spacing:4px; }
+.fb-demo{ left:1090px; top:2px; width:230px; height:192px; text-align:center; color:#fff; padding-top:38px; background:linear-gradient(#8a3de8,#4a12a8);
+  clip-path:polygon(0 0,100% 0,100% 82%,50% 100%,0 82%); transform-origin:50% 40%; }
+.fb-demo b{ display:block; font-weight:800; font-size:66px; line-height:56px; }
+.fb-demo.fb-md b{ font-size:56px; line-height:52px; }
+.fb-demo.fb-xl{ left:1040px; width:300px; }
+.fb-demo.fb-xl b:first-child{ font-size:40px; line-height:44px; letter-spacing:1px; }
+.fb-bubble{ left:1340px; top:34px; width:230px; height:201px; transform:rotate(-9deg); }
+
+@keyframes fbDown{ from{opacity:0;transform:translateY(-36px)} to{opacity:1;transform:none} }
+@keyframes fbUp{ from{opacity:0;transform:translateY(50px)} to{opacity:1;transform:none} }
+@keyframes fbLeft{ from{opacity:0;transform:translateX(-90px)} to{opacity:1;transform:none} }
+@keyframes fbGrow{ from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes fbPanel{ from{opacity:0;transform:translateX(240px)} to{opacity:1;transform:none} }
+@keyframes fbCorner{ from{opacity:0;transform:translate(-120px,-120px)} to{opacity:1;transform:none} }
+@keyframes fbCorner2{ from{opacity:0;transform:translate(160px,160px)} to{opacity:1;transform:none} }
+@keyframes fbPop{ 0%{opacity:0;transform:rotate(-9deg) scale(.3)} 60%{opacity:1;transform:rotate(-9deg) scale(1.12)} 100%{opacity:1;transform:rotate(-9deg) scale(1)} }
+@keyframes fbBadge{ 0%{opacity:0;transform:scale(.4)} 70%{opacity:1;transform:scale(1.1)} 100%{opacity:1;transform:scale(1)} }
+@keyframes fbFloat{ 0%,100%{transform:rotate(-9deg) translateY(0)} 50%{transform:rotate(-6deg) translateY(-14px)} }
+@keyframes fbFade{ from{opacity:0} to{opacity:1} }
+
+.fb-play .fb-panel{ animation:fbPanel .9s .05s cubic-bezier(.2,.8,.2,1) both; }
+.fb-play .fb-c1{ animation:fbCorner .7s .1s ease-out both; }
+.fb-play .fb-c2{ animation:fbCorner2 .7s .3s ease-out both; }
+.fb-play .fb-t1{ animation:fbLeft .7s .45s cubic-bezier(.2,.8,.2,1) both; }
+.fb-play .fb-t2{ animation:fbLeft .7s .6s cubic-bezier(.2,.8,.2,1) both; }
+.fb-play .fb-uline{ animation:fbGrow .6s .95s ease-out both; }
+.fb-play .fb-chip{ animation:fbUp .7s 1.05s cubic-bezier(.2,.8,.2,1) both; }
+.fb-play .fb-price{ animation:fbUp .7s 1.2s cubic-bezier(.2,.8,.2,1) both; }
+.fb-play .fb-demo{ animation:fbBadge .6s 1.7s ease-out both; }
+.fb-play .fb-bubble{ animation:fbPop .7s 1s ease-out both, fbFloat 3.2s 1.7s ease-in-out infinite; }
+.fb-play::after{ animation:fbFade .8s .2s both; }
+@media (prefers-reduced-motion:reduce){ .fb-play *, .fb-play::after{ animation:none !important; } }
+
 .ff-banner-wrap{ position:relative; }
-.ff-banner{ width:100%; height:170px; object-fit:cover; display:block; background:linear-gradient(135deg,var(--bg),var(--line)); }
 
 .ff-body{ padding:16px; transition:background .25s ease; }
 .ff-title{ font-size:17px; font-weight:800; color:var(--ink); margin-bottom:8px; }
@@ -790,14 +862,14 @@ button{ font-family:inherit; }
   <!-- PLAN 1 -->
   <div class="ff-card" data-plan="ff1">
     <div class="ff-banner-wrap">
-      <img src="image/f1.jpg" alt="1 Day Plan" class="ff-banner">
+      <div class="ffb" data-likes="220" data-price="25" data-pack="DEMO" role="img" aria-label="220 Free Fire profile likes sirf ₹25"></div>
     </div>
     <div class="ff-body">
       <div class="ff-title">1 Day Plan</div>
       <div class="ff-price-row">
         <span class="ff-price" id="ff1Price">₹25</span>
         <span class="ff-price-sub">/ 1 day</span>
-        <span class="ff-badge" id="ff1Badge">🔥 Quick Trial</span>
+        <span class="ff-badge" id="ff1Badge">🧪 Demo</span>
       </div>
       <div class="ff-pills">
         <span class="ff-pill">📅 1 Day</span>
@@ -821,11 +893,11 @@ button{ font-family:inherit; }
   <!-- PLAN 2 -->
   <div class="ff-card" data-plan="ff2">
     <div class="ff-banner-wrap">
-      <img src="image/f2.jpg" alt="5 Days Plan" class="ff-banner">
+      <div class="ffb" data-likes="1100" data-price="99" data-pack="TRIAL" role="img" aria-label="1100 Free Fire profile likes sirf ₹99"></div>
     </div>
     <div class="ff-body">
       <div class="ff-title">5 Days Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹99</span><span class="ff-price-sub">/ 5 days</span><span class="ff-save">Save 21%</span><span class="ff-badge">⭐ Popular</span></div>
+      <div class="ff-price-row"><span class="ff-price">₹99</span><span class="ff-price-sub">/ 5 days</span><span class="ff-save">Save 21%</span><span class="ff-badge">🚀 Trial</span></div>
       <div class="ff-pills">
         <span class="ff-pill">📅 5 Days</span>
         <span class="ff-pill">📦 1100 Total</span>
@@ -848,11 +920,11 @@ button{ font-family:inherit; }
   <!-- PLAN 3 -->
   <div class="ff-card" data-plan="ff3">
     <div class="ff-banner-wrap">
-      <img src="image/f3.jpg" alt="15 Days Plan" class="ff-banner">
+      <div class="ffb" data-likes="3300" data-price="219" data-pack="BASIC" role="img" aria-label="3300 Free Fire profile likes sirf ₹219"></div>
     </div>
     <div class="ff-body">
       <div class="ff-title">15 Days Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹219</span><span class="ff-price-sub">/ 15 days</span><span class="ff-save">Save 42%</span><span class="ff-badge">💎 Best Value</span></div>
+      <div class="ff-price-row"><span class="ff-price">₹219</span><span class="ff-price-sub">/ 15 days</span><span class="ff-save">Save 42%</span><span class="ff-badge">💎 Basic</span></div>
       <div class="ff-pills">
         <span class="ff-pill">📅 15 Days</span>
         <span class="ff-pill">📦 3300 Total</span>
@@ -875,11 +947,11 @@ button{ font-family:inherit; }
   <!-- PLAN 4 -->
   <div class="ff-card" data-plan="ff4">
     <div class="ff-banner-wrap">
-      <img src="image/f4.jpg" alt="30 Days Plan" class="ff-banner">
+      <div class="ffb" data-likes="6600" data-price="399" data-pack="POPULAR" role="img" aria-label="6600 Free Fire profile likes sirf ₹399"></div>
     </div>
     <div class="ff-body">
       <div class="ff-title">30 Days Plan</div>
-      <div class="ff-price-row"><span class="ff-price">₹399</span><span class="ff-price-sub">/ 30 days</span><span class="ff-save">Save 47%</span><span class="ff-badge">👑 Ultimate</span></div>
+      <div class="ff-price-row"><span class="ff-price">₹399</span><span class="ff-price-sub">/ 30 days</span><span class="ff-save">Save 47%</span><span class="ff-badge">⭐ Popular</span></div>
       <div class="ff-pills">
         <span class="ff-pill">📅 30 Days</span>
         <span class="ff-pill">📦 6600 Total</span>
@@ -895,6 +967,33 @@ button{ font-family:inherit; }
       <button type="button" class="ff-buy-btn" onclick="handleBuyClick('ff4')">
         <span class="ff-buy-btn-left">🛒 Buy Now</span>
         <span class="ff-buy-btn-right">🪙 ₹399</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- PLAN 5 -->
+  <div class="ff-card" data-plan="ff5">
+    <div class="ff-banner-wrap">
+      <div class="ffb" data-likes="13200" data-price="749" data-pack="PROFESSIONAL" role="img" aria-label="13200 Free Fire profile likes sirf ₹749"></div>
+    </div>
+    <div class="ff-body">
+      <div class="ff-title">60 Days Plan</div>
+      <div class="ff-price-row"><span class="ff-price">₹749</span><span class="ff-price-sub">/ 60 days</span><span class="ff-save">Save 50%</span><span class="ff-badge">🏆 Professional</span></div>
+      <div class="ff-pills">
+        <span class="ff-pill">📅 60 Days</span>
+        <span class="ff-pill">📦 13200 Total</span>
+        <span class="ff-pill">⚡ 220/day</span>
+      </div>
+      <p class="ff-urgent">🔥 9 logo ne aaj ye plan liya</p>
+      <button type="button" class="ff-details-btn" data-target="ffDetails5">Details <span class="chev">▾</span></button>
+      <div class="ff-details-box" id="ffDetails5">
+        <div class="ff-detail-item">✔ 220 content per day</div>
+        <div class="ff-detail-item">✔ Admin approval ke baad turant shuru</div>
+        <div class="ff-detail-item">✔ 60 din me plan complete</div>
+      </div>
+      <button type="button" class="ff-buy-btn" onclick="handleBuyClick('ff5')">
+        <span class="ff-buy-btn-left">🛒 Buy Now</span>
+        <span class="ff-buy-btn-right">🪙 ₹749</span>
       </button>
     </div>
   </div>
@@ -1159,6 +1258,101 @@ document.addEventListener("DOMContentLoaded", () => {
     cards.forEach((card) => io.observe(card));
   }
 });
+</script>
+<script>
+// ---- FF Likes banners: code se banate hain, card ki width ke hisaab se scale karte hain ----
+(function(){
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var banners = Array.prototype.slice.call(document.querySelectorAll('.ffb[data-likes]'));
+  var NS = 'http://www.w3.org/2000/svg';
+
+  function build(el, i){
+    var likes = el.dataset.likes, price = el.dataset.price, pack = el.dataset.pack;
+    var demoCls = pack.length >= 10 ? 'fb-demo fb-sc fb-xl' : (pack.length >= 7 ? 'fb-demo fb-sc fb-md' : 'fb-demo fb-sc');
+    el.innerHTML =
+      '<div class="fb-stage fb-play">' +
+        '<svg class="fb-bg" viewBox="0 0 1672 941" xmlns="' + NS + '"><defs><linearGradient id="fbpg' + i + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2de6"/><stop offset="1" stop-color="#4a12a8"/></linearGradient></defs>' +
+          '<polygon class="fb-c1" points="0,0 220,0 0,155" fill="#ff8a1c"/>' +
+          '<polygon class="fb-panel" points="1580,0 1672,0 1672,941 1440,941" fill="url(#fbpg' + i + ')"/>' +
+          '<polygon class="fb-c2" points="1500,941 1672,810 1672,941" fill="#ff7a12"/></svg>' +
+        '<h3 class="fb-t1 fb-sc">FREE FIRE</h3>' +
+        '<h3 class="fb-t2 fb-sc"><span class="fb-gt fb-pur">PROFILE</span> <span class="fb-gt fb-ora">LIKES</span></h3>' +
+        '<div class="fb-uline"></div>' +
+        '<div class="fb-chip"><div class="fb-ic"><svg viewBox="0 0 90 90" width="110" height="110"><circle cx="45" cy="34" r="13" fill="none" stroke="#fff" stroke-width="5"/><path d="M22 66 Q22 51 45 51 Q68 51 68 66Z" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></svg></div>' +
+          '<div class="fb-tx">Apne Profile par <span class="fb-hp">Likes</span> Badhaye<br>Aur Apni Social Image <span class="fb-ho">Improve</span> Kare</div></div>' +
+        '<div class="fb-price"><div class="fb-buy"></div>' +
+          '<div class="fb-num fb-sc">' + likes + '</div><div class="fb-like fb-sc">LIKE</div>' +
+          '<div class="fb-only fb-sc">ONLY</div>' +
+          '<div class="fb-amt fb-sc"><span class="fb-rs">₹</span><span class="fb-amtnum fb-gt">' + price + '</span></div>' +
+          '<div class="fb-rup fb-sc">RUPEES</div>' +
+          '<div class="' + demoCls + '"><b>' + pack + '</b><b>PACK</b></div></div>' +
+        '<svg class="fb-bubble" viewBox="0 0 240 210" xmlns="' + NS + '"><defs><linearGradient id="fbbg' + i + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d2de6"/><stop offset="1" stop-color="#ff7a12"/></linearGradient></defs>' +
+          '<path d="M52 14 H196 Q226 14 226 46 V128 Q226 160 196 160 H128 L72 196 Q62 202 66 190 L72 160 H52 Q22 160 22 128 V46 Q22 14 52 14Z" fill="url(#fbbg' + i + ')"/>' +
+          '<path transform="translate(69,36) scale(4.6)" fill="#fff" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>' +
+      '</div>';
+    // title fit: PROFILE LIKES width tak failta hai, baaki sab uske neeche stack
+    el._st = el.firstChild;
+  }
+
+  function scale(el){
+    var s = el.clientWidth / 1672;
+    if (s > 0) el._st.style.transform = 'scale(' + s + ')';
+  }
+
+  function fitTitles(el){
+    var st = el._st, q = function(x){ return st.querySelector(x); };
+    var t1 = q('.fb-t1'), t2 = q('.fb-t2');
+    t2.style.fontSize = '100px';
+    var w = t2.offsetWidth || 1, s = Math.max(150, Math.min(250, 100 * 1360 / w)), f = s * .5, y = 100;
+    t1.style.fontSize = f + 'px'; t1.style.top = (y - .2 * f) + 'px'; y += .7 * f + 56;
+    t2.style.fontSize = s + 'px'; t2.style.top = (y - .2 * s) + 'px'; y += .7 * s + 40;
+    q('.fb-uline').style.top = y + 'px'; y += 44;
+    q('.fb-chip').style.top = y + 'px'; y += 182;
+    q('.fb-price').style.top = y + 'px';
+  }
+
+  function count(el){
+    var n = el._st.querySelector('.fb-num'), target = parseInt(el.dataset.likes, 10), id = (el._run = (el._run || 0) + 1);
+    if (rm){ n.textContent = target; return; }
+    n.textContent = '0';
+    var t0 = null;
+    (function step(t){
+      if (id !== el._run) return;
+      if (t0 === null) t0 = t;
+      var k = Math.min(1, Math.max(0, (t - t0 - 1250) / 1100));
+      n.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step);
+    })(performance.now());
+  }
+
+  function replay(el){
+    var st = el._st;
+    st.classList.remove('fb-play'); void st.offsetWidth; st.classList.add('fb-play');
+    count(el);
+  }
+
+  banners.forEach(function(el, i){
+    build(el, i);
+    scale(el);
+    el.addEventListener('click', function(){ replay(el); });
+  });
+
+  function refit(){ banners.forEach(function(el){ scale(el); fitTitles(el); }); }
+  window.addEventListener('resize', refit);
+  refit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refit);
+
+  // Animation tab screen me aane par ek baar chalegi (load par sab ek saath nahi)
+  if ('IntersectionObserver' in window){
+    banners.forEach(function(el){ el._st.classList.remove('fb-play'); });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ replay(e.target); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.35 });
+    banners.forEach(function(el){ io.observe(el); });
+  }
+})();
 </script>
 <script type="module" src="js/ff.js"></script>
 
