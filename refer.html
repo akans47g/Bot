@@ -138,6 +138,89 @@ a{ color:inherit; } img{ max-width:100%; display:block; } button{ font-family:in
 .admin-status.completed{ background:#E8F9F1; color:var(--success); }
 .admin-status.rejected{ background:#FDEEEE; color:#E63946; }
 
+/* =================================================================
+   REFER PAGE — ADVANCED ADDITIONS
+================================================================= */
+
+/* collapsible cards (tap on card title) */
+.pp-card h3{ display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none; }
+.pp-card h3::after{ content:'▾'; color:var(--sub); font-size:13px; transition:transform .25s ease; }
+.pp-card.collapsed h3::after{ transform:rotate(-90deg); }
+.pp-card.collapsed > *:not(h3){ display:none; }
+.pp-card.collapsed h3{ margin-bottom:0; }
+
+/* commission calculator */
+.rf-rate-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.rf-rate-box{
+  background:linear-gradient(135deg,var(--brand),var(--brand-2)); color:#fff;
+  border-radius:14px; padding:14px 8px; text-align:center;
+}
+.rf-rate-box.alt{ background:linear-gradient(135deg,var(--accent),var(--accent-2)); }
+.rf-rate-pct{ font-size:26px; font-weight:800; }
+.rf-rate-label{ font-size:10.5px; font-weight:700; opacity:.9; margin-top:2px; }
+.rf-calc-result{
+  background:var(--bg); border-radius:12px; padding:12px; font-size:12.5px;
+  color:var(--ink); line-height:1.7; font-weight:600;
+}
+.rf-calc-result b{ color:var(--brand); }
+
+/* level + progress bars */
+.rf-level-top{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.rf-level-icon{
+  width:50px; height:50px; border-radius:16px; flex-shrink:0;
+  background:linear-gradient(135deg,#FFD97A,#FFB349);
+  display:flex; align-items:center; justify-content:center; font-size:26px;
+  box-shadow:0 6px 16px rgba(255,179,73,.35);
+}
+.rf-level-name{ font-size:17px; font-weight:800; color:var(--ink); }
+.rf-level-next{ font-size:11.5px; color:var(--sub); margin-top:2px; }
+.rf-progress-track{ background:var(--bg); border-radius:10px; height:12px; overflow:hidden; }
+.rf-progress-fill{
+  height:100%; width:0%; border-radius:10px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));
+  transition:width .6s ease;
+}
+
+/* referral stats grid */
+.rf-stat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+.rf-stat{ background:var(--bg); border-radius:12px; padding:10px 4px; text-align:center; }
+
+/* goal */
+.rf-goal-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+.rf-goal-current{ font-size:22px; font-weight:800; color:var(--brand); }
+.rf-goal-target{ font-size:12px; color:var(--sub); }
+.rf-mini-btn{
+  border:1.5px solid var(--line); background:var(--bg); color:var(--ink);
+  font-size:11.5px; font-weight:700; padding:7px 13px; border-radius:10px;
+  cursor:pointer; font-family:inherit;
+}
+.rf-mini-btn:active{ transform:scale(.96); }
+
+/* follow-up */
+.rf-followup-days{ font-size:11.5px; font-weight:800; color:#E63946; flex-shrink:0; }
+
+/* share templates */
+.rf-template{ background:var(--bg); border-radius:12px; padding:12px; margin-bottom:10px; }
+.rf-template-text{ font-size:12.5px; color:var(--ink); line-height:1.5; margin:0 0 10px; white-space:pre-line; word-break:break-word; }
+.rf-template-btns{ display:flex; gap:8px; }
+.rf-template-btns button{
+  flex:1; border:none; border-radius:10px; padding:9px;
+  font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; color:#fff;
+}
+.rf-template-btns .copy{ background:linear-gradient(135deg,var(--brand),var(--brand-2)); }
+.rf-template-btns .wa{ background:#25D366; }
+
+/* withdraw summary */
+.rf-wd-summary{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+.rf-wd-stat{ background:var(--bg); border-radius:12px; padding:10px 6px; text-align:center; }
+.rf-wd-val{ font-size:14px; font-weight:800; color:var(--ink); }
+.rf-wd-label{ font-size:9.5px; font-weight:700; color:var(--sub); text-transform:uppercase; margin-top:2px; }
+
+@media (prefers-reduced-motion: reduce){
+  .rf-progress-fill{ transition:none; }
+  .pp-card h3::after{ transition:none; }
+}
+
 .rf-code-copy:focus-visible,
 .pp-copy-btn:focus-visible,
 .pp-btn:focus-visible,
@@ -163,12 +246,35 @@ a{ color:inherit; } img{ max-width:100%; display:block; } button{ font-family:in
 
   <div class="pp-title">
     <h2>🎯 Refer &amp; Earn</h2>
-    <p>Apna code share karo, dost ke PEHLE deposit par 21% turant kamao</p>
+    <p>Apna code share karo — dost ke PEHLE deposit par 21% aur uske baad har deposit par 19% kamao</p>
   </div>
 
   <div class="pp-card pp-balance-card">
     <p class="pp-label">Refer Balance</p>
     <div class="pp-balance" id="rfBalance">₹0</div>
+  </div>
+
+  <div class="pp-card">
+    <h3>💰 Kitna Milega? (Calculator)</h3>
+    <div class="rf-rate-row">
+      <div class="rf-rate-box"><div class="rf-rate-pct">21%</div><div class="rf-rate-label">Pehle Deposit Par</div></div>
+      <div class="rf-rate-box alt"><div class="rf-rate-pct">19%</div><div class="rf-rate-label">Uske Baad Har Deposit</div></div>
+    </div>
+    <input type="number" id="rfCalcAmount" class="pp-input" placeholder="Dost kitna deposit karega? (₹)" inputmode="numeric">
+    <div id="rfCalcResult" class="rf-calc-result">Amount daalo — kamai turant dikhegi</div>
+  </div>
+
+  <div class="pp-card">
+    <h3>🏅 Referral Level</h3>
+    <div class="rf-level-top">
+      <div class="rf-level-icon" id="rfLevelIcon">🌱</div>
+      <div>
+        <div class="rf-level-name" id="rfLevelName">Starter</div>
+        <div class="rf-level-next" id="rfLevelNext">Load ho raha hai...</div>
+      </div>
+    </div>
+    <div class="rf-progress-track"><div class="rf-progress-fill" id="rfLevelFill"></div></div>
+    <p class="pp-hint" style="margin:8px 0 0;">Level un referrals se banta hai jinhone deposit kiya hai. Ye sirf badge hai — commission rates sabke liye same hain.</p>
   </div>
 
   <div class="pp-card">
@@ -183,15 +289,40 @@ a{ color:inherit; } img{ max-width:100%; display:block; } button{ font-family:in
       <span id="rfLinkText">Load ho raha hai...</span>
       <button type="button" class="pp-copy-btn" id="rfLinkCopyBtn">Copy Link</button>
     </div>
-    <p class="pp-hint">Code ya link, jo bhi aasan lage share karo — dono se kaam ho jaata hai. Sirf PEHLE deposit par 21% milta hai.</p>
+    <p class="pp-hint">Code ya link, jo bhi aasan lage share karo — dono se kaam ho jaata hai. PEHLE deposit par 21% aur uske baad har deposit par 19% milta hai.</p>
   </div>
 
   <div class="pp-card">
-    <div class="pp-stat-row">
-      <div class="pp-stat-num" id="rfReferralCount">0</div>
-      <div class="pp-stat-label">Total Referrals</div>
+    <h3>📣 Ready-made Share Messages</h3>
+    <p>Copy karo ya seedha WhatsApp pe bhejo — aapka code aur link pehle se laga hua hai.</p>
+    <div id="rfTemplates"></div>
+  </div>
+
+  <div class="pp-card">
+    <div class="rf-stat-grid">
+      <div class="rf-stat"><div class="pp-stat-num" id="rfReferralCount">0</div><div class="pp-stat-label">Total Referrals</div></div>
+      <div class="rf-stat"><div class="pp-stat-num" id="rfDepositedCount">0</div><div class="pp-stat-label">Deposit Kiya</div></div>
+      <div class="rf-stat"><div class="pp-stat-num" id="rfConversion">0%</div><div class="pp-stat-label">Conversion</div></div>
     </div>
     <div id="rfReferralList"><p class="admin-empty">Load ho raha hai...</p></div>
+  </div>
+
+  <div class="pp-card">
+    <h3>🎯 Monthly Referral Goal</h3>
+    <div class="rf-goal-top">
+      <span class="rf-goal-current" id="rfGoalCurrent">0</span>
+      <span class="rf-goal-target" id="rfGoalTarget">of 5 naye referrals</span>
+    </div>
+    <div class="rf-progress-track"><div class="rf-progress-fill" id="rfGoalFill"></div></div>
+    <p id="rfGoalNote" style="margin:8px 0 10px;">Is mahine ke naye referrals</p>
+    <button type="button" class="rf-mini-btn" id="rfGoalEditBtn">✏️ Goal Set Karo</button>
+  </div>
+
+  <div class="pp-card">
+    <h3>⏰ Follow-up Zaroori</h3>
+    <p>Jinhone join kiya lekin abhi tak deposit nahi kiya — unhe ek reminder bhejo.</p>
+    <div id="rfFollowList"><p class="admin-empty">Load ho raha hai...</p></div>
+    <button type="button" class="rf-mini-btn" id="rfReminderCopyBtn" style="margin-top:10px;display:none;">📋 Reminder Message Copy Karo</button>
   </div>
 
   <div class="pp-card">
@@ -213,6 +344,7 @@ a{ color:inherit; } img{ max-width:100%; display:block; } button{ font-family:in
 
   <div class="pp-card">
     <h3>📋 Withdrawal History</h3>
+    <div class="rf-wd-summary" id="rfWithdrawSummary" style="display:none;"></div>
     <div id="rfWithdrawHistory"><p class="admin-empty">Load ho raha hai...</p></div>
   </div>
 
