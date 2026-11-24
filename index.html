@@ -193,6 +193,25 @@ button{ font-family:inherit; }
   background:var(--line);
   flex-shrink:0;
 }
+
+/* Card ka thumbnail ab image nahi, code se bana poster (js/posters.js) hai */
+.igp{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,#f3eefc,#fdeef3);
+}
+.igp svg{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  display:block;
+  pointer-events:none;
+}
+@keyframes igpIn{
+  from{ opacity:0; transform:scale(1.05); }
+  to  { opacity:1; transform:none; }
+}
+.igp.igp-in svg{ animation:igpIn .6s ease backwards; }
+@media (prefers-reduced-motion:reduce){ .igp.igp-in svg{ animation:none; } }
 .card-text{ flex:1; min-width:0; }
 
 /* ---------------- TIER BADGES (under image) ---------------- */
@@ -887,7 +906,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig1.jpg" class="card-img" alt="Instagram Views">
+        <div class="card-img igp" data-poster="views-1" role="img" aria-label="Instagram Views"></div>
         <div class="tier-badge tier-standard">Standard</div>
       </div>
       <div class="card-text">
@@ -921,7 +940,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig2.jpg" class="card-img" alt="Instagram Likes">
+        <div class="card-img igp" data-poster="likes-1" role="img" aria-label="Instagram Likes"></div>
         <div class="tier-badge tier-standard">Standard</div>
       </div>
       <div class="card-text">
@@ -955,7 +974,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig3.jpg" class="card-img" alt="Instagram Followers">
+        <div class="card-img igp" data-poster="followers-1" role="img" aria-label="Instagram Followers"></div>
         <div class="tier-badge tier-standard">Standard</div>
       </div>
       <div class="card-text">
@@ -989,7 +1008,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig4.jpg" class="card-img" alt="Instagram Comment">
+        <div class="card-img igp" data-poster="comments-1" role="img" aria-label="Instagram Comment"></div>
         <div class="tier-badge tier-standard">Standard</div>
       </div>
       <div class="card-text">
@@ -1028,7 +1047,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig5.jpg" class="card-img" alt="Instagram Premium Views">
+        <div class="card-img igp" data-poster="views-2" role="img" aria-label="Instagram Premium Views"></div>
         <div class="tier-badge tier-premium">⭐ Premium</div>
       </div>
       <div class="card-text">
@@ -1064,7 +1083,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig6.jpg" class="card-img" alt="Instagram Premium Likes">
+        <div class="card-img igp" data-poster="likes-2" role="img" aria-label="Instagram Premium Likes"></div>
         <div class="tier-badge tier-premium">⭐ Premium</div>
       </div>
       <div class="card-text">
@@ -1098,7 +1117,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig7.jpg" class="card-img" alt="Instagram Premium Followers">
+        <div class="card-img igp" data-poster="followers-2" role="img" aria-label="Instagram Premium Followers"></div>
         <div class="tier-badge tier-premium">⭐ Premium</div>
       </div>
       <div class="card-text">
@@ -1132,7 +1151,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig8.jpg" class="card-img" alt="Instagram Premium Comment">
+        <div class="card-img igp" data-poster="comments-2" role="img" aria-label="Instagram Premium Comment"></div>
         <div class="tier-badge tier-premium">⭐ Premium</div>
       </div>
       <div class="card-text">
@@ -1173,7 +1192,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig9.jpg" class="card-img" alt="P. Indian Views">
+        <div class="card-img igp" data-poster="views-3" role="img" aria-label="P. Indian Views"></div>
         <div class="tier-badge tier-professional">👑 Professional</div>
       </div>
       <div class="card-text">
@@ -1209,7 +1228,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig10.jpg" class="card-img" alt="P. Ind Likes">
+        <div class="card-img igp" data-poster="likes-3" role="img" aria-label="P. Ind Likes"></div>
         <div class="tier-badge tier-professional">👑 Professional</div>
       </div>
       <div class="card-text">
@@ -1243,7 +1262,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig11.jpg" class="card-img" alt="P. Ind Followers">
+        <div class="card-img igp" data-poster="followers-3" role="img" aria-label="P. Ind Followers"></div>
         <div class="tier-badge tier-professional">👑 Professional</div>
       </div>
       <div class="card-text">
@@ -1277,7 +1296,7 @@ function toggleTierGroup(id) {
   <div class="bundle-card">
     <div class="card-top">
       <div class="card-img-wrap">
-        <img src="image/ig12.jpg" class="card-img" alt="P. Ind Comments">
+        <div class="card-img igp" data-poster="comments-3" role="img" aria-label="P. Ind Comments"></div>
         <div class="tier-badge tier-professional">👑 Professional</div>
       </div>
       <div class="card-text">
@@ -1652,6 +1671,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <script type="module" src="js/auth.js"></script>
 <script src="js/products.js"></script>
+<script src="js/posters.js" defer></script>
 
 <!-- ========================
      BUY NOW MODAL — LOGIC
